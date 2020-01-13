@@ -1,0 +1,13 @@
+
+
+PRINT "Enter rollno you want to delete : "
+INPUT ROLLNO
+
+deleteOperation = "DELETE FROM student WHERE rollno =  ":ROLLNO:" ;"
+
+STATUS = SQLExecDirect(@HSTMT,deleteOperation)
+
+PRINT STATUS
+
+
+

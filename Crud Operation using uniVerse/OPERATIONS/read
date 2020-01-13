@@ -1,0 +1,16 @@
+readOperation = "SELECT * from student;"
+
+STATUS = SQLExecDirect(@HSTMT,readOperation)
+
+ST=SQLBindCol(@HSTMT,1,SQL.B.CHAR,name);
+ST=SQLBindCol(@HSTMT,2,SQL.B.NUMBER,rollno);
+
+LOOP
+WHILE SQL.SUCCESS = SQLFetch(@HSTMT) DO
+PRINT name
+PRINT rollno
+REPEAT
+
+ST = SQLFreeStmt (@HSTMT, SQL.CLOSE)
+
+
