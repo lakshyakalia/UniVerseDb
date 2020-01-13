@@ -1,0 +1,14 @@
+
+
+PRINT "Enter rollno you want to update : "
+INPUT ROLLNO
+
+print "Enter new student name : "
+INPUT NAME
+
+updateOperation = "UPDATE student SET name= '":NAME:"' WHERE rollno = ":ROLLNO:";"
+
+STATUS = SQLExecDirect(@HSTMT,updateOperation)
+
+PRINT STATUS
+

@@ -1,0 +1,14 @@
+
+PRINT "Enter Name : "
+INPUT NAME
+PRINT "Enter rollno : "
+INPUT ROLLNO
+ 
+insertOperation = "INSERT INTO student VALUES ('":NAME:"',":ROLLNO:");"
+PRINT insertOperation
+STATUS = SQLExecDirect(@HSTMT,insertOperation)
+
+PRINT STATUS
+
+
+ 
