@@ -1,5 +1,5 @@
 <div id="btn">
-  <button mat-raised-button id="read">Read Data</button>
+  <button mat-raised-button id="read" (click)="readData()" >Read Data</button>
   <button mat-raised-button id="post">Post data</button>
 </div>
 <form id="mainform">
@@ -13,3 +13,6 @@
   </div>
 </form>
 <app-display></app-display>
+<div id ="data" *ngFor="let d of data">
+    {{d}}
+</div>
