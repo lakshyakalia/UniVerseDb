@@ -8,6 +8,12 @@ import { UniverseDataService } from './service/universe-data.service';
 })
 export class AppComponent {
   title = 'universe-poc';
-
-
+  constructor(private dataservice: UniverseDataService)
+  {}
+  readData(value){
+    this.dataservice.readData(value)
+    .subscribe(res=>{
+      console.log(res)
+    })
+  }
 }
