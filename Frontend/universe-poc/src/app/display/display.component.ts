@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-display',
+  selector: 'display',
   templateUrl: './display.component.html',
   styleUrls: ['./display.component.css']
 })
 export class DisplayComponent implements OnInit {
-  dummydata="dummy data showing"
   constructor() { }
+
+  @Input() userdata : any
 
   ngOnInit() {
   }

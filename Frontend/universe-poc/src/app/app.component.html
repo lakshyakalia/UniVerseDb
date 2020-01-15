@@ -1,17 +1,20 @@
-<form id="mainform" [formGroup]="submitForm">
-  <div class="form-group">
-    <label for="exampleInputEmail1">File Name</label>
-    <input type="text" class="form-control" id="filename" placeholder="Enter File name" [formControl]="filename" name="filename">
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Record</label>
-    <input type="text" class="form-control" id="rec" placeholder="Record name" [formControl]="recordname" name="recordname">
-  </div>
-</form>
+<p class="headline">uniVerse POC</p>
+
+<div class="container">
+  <form id="mainform" [formGroup]="submitForm">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>File Name</mat-label>
+      <input matInput placeholder="Enter File Name" id="filename" [formControl]="filename" name="filename">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Record Name</mat-label>
+      <input matInput placeholder="Enter record name" [formControl]="recordname" name="recordname">
+    </mat-form-field>
+  </form>
+</div>
 <div id="btn">
-  <button mat-raised-button id="read" (click)="readData()" type="button">Read Data</button>
-  <button mat-raised-button id="post" (click)="submitData(submitForm)" type="button">Post data</button>
+  <button mat-raised-button id="read" (click)="readData()" type="button" class="mr-2" color="primary">{{ buttonText }}</button>
+  <button mat-raised-button id="post" (click)="submitData(submitForm)" type="button" color="primary">Post data</button>
 </div>
-<div id ="data" *ngFor="let d of data">
-    {{d}}
-</div>
+
+<display *ngIf="userdata" [userdata]="userdata"></display>

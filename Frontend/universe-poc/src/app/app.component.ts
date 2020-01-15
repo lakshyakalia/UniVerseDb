@@ -8,7 +8,14 @@ import { FormGroup, FormControl } from '@angular/forms'
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  data: any
+
+  userdataStatus: boolean = false
+  
+  userdata : any
+
+  $serialno = 0
+
+  buttonText  = 'Show data'
 
   constructor(private dataService: UniverseDataService) {
 
@@ -31,9 +38,18 @@ export class AppComponent {
   }
 
   readData(value) {
-    this.dataService.readData(value)
+    if(this.userdataStatus){
+      this.userdata = null
+      this.userdataStatus = false
+      this.buttonText = 'Show data'
+    }
+    else{
+      this.dataService.readData(value)
       .subscribe((res:any) => {
-        this.data = res.data;
+        this.userdata = res.data;
+        this.userdataStatus = true
+        this.buttonText = 'Hide data'
       })
+    }
   }
 }
