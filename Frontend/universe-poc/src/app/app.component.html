@@ -1,5 +1,9 @@
 <div id="btn">
-  <button mat-raised-button id="read">Read Data</button>
+  <form ngSubmit="submitData()">
+    <input type="text" name="text">
+    <button mat-raised-button id="read">Read Data</button>
+  </form>
+  
   <button mat-raised-button id="post">Post data</button>
 </div>
 <app-display></app-display>
