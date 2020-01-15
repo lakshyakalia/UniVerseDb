@@ -1,9 +1,17 @@
+<form id="mainform" [formGroup]="submitForm">
+  <div class="form-group">
+    <label for="exampleInputEmail1">File Name</label>
+    <input type="text" class="form-control" id="filename" placeholder="Enter File name" [formControl]="filename" name="filename">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Record</label>
+    <input type="text" class="form-control" id="rec" placeholder="Record name" [formControl]="recordname" name="recordname">
+  </div>
+</form>
 <div id="btn">
-  <form ngSubmit="submitData()">
-    <input type="text" name="text">
-    <button mat-raised-button id="read">Read Data</button>
-  </form>
-  
-  <button mat-raised-button id="post">Post data</button>
+  <button mat-raised-button id="read" (click)="readData()" type="button">Read Data</button>
+  <button mat-raised-button id="post" (click)="submitData(submitForm)" type="button">Post data</button>
 </div>
-<app-display></app-display>
+<div id ="data" *ngFor="let d of data">
+    {{d}}
+</div>

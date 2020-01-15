@@ -1,5 +1,6 @@
 import { Component } from '@angular/core'
 import { UniverseDataService } from './service/universe-data.service'
+import { FormGroup, FormControl } from '@angular/forms'
 
 @Component({
   selector: 'app-root',
@@ -7,18 +8,32 @@ import { UniverseDataService } from './service/universe-data.service'
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'universe-poc';
+  data: any
 
-  constructor(private dataService: UniverseDataService){
+  constructor(private dataService: UniverseDataService) {
 
   }
 
-  submitData(){
-    console.log('working')
-    let value = { id: 1365 }
-    // this.dataService.submitData(value)
-    // .subscribe(res=>{
-    //   console.log(res)
-    // })
+  submitForm  = new FormGroup({
+    filename : new FormControl(),
+    recordname : new FormControl()
+  })
+
+  get filename(){ return this.submitForm.get('filename') }
+
+  get recordname(){ return this.submitForm.get('recordname') }
+
+  submitData(submitForm) { 
+    this.dataService.submitData(submitForm.value)
+    .subscribe(res=>{
+      console.log(res)
+    })
+  }
+
+  readData(value) {
+    this.dataService.readData(value)
+      .subscribe((res:any) => {
+        this.data = res.data;
+      })
   }
 }

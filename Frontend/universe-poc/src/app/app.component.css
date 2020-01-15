@@ -2,3 +2,21 @@
 padding: 20px;
 text-align: center;
 }
+#example-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  #example-container > * {
+    width: 100%;
+  }
+#mainform{
+    margin: 0 auto;
+    text-align: center;
+    width: 50%;
+}
+#data{
+  margin: 0 auto;
+    text-align: center;
+
+}
