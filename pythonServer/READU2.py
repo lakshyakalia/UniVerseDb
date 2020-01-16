@@ -8,6 +8,10 @@ def mainPage():
 	return "Hello"
 @app.route('/api/U2data',methods=['GET'])
 def readFromU2():
+	username = request.args.get('data')
+	print(username)
+	filename=''
+	record=''
 	data=[]
 	f=u2py.File("UBER")
 	theArray=u2py.DynArray()

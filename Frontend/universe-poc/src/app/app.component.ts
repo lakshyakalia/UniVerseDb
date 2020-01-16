@@ -37,14 +37,14 @@ export class AppComponent {
     })
   }
 
-  readData(value) {
+  readData(submitForm) {
     if(this.userdataStatus){
       this.userdata = null
       this.userdataStatus = false
       this.buttonText = 'Show data'
     }
     else{
-      this.dataService.readData(value)
+      this.dataService.readData(submitForm.value)
       .subscribe((res:any) => {
         this.userdata = res.data;
         this.userdataStatus = true
