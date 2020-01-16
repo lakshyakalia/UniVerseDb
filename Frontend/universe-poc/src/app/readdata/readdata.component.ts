@@ -19,6 +19,11 @@ export class ReaddataComponent implements OnInit {
     filename: new FormControl(),
     recordname: new FormControl()
   })
+
+  get filename(){ return this.submitForm.get('filename') }
+
+  get recordname(){ return this.submitForm.get('recordname') }
+  
   readData(submitForm) {
     if (this.userdataStatus) {
       this.userdata = null

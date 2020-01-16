@@ -1,7 +1,11 @@
 <p class="headline">uniVerse POC</p>
-
 <div class="container">
-<div id="btn">
-  <button mat-raised-button id="read" (click)="readData(submitForm)" type="button" class="mr-2" color="primary">Read data</button>
-  <button mat-raised-button id="post" (click)="submitData(submitForm)" type="button" color="primary">Post data</button>
+    <div id="btn">
+        <button mat-raised-button (click)="redirectToReadComponent()" id="read"  type="button" class="mr-2"
+            color="primary">Read data</button>
+        <button mat-raised-button id="post" (click)="redirectToWriteComponent()" type="button" color="primary">Write
+            data</button>
+    </div>
 </div>
+
+<router-outlet></router-outlet>
