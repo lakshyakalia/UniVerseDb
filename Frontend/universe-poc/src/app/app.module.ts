@@ -8,13 +8,15 @@ import { DisplayComponent } from './display/display.component';
 import {HttpClientModule } from '@angular/common/http';
 import { PostDataComponent } from './post-data/post-data.component'
 import { FormsModule,ReactiveFormsModule } from '@angular/forms'
-import { MatFormFieldModule,MatInputModule } from '@angular/material'
+import { MatFormFieldModule,MatInputModule } from '@angular/material';
+import { WriteDataComponent } from './write-data/write-data.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     DisplayComponent,
-    PostDataComponent
+    PostDataComponent,
+    WriteDataComponent
   ],
   imports: [
     BrowserModule,

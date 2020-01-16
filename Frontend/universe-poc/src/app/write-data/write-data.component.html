@@ -1,0 +1,23 @@
+<div class="container">
+    <form id="mainform" [formGroup]="submitForm" enctype="multipart/form-data">
+        <mat-form-field appearance="outline" class="w-100">
+            <mat-label>File Name</mat-label>
+            <input matInput placeholder="Enter File Name" id="filename" [formControl]="filename" name="filename">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Record Name</mat-label>
+            <input matInput placeholder="Enter record name" [formControl]="recordname" name="recordname">
+        </mat-form-field>
+        <div class="input-group mb-3">
+            <label class="w-100">Upload Excel File</label>
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile02" name="file"
+                    (change)="fileChange($event)">
+                <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="btn">
+    <button mat-raised-button id="post" (click)="submitData(submitForm)" type="button" color="primary">Postdata</button>
+</div>
