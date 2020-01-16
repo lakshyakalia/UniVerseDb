@@ -17,6 +17,8 @@ export class AppComponent {
 
   buttonText  = 'Show data'
 
+  uploadedFiles : Array <File>
+
   constructor(private dataService: UniverseDataService) {
 
   }
@@ -30,8 +32,12 @@ export class AppComponent {
 
   get recordname(){ return this.submitForm.get('recordname') }
 
-  submitData(submitForm) { 
-    this.dataService.submitData(submitForm.value)
+  submitData(submitForm) {
+    let formData = new FormData()
+    formData.append('file',this.uploadedFiles[0],this.uploadedFiles[0].name)
+    formData.append('recordname',submitForm.value.recordname)
+    formData.append('filename',submitForm.value.filename)
+    this.dataService.submitData(formData)
     .subscribe(res=>{
       console.log(res)
     })
@@ -51,5 +57,9 @@ export class AppComponent {
         this.buttonText = 'Hide data'
       })
     }
+  }
+
+  fileChange(element){
+    this.uploadedFiles = element.target.files
   }
 }
