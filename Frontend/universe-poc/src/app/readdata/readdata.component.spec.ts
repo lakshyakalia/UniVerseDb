@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PostDataComponent } from './post-data.component';
+import { ReaddataComponent } from './readdata.component';
 
-describe('PostDataComponent', () => {
-  let component: PostDataComponent;
-  let fixture: ComponentFixture<PostDataComponent>;
+describe('ReaddataComponent', () => {
+  let component: ReaddataComponent;
+  let fixture: ComponentFixture<ReaddataComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PostDataComponent ]
+      declarations: [ ReaddataComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PostDataComponent);
+    fixture = TestBed.createComponent(ReaddataComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

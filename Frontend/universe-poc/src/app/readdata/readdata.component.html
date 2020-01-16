@@ -8,16 +8,11 @@
             <mat-label>Record Name</mat-label>
             <input matInput placeholder="Enter record name" [formControl]="recordname" name="recordname">
         </mat-form-field>
-        <div class="input-group mb-3">
-            <label class="w-100">Upload Excel File</label>
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="inputGroupFile02" name="file"
-                    (change)="fileChange($event)">
-                <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
-            </div>
-        </div>
     </form>
 </div>
 <div id="btn">
-    <button mat-raised-button id="post" (click)="submitData(submitForm)" type="button" color="primary">Submit</button>
+    <button mat-raised-button id="read" (click)="readData(submitForm)" type="button" class="mr-2"
+        color="primary">{{ buttonText }}</button>
 </div>
+
+<display *ngIf="userdata" [userdata]="userdata"></display>

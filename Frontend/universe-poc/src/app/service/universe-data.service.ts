@@ -18,7 +18,9 @@ export class UniverseDataService {
   }
 
   readData(data){
-    return this.http.get('http://localhost:5000/api/U2data')
+    return this.http.get('http://localhost:5000/api/U2data',{
+      params: data
+    })
   }
 
 }
