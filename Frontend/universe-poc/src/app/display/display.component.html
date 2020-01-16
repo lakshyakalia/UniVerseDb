@@ -1,0 +1,16 @@
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">S.No</th>
+                <th scope="col">Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of userdata">
+                <th scope="row">{{ $index + 1 | number}}</th>
+                <td>{{ data[0] }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
