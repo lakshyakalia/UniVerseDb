@@ -1,29 +1,27 @@
-#btn {
+#btn{
     padding: 20px;
     text-align: center;
-}
-
-#example-container {
-    display: flex;
-    flex-direction: column;
-}
-
-#example-container>* {
-    width: 100%;
-}
-
-#mainform {
-    margin: 0 auto;
-    width: 50%;
-}
-
-#data {
-    margin: 0 auto;
-    text-align: center;
-}
-
-.headline {
-    text-align: center;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 40px;
-}
+    }
+    #example-container {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      #example-container > * {
+        width: 100%;
+      }
+    #mainform{
+        margin: 0 auto;
+        width: 50%;
+    }
+    #data{
+      margin: 0 auto;
+        text-align: center;
+    
+    }
+    
+    .headline{
+      text-align: center;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      font-size: 40px;
+    }

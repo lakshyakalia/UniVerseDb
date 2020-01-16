@@ -7,7 +7,7 @@ import {MatButtonModule} from '@angular/material/button';
 import { DisplayComponent } from './display/display.component';
 import {HttpClientModule } from '@angular/common/http';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms'
-import { MatFormFieldModule,MatInputModule, MatSnackBarModule } from '@angular/material'
+import { MatFormFieldModule,MatInputModule,MatSnackBarModule } from '@angular/material';
 import { WriteDataComponent } from './write-data/write-data.component'
 import { ReaddataComponent } from './readdata/readdata.component'
 
