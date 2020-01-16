@@ -1,6 +1,7 @@
 import { Component } from '@angular/core'
 import { UniverseDataService } from '../service/universe-data.service'
 import { FormGroup, FormControl } from '@angular/forms'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'app-write-data',
@@ -9,7 +10,7 @@ import { FormGroup, FormControl } from '@angular/forms'
 })
 export class WriteDataComponent{
 
-  constructor(private dataService: UniverseDataService) { }
+  constructor(private dataService: UniverseDataService, private matSnackBar : MatSnackBar) { }
 
   uploadedFiles : Array <File>
 
@@ -28,8 +29,10 @@ export class WriteDataComponent{
     formData.append('recordname',submitForm.value.recordname)
     formData.append('filename',submitForm.value.filename)
     this.dataService.submitData(formData)
-    .subscribe(res=>{
-      console.log(res)
+    .subscribe((res: any)=>{
+      this.matSnackBar.open(res.msg,'Close',{
+        duration: 8000
+      })
     })
   }
 
