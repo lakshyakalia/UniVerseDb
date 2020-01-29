@@ -9,6 +9,8 @@ export class DisplayComponent implements OnInit {
   constructor() { }
 
   @Input() userdata : any
+  @Input() table : any
+  @Input() columnData:any
 
   ngOnInit() {
   }
