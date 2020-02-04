@@ -36,21 +36,20 @@ def savedata():
 
 @app.route('/api/U2data',methods=['GET'])
 def readFromU2():
-	data=[]
 	filename = request.args.get('filename')
-	record=request.args.get('recordname')
+	print(filename)
 	try:
 		f=u2py.File(filename)
 	except u2py.U2Error as e:
 		return {'status':404,'msg':"File Not Found"}
-	theArray=u2py.DynArray()
-	try:
-		data=f.read(record)
-	except u2py.U2Error as e:
-		return {'status':404,'msg':"Record Not Found"}
-	data=tuple(data)
-	print(theArray)
-	return{"data":data},201
+	sub=u2py.Subroutine("TEST2",4)
+	sub.args[0]=""
+	sub.args[1]=filename
+	sub.args[2]=""
+	sub.args[3]=""
+	sub.call()
+	fieldData=sub.args
+	return{"table":fieldData[0].to_list()},200
 if __name__ == '__main__':
 	app.run()
 
