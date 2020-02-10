@@ -28,12 +28,12 @@ export class ReaddataComponent implements OnInit {
       this.dataService.readData(submitForm.value)
         .subscribe((res: any) => {
           this.userdata = res.data;
+          console.log(res)
           if(res.status=='404'){
             this.matsnackbar.open(res.msg,'Close',{
               duration:8000
             })
           }
-          console.log(res)
         })
   }
 

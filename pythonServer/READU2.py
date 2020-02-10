@@ -1,4 +1,3 @@
-
 from flask import Flask, request,jsonify, render_template
 from flask_cors import CORS, cross_origin
 import pandas as pd
@@ -21,12 +20,10 @@ def savedata():
 	except u2py.U2Error as e:
 		return {'status':404,'msg': 'File not found'}
 	data = tuple(f.read(recordname))
-	print(len(data))
 	if(len(data) != 0):
 		val = len(data)+ 1
 	else:
 		val = len(data)
-	data = pd.read_excel(open(filePath,'rb'),sheet_name='Sheet1')
 	for i,j in data.iterrows():
 		theArray.insert(val,0,0,j['empname'])
 		val+=1
@@ -37,20 +34,22 @@ def savedata():
 
 @app.route('/api/U2data',methods=['GET'])
 def readFromU2():
+	data=[]
 	filename = request.args.get('filename')
-	print(filename)
+	record=request.args.get('recordname')
 	try:
 		f=u2py.File(filename)
 	except u2py.U2Error as e:
 		return {'status':404,'msg':"File Not Found"}
-	sub=u2py.Subroutine("TEST2",4)
-	sub.args[0]=""
-	sub.args[1]=filename
-	sub.args[2]=""
-	sub.args[3]=""
-	sub.call()
-	fieldData=sub.args
-	return{"table":fieldData[0].to_list()},200
+	theArray=u2py.DynArray()
+	try:
+		data=f.read(record)
+	except u2py.U2Error as e:
+		return {'status':404,'msg':"Record Not Found"}
+	data=tuple(data)
+	print(theArray)
+	return{"data":data},201
 if __name__ == '__main__':
 	app.run()
+
 
