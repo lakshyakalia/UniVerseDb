@@ -1,15 +1,19 @@
 <div class="container">
     <table class="table">
-        <thead>
             <tr>
-                <th scope="col">S.No</th>
+                <th scope="col">Sno</th>
                 <th scope="col">Name</th>
+                <th scope="col">EquipCode</th>
+                <th scope="col">OperatorCode</th>
+
             </tr>
-        </thead>
+
         <tbody>
-            <tr *ngFor="let data of userdata">
-                <th scope="row">{{ $index + 1 | number}}</th>
-                <td>{{ data[0] }}</td>
+            <tr *ngFor="let data of table[1]; index as i">
+                <td >{{ table[1][i]}}</td>
+                <td >{{ table[2][i]}}</td>
+                <td >{{ table[3][i]}}</td>
+                <td >{{ table[4][i]}}</td>
             </tr>
         </tbody>
     </table>
