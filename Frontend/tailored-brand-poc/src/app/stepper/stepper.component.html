@@ -1,50 +1,50 @@
 <div class="main container">
 <div class="main-div-body body-image flex-body-1"></div>
 <div class="stepper-container main-div-body flex-body-2">
-    <mat-horizontal-stepper [linear]="isLinear" #stepper class="parent-div">
+    <mat-horizontal-stepper linear  class="parent-div">
         <mat-step [stepControl]="firstFormGroup">
             <form [formGroup]="firstFormGroup">
                 <ng-template matStepLabel class="step-header">Stepper page 1</ng-template>
                 <div class="full-width">
                     <mat-form-field>
                         <mat-label>Item</mat-label>
-                        <mat-select name="item" [formControl]="item">
-                            <mat-option>Option1</mat-option>
-                            <mat-option>Option2</mat-option>
-                            <mat-option>Option3</mat-option>
-                            <mat-option>Option4</mat-option>
+                        <mat-select name="item" [formControl]="item" required>
+                            <mat-option value="Option1">Option1</mat-option>
+                            <mat-option value="Option2">Option2</mat-option>
+                            <mat-option value="Option3">Option3</mat-option>
+                            <mat-option value="Option4">Option4</mat-option>
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Quantity</mat-label>
-                        <input matInput placeholder="Enter Quantity" name="quantity" [formControl]="quantity">
+                        <input matInput placeholder="Enter Quantity" name="quantity" [formControl]="quantity" required>
                     </mat-form-field>
                     <div>
                         <p>Unit Price - $10</p>
                         <p>Total Price - $10</p>
                     </div>
-                    <button mat-raised-button color="primary">Next</button>
+                    <button mat-raised-button color="primary" matStepperNext>Next</button>
                 </div>
             </form>
         </mat-step>
         <mat-step [stepControl]="secondFormGroup">
-            <form [formGroup]="secondFormGroup">
+            <form [formGroup]="secondFormGroup" (ngSubmit)="submitData(firstFormGroup,secondFormGroup)">
                 <div class="full-width">
                     <mat-form-field>
                         <mat-label>Company</mat-label>
-                        <input matInput placeholder="Enter Company name" name="companyName" [formControl]="companyName">
+                        <input matInput placeholder="Enter Company name" name="companyName" [formControl]="companyName" required>
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Contact</mat-label>
-                        <input matInput placeholder="Enter Company name" name="contact" [formControl]="contact">
+                        <input matInput placeholder="Enter Company name" name="contact" [formControl]="contact" required>
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Address</mat-label>
-                        <input matInput placeholder="Enter Company name" name="address" [formControl]="address">
+                        <input matInput placeholder="Enter Company name" name="address" [formControl]="address" required>
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Phone</mat-label>
-                        <input matInput placeholder="Enter Company name" name="phoneno" [formControl]="phoneno">
+                        <input matInput placeholder="Enter Company name" name="phoneno" [formControl]="phoneno" required>
                     </mat-form-field>
                     <button mat-raised-button color="primary">Submit</button>
                 </div>

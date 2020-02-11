@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { GetDataService } from '../service/get-data.service';
+import { SaveDataService } from '../service/save-data.service';
 
 @Component({
   selector: 'stepper',
@@ -9,7 +9,7 @@ import { GetDataService } from '../service/get-data.service';
 })
 export class StepperComponent implements OnInit {
 
-  constructor(private getData: GetDataService) { }
+  constructor(private saveData: SaveDataService) { }
 
   firstFormGroup = new FormGroup({
     item: new FormControl(''),
@@ -37,11 +37,14 @@ export class StepperComponent implements OnInit {
   get phoneno() { return this.secondFormGroup.get('phoneno') }
 
   ngOnInit() {
-    this.getData.getPurchaseOrderData()
-      .subscribe((res) => {
-        console.log(res)
-      })
+    
+  }
 
+  submitData(firstFormGroup, secondFormGroup){
+    this.saveData.saveItemData(firstFormGroup.value,secondFormGroup.value)
+    .subscribe(res=>{
+      
+    })
   }
 
 }
