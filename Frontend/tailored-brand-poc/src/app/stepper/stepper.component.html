@@ -1,0 +1,53 @@
+<div class="stepper-container">
+    <mat-horizontal-stepper [linear]="isLinear" #stepper>
+        <mat-step [stepControl]="firstFormGroup">
+            <form [formGroup]="firstFormGroup">
+                <ng-template matStepLabel>Stepper page 1</ng-template>
+                <div class="full-width">
+                    <mat-form-field>
+                        <mat-label>Item</mat-label>
+                        <mat-select name="item" [formControl]="item">
+                            <mat-option>Option1</mat-option>
+                            <mat-option>Option2</mat-option>
+                            <mat-option>Option3</mat-option>
+                            <mat-option>Option4</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Quantity</mat-label>
+                        <input matInput placeholder="Enter Quantity" name="quantity" [formControl]="quantity">
+                    </mat-form-field>
+                    <div>
+                        <p>Unit Price - $10</p>
+                        <p>Total Price - $10</p>
+                    </div>
+                    <button mat-raised-button color="primary">Next</button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="secondFormGroup">
+            <form [formGroup]="secondFormGroup">
+                <div class="full-width">
+                    <mat-form-field>
+                        <mat-label>Company</mat-label>
+                        <input matInput placeholder="Enter Company name" name="companyName" [formControl]="companyName">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Contact</mat-label>
+                        <input matInput placeholder="Enter Company name" name="contact" [formControl]="contact">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Address</mat-label>
+                        <input matInput placeholder="Enter Company name" name="address" [formControl]="address">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Phone</mat-label>
+                        <input matInput placeholder="Enter Company name" name="phoneno" [formControl]="phoneno">
+                    </mat-form-field>
+                    <button mat-raised-button color="primary">Submit</button>
+                </div>
+            </form>
+            <ng-template matStepLabel>Stepper page 2</ng-template>
+        </mat-step>
+    </mat-horizontal-stepper>
+</div>
