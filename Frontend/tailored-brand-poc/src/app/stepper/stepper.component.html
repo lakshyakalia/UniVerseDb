@@ -1,8 +1,8 @@
 <div class="stepper-container">
-    <mat-horizontal-stepper [linear]="isLinear" #stepper>
+    <mat-horizontal-stepper [linear]="isLinear" #stepper class="parent-div">
         <mat-step [stepControl]="firstFormGroup">
             <form [formGroup]="firstFormGroup">
-                <ng-template matStepLabel>Stepper page 1</ng-template>
+                <ng-template matStepLabel class="step-header">Stepper page 1</ng-template>
                 <div class="full-width">
                     <mat-form-field>
                         <mat-label>Item</mat-label>
@@ -47,7 +47,7 @@
                     <button mat-raised-button color="primary">Submit</button>
                 </div>
             </form>
-            <ng-template matStepLabel>Stepper page 2</ng-template>
+            <ng-template matStepLabel class="step-header">Stepper page 2</ng-template>
         </mat-step>
     </mat-horizontal-stepper>
 </div>
