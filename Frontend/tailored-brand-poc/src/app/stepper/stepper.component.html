@@ -1,4 +1,6 @@
-<div class="stepper-container">
+<div class="main container">
+<div class="main-div-body body-image flex-body-1"></div>
+<div class="stepper-container main-div-body flex-body-2">
     <mat-horizontal-stepper [linear]="isLinear" #stepper class="parent-div">
         <mat-step [stepControl]="firstFormGroup">
             <form [formGroup]="firstFormGroup">
@@ -50,4 +52,5 @@
             <ng-template matStepLabel class="step-header">Stepper page 2</ng-template>
         </mat-step>
     </mat-horizontal-stepper>
+</div>
 </div>
