@@ -14,13 +14,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { NavbarComponent } from './navbar/navbar.component';
 import { VendorSignUpComponent } from './vendor-sign-up/vendor-sign-up.component'
 import { HttpClientModule } from '@angular/common/http';
+import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     StepperComponent,
     NavbarComponent,
-    VendorSignUpComponent
+    VendorSignUpComponent,
+    PurchaseOrderComponent
   ],
   imports: [
     BrowserModule,
