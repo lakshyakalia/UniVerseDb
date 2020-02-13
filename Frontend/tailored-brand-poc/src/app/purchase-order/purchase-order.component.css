@@ -26,9 +26,7 @@ input,.input{
     display: flex;
     flex-direction: row;
 }
-.form-bottom{
-    
-}
+
 .form-top-left-items{
     flex: 3;
     display: flex;
@@ -68,9 +66,6 @@ hr{
 .vendor-name{
     border: none;
     border-bottom: 1px solid rgb(14, 14, 14)  ;
-}
-.order-date{
-
 }
 .vendor{
     margin-left: 40px;

@@ -26,9 +26,6 @@ input,.input{
     display: flex;
     flex-direction: row;
 }
-.form-bottom{
-    
-}
 .form-top-left-items{
     flex: 3;
     display: flex;
@@ -36,7 +33,7 @@ input,.input{
 }
 .form-top-right-items{
     flex: 3;
-    float: right;
+    margin-left: 80px;
 }
 .form-head{
     display: flex;
@@ -54,10 +51,9 @@ hr{
 .form-head,.form-top,.form-bottom{
     margin: 20px;
 }
-.form-top-left-items,.form-top-right-items{
-    margin-left: 20px;
-}
+
 .vendor-name{
+    margin-right: 40px;
     border: none;
     border-bottom: 1px solid rgb(14, 14, 14)  ;
 }
@@ -128,5 +124,11 @@ td button{
     }
     .form{
         padding: 0;
+    }
+    .form-top-right-items{
+        margin-left: 0px;
+    }
+    .vendor-name{
+        margin-right: 0px;
     }
 }
