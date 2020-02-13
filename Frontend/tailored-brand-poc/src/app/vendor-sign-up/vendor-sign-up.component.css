@@ -102,6 +102,22 @@ td button{
     font-weight: 400;
     cursor: pointer;
 }
+
+.button-div{
+    margin-top: 30px;
+    float: right;
+
+}
+.button-div button{
+    margin: 10px;
+    border: none;
+    background-color: #282936;
+    border-radius: 30px;
+    color: white;
+    padding: 10px 24px;
+    cursor: pointer;
+    box-shadow:0 1px 8px 0 rgba(0, 0, 0, 0.2) ;
+}
 @media (max-width: 995px)
 {
     .form-top{
