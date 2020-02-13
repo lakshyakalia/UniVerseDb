@@ -1,0 +1,113 @@
+.sign-up-div{
+    margin: 20px auto 30px auto;
+    display: flex;
+}
+.form{
+    
+    width: 100%;
+    padding: 30px;
+    font-weight: 200;
+    display: flex;
+    border-radius: 6px;
+    box-shadow:0 1px 8px 0 rgba(0, 0, 0, 0.2) ;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 1);
+}
+label{
+    margin-right: 20px;
+   
+}
+input,.input{
+    /* display: block; */
+    float: right;
+    /* margin-right: 60px; */
+}
+.form-top{
+    display: flex;
+    flex-direction: row;
+}
+.form-bottom{
+    
+}
+.form-top-left-items{
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+}
+.form-top-right-items{
+    flex: 3;
+    float: right;
+}
+.form-head{
+    display: flex;
+}
+.form-head-left{
+    flex: 3;
+}
+.form-head-right{
+    flex: 3;
+}
+hr{
+    height: 10px;
+    
+}
+.form-head,.form-top,.form-bottom{
+    margin: 20px;
+}
+.form-top-left-items,.form-top-right-items{
+    margin-left: 20px;
+}
+.vendor-name{
+    border: none;
+    border-bottom: 1px solid rgb(14, 14, 14)  ;
+}
+::placeholder{
+    text-align: center;
+}
+
+.vendor-name:focus{
+    border-bottom: 2px solid blue;
+    transition-duration: 0.4s;
+    outline: none;
+}
+.remove{
+    font-weight: 500;
+    
+}
+.remove:hover{
+    cursor: pointer;
+}
+
+select{
+   padding: 1px 0px;
+   width: 205px;
+}
+.vendor-item-table{
+    display: inline-table;
+    width: 100%;
+    text-align: center;
+    
+}
+img{
+    color: rgba(255, 255, 255, 1);
+}
+td button{
+    border-radius: 40%;
+    border: none;
+    background-color: #343a40!important;
+    color: rgba(255, 255, 255, 1);
+    font-weight: 400;
+    cursor: pointer;
+}
+@media (max-width: 995px)
+{
+    .form-top{
+        flex-direction: column;
+    }
+    .form-head{
+        flex-direction: column;
+    }
+    .form{
+        padding: 0;
+    }
+}

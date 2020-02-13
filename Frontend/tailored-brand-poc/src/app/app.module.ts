@@ -9,12 +9,16 @@ import { MatStepperModule } from '@angular/material/stepper'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button'
+import { MatButtonModule } from '@angular/material/button';
+import { NavbarComponent } from './navbar/navbar.component';
+import { VendorSignUpComponent } from './vendor-sign-up/vendor-sign-up.component'
 
 @NgModule({
   declarations: [
     AppComponent,
-    StepperComponent
+    StepperComponent,
+    NavbarComponent,
+    VendorSignUpComponent
   ],
   imports: [
     BrowserModule,
