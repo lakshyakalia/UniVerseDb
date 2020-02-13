@@ -79,8 +79,11 @@ hr{
 }
 
 select{
-   padding: 1px 0px;
+    /* height: 10px; */
    width: 205px;
+}
+option{
+    font-weight: 200;
 }
 .vendor-item-table{
     display: inline-table;
