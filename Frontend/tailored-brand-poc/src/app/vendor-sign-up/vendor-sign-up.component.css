@@ -62,7 +62,7 @@ hr{
 }
 
 .vendor-name:focus{
-    border-bottom: 2px solid blue;
+    border-bottom: 2px solid rgb(28, 28, 224);
     transition-duration: 0.4s;
     outline: none;
 }

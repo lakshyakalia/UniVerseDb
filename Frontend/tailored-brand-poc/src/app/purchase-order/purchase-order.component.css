@@ -30,11 +30,16 @@ input,.input{
 .form-top-left-items{
     flex: 3;
     display: flex;
+    margin-right: 30px;
     flex-direction: column;
 }
 .form-top-right-items{
     flex: 3;
     float: right;
+    
+}
+.form-top-right-items label{
+    margin-left: 60px;
 }
 .form-head{
     display: flex;
@@ -50,6 +55,7 @@ hr{
     margin-bottom: 20px;
     
 }
+
 .form-head-left,.form-head-right{
     margin-left: 20px;
     margin-right: 20px;
@@ -137,6 +143,7 @@ td button{
     cursor: pointer;
     box-shadow:0 1px 8px 0 rgba(0, 0, 0, 0.2) ;
 }
+
 @media (max-width: 995px)
 {
     .form-top{
@@ -158,5 +165,12 @@ td button{
     }
     .vendor{
         margin-left: 20px;
+    }
+    .form-top-right-items label{
+        margin: 0;
+        margin-right: 0;
+    }
+    .form-top-left-items{
+        margin-right: 0;
     }
 }
