@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform, ViewChild, ElementRef, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { SaveDataService } from '../service/save-data.service';
+import {DOCUMENT } from '@angular/common'
+
 
 @Component({
   selector: 'stepper',
@@ -15,7 +17,11 @@ export class StepperComponent implements OnInit {
 
   totalPrice : number = 0.00
 
-  constructor(private saveData: SaveDataService) { }
+  unitPrice : number = 0.00
+
+  @ViewChild('selectValue',{ static: false}) selectValue: ElementRef;
+
+  constructor(private saveData: SaveDataService,@Inject(DOCUMENT) document) { }
 
   firstFormGroup = new FormGroup({
     item: new FormControl(''),
@@ -53,14 +59,21 @@ export class StepperComponent implements OnInit {
   }
 
   submitData(firstFormGroup, secondFormGroup){
+    let splittedItem = firstFormGroup.value.item.split(',')
+    firstFormGroup.value.item = splittedItem[0]
+    firstFormGroup.value.price = splittedItem[1]
     this.saveData.saveItemData(firstFormGroup.value,secondFormGroup.value)
     .subscribe(res=>{
       
     })
   }
 
-  calculateTotalPrice(unitPrice,quantity){
-    this.totalPrice = unitPrice * quantity
+  calculateTotalPrice(quantity){
+    this.totalPrice = this.unitPrice * quantity
+  }
+
+  onChange(){
+    this.unitPrice = this.recordData[this.item.value][1]
   }
 
 }
