@@ -11,13 +11,22 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { NavbarComponent } from './navbar/navbar.component';
+import { VendorSignUpComponent } from './vendor-sign-up/vendor-sign-up.component'
 import { HttpClientModule } from '@angular/common/http';
+import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     StepperComponent,
+<<<<<<< HEAD
     SplitLastPipe
+=======
+    NavbarComponent,
+    VendorSignUpComponent,
+    PurchaseOrderComponent
+>>>>>>> 50e2dd60002fe1567806df68bafaebce46fd1e11
   ],
   imports: [
     BrowserModule,
