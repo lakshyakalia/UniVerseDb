@@ -15,6 +15,11 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { VendorSignUpComponent } from './vendor-sign-up/vendor-sign-up.component'
 import { HttpClientModule } from '@angular/common/http';
 import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
+import { InvoiceDetailComponent } from './invoice-detail/invoice-detail.component';
+import { HomeComponent } from './home/home.component';
+import { AllPurchaseOrdersComponent } from './all-purchase-orders/all-purchase-orders.component';
+import { FooterComponent } from './footer/footer.component';
+import { AllVendorsComponent } from './all-vendors/all-vendors.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +27,12 @@ import { PurchaseOrderComponent } from './purchase-order/purchase-order.componen
     StepperComponent,
     NavbarComponent,
     VendorSignUpComponent,
-    PurchaseOrderComponent
+    PurchaseOrderComponent,
+    InvoiceDetailComponent,
+    HomeComponent,
+    AllPurchaseOrdersComponent,
+    FooterComponent,
+    AllVendorsComponent
   ],
   imports: [
     BrowserModule,

@@ -3,5 +3,10 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 body{
-    background-color: #ebebeb;
+    background-color: #eee;
+    /* background-image: url(./assets/clothes-back.jpg); */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+ 
 }
