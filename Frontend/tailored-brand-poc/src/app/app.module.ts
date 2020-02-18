@@ -20,6 +20,7 @@ import { HomeComponent } from './home/home.component';
 import { AllPurchaseOrdersComponent } from './all-purchase-orders/all-purchase-orders.component';
 import { FooterComponent } from './footer/footer.component';
 import { AllVendorsComponent } from './all-vendors/all-vendors.component';
+import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { AllVendorsComponent } from './all-vendors/all-vendors.component';
     HomeComponent,
     AllPurchaseOrdersComponent,
     FooterComponent,
-    AllVendorsComponent
+    AllVendorsComponent,
+    AllInvoicesComponent,
   ],
   imports: [
     BrowserModule,

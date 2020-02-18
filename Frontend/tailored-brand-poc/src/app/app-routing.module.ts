@@ -6,6 +6,8 @@ import { InvoiceDetailComponent } from './invoice-detail/invoice-detail.componen
 import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
 import { AllPurchaseOrdersComponent } from './all-purchase-orders/all-purchase-orders.component';
 import { AllVendorsComponent } from './all-vendors/all-vendors.component';
+import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
+import { EditVendorComponent } from './edit-vendor/edit-vendor.component';
 
 
 const routes: Routes = [
@@ -14,7 +16,9 @@ const routes: Routes = [
   { path: 'newInvoice' , component: InvoiceDetailComponent },
   { path: 'newPurchaseOrder' , component: PurchaseOrderComponent },
   { path: 'allPurchaseOrders' , component: AllPurchaseOrdersComponent},
-  { path: 'allVendors' , component : AllVendorsComponent}
+  { path: 'allVendors' , component : AllVendorsComponent},
+  { path: 'allInvoices' , component : AllInvoicesComponent},
+  { path: 'editVendors' , component : EditVendorComponent}
 ];
 
 @NgModule({
