@@ -20,13 +20,10 @@ import { PurchaseOrderComponent } from './purchase-order/purchase-order.componen
   declarations: [
     AppComponent,
     StepperComponent,
-<<<<<<< HEAD
-    SplitLastPipe
-=======
+    SplitLastPipe,
     NavbarComponent,
     VendorSignUpComponent,
     PurchaseOrderComponent
->>>>>>> 50e2dd60002fe1567806df68bafaebce46fd1e11
   ],
   imports: [
     BrowserModule,
