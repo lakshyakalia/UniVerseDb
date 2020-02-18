@@ -18,6 +18,7 @@ def readFromU2():
 	cost=[]
 	itemData=[]
 	dictItems={}
+	dataLength=len(xmltodict.parse(my_xml)['ROOT'])
 	for i in range(0,5):
 		data = xmltodict.parse(my_xml)['ROOT']['PO.ITEM.MST'][i]
 		ids=(data['@_ID'])

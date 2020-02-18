@@ -9,16 +9,17 @@ import { SaveDataService } from '../service/save-data.service';
 })
 export class StepperComponent implements OnInit {
 
-  recordIDs : String[]
+  recordIDs: String[]
 
   recordData: {}
 
-  totalPrice : number = 0.00
+  totalPrice: number = 0.00
+  unitPrice: number
 
   constructor(private saveData: SaveDataService) { }
 
   firstFormGroup = new FormGroup({
-    item: new FormControl(''),
+    item: new FormControl(),
     quantity: new FormControl('')
 
   })
@@ -44,23 +45,32 @@ export class StepperComponent implements OnInit {
 
   ngOnInit() {
     this.saveData.readItem()
-    .subscribe((res:any)=>{
-      this.recordData = res.table
-      this.recordIDs = Object.keys(res.table)
+      .subscribe((res: any) => {
+        this.recordData = res.table
+        this.recordIDs = Object.keys(res.table)
+        //console.log(this.unitPrice=this.recordData[this.item.value][0])
+        console.log(this.recordIDs);
+        console.log(this.recordData);
+        console.log(this.recordData[45623412]);
 
-     
-    })
+      })
   }
 
-  submitData(firstFormGroup, secondFormGroup){
-    this.saveData.saveItemData(firstFormGroup.value,secondFormGroup.value)
-    .subscribe(res=>{
-      
-    })
-  }
+  submitData(firstFormGroup, secondFormGroup) {
+    this.saveData.saveItemData(firstFormGroup.value, secondFormGroup.value)
+      .subscribe(res => {
 
-  calculateTotalPrice(unitPrice,quantity){
-    this.totalPrice = unitPrice * quantity
+      })
+  }
+  setUnitprice() {
+    this.unitPrice = this.recordData[this.item.value][1]
+  }
+  calculateTotalPrice(unitPrice, quantity) {
+    console.log(this.item.value);
+    console.log(this.recordData[this.item.value][0]);
+    console.log(this.recordData[this.item.value][1]);
+    this.unitPrice = this.recordData[this.item.value][1]
+    this.totalPrice = this.recordData[this.item.value][1] * quantity
   }
 
 }

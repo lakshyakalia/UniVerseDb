@@ -44,10 +44,10 @@
           <input type="text" />
         </p>
       </div>
-     
+
     </div>
     <div class="form-bottom">
-        <hr>
+      <hr>
       <label>Items :</label>
       <table class="table vendor-item-table">
         <thead class="thead-dark">
@@ -57,23 +57,28 @@
           <th>Remove</th>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>1234567</td>
-            <td>Hones T-shirt adasdas</td>
-            <td class="remove">X</td>
+          <tr *ngFor="let items of itemArray; let i = index"> 
+            <td>{{i+1}}</td>
+            <td><select [(ngModel)]="recordId[i+1]" (change)="addRecordId(recordId[i+1])" class="input form-control-sm">
+              <option style="display:none"></option>
+              <option disabled selected value> -- select an option -- </option>
+              <option *ngFor ="let ids of recordIds">{{ids}}</option>
+              </select></td>
+              <td *ngIf="recordData!=undefined">{{recordData[recordId[i+1]]}}</td>
+              <td class="remove" (click)="deleteRow(i)">X</td>
           </tr>
           <tr>
-            <td>2</td>
-            <td>1234567</td>
-            <td>Hones T-shirt adasdas</td>
-            <td class="remove">X</td>
+            <td>{{sno}}</td>
+            <td><select [(ngModel)]="recordId[0]" (change)="addRecordId(recordId[0])" class="input form-control-sm">
+              <option style="display:none"></option>
+              <option disabled selected value> -- select an option -- </option>
+                <option *ngFor ="let ids of recordIds">{{ids}}</option>
+              </select></td>
+            <td *ngIf="recordData!=undefined">{{recordData[recordId[0]]}}</td>  
+            <td class="remove" (click)="deleteRow(sno)">X</td>
           </tr>
           <tr>
-            <td>3</td>
-            <td>1234567</td>
-            <td>Hones T-shirt adasdas</td>
-            <td class="remove">X</td>
+            <button (click)="addRow()">+</button> 
           </tr>
         </tbody>
       </table>
