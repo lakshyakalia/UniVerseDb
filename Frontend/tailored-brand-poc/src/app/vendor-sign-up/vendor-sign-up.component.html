@@ -1,87 +1,82 @@
 <div class="sign-up-div container">
   <div class="form">
-    <div class="form-head">
-      <div class="form-head-left">
-        <label class="items-left">Vendor No.</label>
-        <input type="text" class="vendor-name" placeholder="New Vendor" />
+    <form [formGroup]="vendorDetailForm">
+      <div class="form-head">
+        <div class="form-head-left">
+          <label class="items-left">Vendor No.</label>
+          <input type="text" disabled class="vendor-name" placeholder="New Vendor" />
+        </div>
+        <div class="form-head-right"></div>
       </div>
-      <div class="form-head-right"></div>
-    </div>
-    <div class="form-top">
-      <div class="form-top-left-items">
-        <p>
-          <label class="items-left">Company</label>
-          <input type="text" />
-        </p>
-        <p>
-          <label class="items-left">Street</label>
-          <input type="text" />
-        </p>
-        <p>
-          <label class="items-left">State</label>
-          <select class="input form-control-sm">
-            <option>lo</option>
-            <option>B</option>
-            <option>C</option>
-          </select>
-        </p>
-        <p>
-          <label class="items-left">Phone</label>
-          <input type="text" />
-        </p>
+      <div class="form-top">
+        <div class="form-top-left-items">
+          <p>
+            <label class="items-left">Company</label>
+            <input type="text" formControlName="Company" />
+          </p>
+          <p>
+            <label class="items-left">Street</label>
+            <input type="text" formControlName="Street" />
+          </p>
+          <p>
+            <label class="items-left">State</label>
+            <select class="input form-control-sm" formControlName="State">
+              <option>lo</option>
+              <option>B</option>
+              <option>C</option>
+            </select>
+          </p>
+          <p>
+            <label class="items-left">Phone</label>
+            <input type="text" formControlName="Phone" />
+          </p>
+        </div>
+        <div class="form-top-right-items">
+          <p>
+            <label class="items-right">Contact Name</label>
+            <input type="text" formControlName="Contact" />
+          </p>
+          <p>
+            <label class="items-right">City</label>
+            <input type="text" formControlName="City" />
+          </p>
+          <p>
+            <label class="items-right">Zip</label>
+            <input type="text" formControlName="Zip" />
+          </p>
+        </div>
       </div>
-      <div class="form-top-right-items">
-        <p>
-          <label class="items-right">Contact Name</label>
-          <input type="text" />
-        </p>
-        <p>
-          <label class="items-right">City</label>
-          <input type="text" />
-        </p>
-        <p>
-          <label class="items-right">Zip</label>
-          <input type="text" />
-        </p>
-      </div>
-
-    </div>
+    </form>
     <div class="form-bottom">
-      <hr>
-      <label>Items :</label>
-      <table class="table vendor-item-table">
-        <thead class="thead-dark">
-          <th>sno</th>
-          <th>Items</th>
-          <th>Description</th>
-          <th>Remove</th>
-        </thead>
-        <tbody>
-          <tr *ngFor="let items of itemArray; let i = index"> 
-            <td>{{i+1}}</td>
-            <td><select [(ngModel)]="recordId[i+1]" (change)="addRecordId(recordId[i+1])" class="input form-control-sm">
-              <option style="display:none"></option>
-              <option disabled selected value> -- select an option -- </option>
-              <option *ngFor ="let ids of recordIds">{{ids}}</option>
-              </select></td>
-              <td *ngIf="recordData!=undefined">{{recordData[recordId[i+1]]}}</td>
+      <form [formGroup]="items">
+        <hr>
+        <label>Items :</label>
+        <table class="table vendor-item-table">
+          <thead class="thead-dark">
+            <th>sno</th>
+            <th>Items</th>
+            <th>Description</th>
+            <th>Remove</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let control of items.controls.items.controls;let i = index" [formGroup]="control">
+              <td>{{i + 1}}</td>
+              <td>{{ control.value.items }}</td>
+              <td>{{ control.value.description }}</td>
               <td class="remove" (click)="deleteRow(i)">X</td>
-          </tr>
-          <tr>
-            <td>{{sno}}</td>
-            <td><select [(ngModel)]="recordId[0]" (change)="addRecordId(recordId[0])" class="input form-control-sm">
-              <option style="display:none"></option>
-              <option disabled selected value> -- select an option -- </option>
-                <option *ngFor ="let ids of recordIds">{{ids}}</option>
-              </select></td>
-            <td *ngIf="recordData!=undefined">{{recordData[recordId[0]]}}</td>  
-            <td class="remove" (click)="deleteRow(sno)">X</td>
-          </tr>
-          <tr>
-            <button (click)="addRow()">+</button> 
-          </tr>
-        </tbody>
-      </table>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="form-group">
+                <select (change)="addRecordId()" class="input form-control-sm" formControlName="itemId">
+                  <option disabled selected value> -- select an option -- </option>
+                  <option *ngFor="let ids of recordIds">{{ids}}</option>
+                </select></td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+      <button type="submit" (click)="vendorDetail(vendorDetailForm,items)">SUBMIT</button>
     </div>
   </div>
 </div>
