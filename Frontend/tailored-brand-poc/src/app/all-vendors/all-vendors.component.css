@@ -1,14 +1,13 @@
-.purchase-order-heading{
+.vendor-heading{
     background-color: #202020;
     height: 90px;
 }
-.purchase-order-head{
+.vendor-head{
     color: rgba(255, 255, 255, 1);
     font-weight: 100;
     font-size: 1.7em;
     padding-top: 25px;
 }
-
 .sign-up-div{
     margin: 10px auto 30px auto;
     display: flex;

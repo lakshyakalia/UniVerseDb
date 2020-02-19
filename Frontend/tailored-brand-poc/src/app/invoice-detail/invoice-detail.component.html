@@ -1,0 +1,72 @@
+<div class="invoice-heading">
+  <div class="invoice-head container">
+    <span>New Invoice Update</span>
+  </div>
+</div>
+<div class="sign-up-div container">
+    <div class="form">
+      <form [formGroup]="invoiceForm">
+      <div class="form-top">
+        <div class="form-top-left-items">
+          <p>
+            <label class="items-left">Invoice No.</label>
+            <input type="text" id="invoiceNo" formControlName="invoiceNo" 
+             />
+          </p>
+          <p>
+            <label class="items-left">Invoice Date</label>
+            <input type="text"  id="invoiceDate" formControlName="invoiceDate" 
+            />
+          </p>
+
+        </div>
+        <div class="form-top-right-items">
+          <p>
+            <label class="items-right">Order No.</label>
+            <input type="text" id="orderNo" formControlName="orderNo" 
+            />
+          </p>
+          <p>
+            <label class="items-right" >Invoice Amount</label>
+            <input type="text" id="invoiceAmount" formControlName="invoiceAmount" 
+             />
+          </p>
+
+        </div>
+       
+      </div>
+      <div class="form-bottom">
+          <hr>
+        <label>Items :</label>
+        <table class="table vendor-item-table">
+          <thead class="thead-dark">
+            <th>sno</th>
+            <th>Items</th>
+            <th>Description</th>
+            <th>Quantity Ordered</th>
+            <th>Quantity Pending</th>
+            <th>Quantity Received</th>
+            <th>Remove</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>1234567</td>
+              <td>Hones T-shirt adasdas</td>
+              <td>50</td>
+              <td>30</td>
+              <td>0</td>
+              <td class="remove">X</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="button-div">
+            <button>Save as Draft</button>
+            <button (click)="sub()">Receive</button>
+            <button>Cancel</button>
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
+  

@@ -1,8 +1,8 @@
-.purchase-order-heading{
+.invoice-heading{
     background-color: #202020;
     height: 90px;
 }
-.purchase-order-head{
+.invoice-head{
     color: rgba(255, 255, 255, 1);
     font-weight: 100;
     font-size: 1.7em;
@@ -153,6 +153,10 @@ td button{
     padding: 10px 24px;
     cursor: pointer;
     box-shadow:0 1px 8px 0 rgba(0, 0, 0, 0.2) ;
+}
+.vendor-item-table{
+    width: 100%;
+    
 }
 
 @media (max-width: 995px)

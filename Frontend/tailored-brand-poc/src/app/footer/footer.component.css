@@ -1,0 +1,88 @@
+.footer{
+    display: flex;
+    background-color: #202020;
+    box-shadow: 0 50vh 0 50vh #202020;
+ }
+ .flex1{
+    flex:40%;
+    padding: 20px 20px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+    color: rgb(255, 255, 255,0.9);
+ }
+ .version{
+    font-size: .875rem;
+    margin-top: 20px;
+    font-weight: 400;
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+    color: rgb(255, 255, 255,0.9);
+ }
+ .footb{
+    background-color: #ffc107;
+    cursor: pointer;
+    font-weight: 400!important;
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+    font-size: 14px;
+    line-height: 36px;
+    min-width: 64px;
+    border-radius: 4px;
+    padding: 0 16px;
+    margin-top: 20px;
+    border: none;
+ }
+ .social-media i{
+    margin-top: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    
+    color: rgba(255,255,255,0.4);
+ }
+ .flex2{
+    flex: 27%;
+    padding: 20px 20px;
+ }
+ span{
+    display: block;
+ }
+ ::placeholder{
+    font-size: 12px;
+    vertical-align: middle;
+ }
+ .version1{
+   
+    font-weight: 700;
+    font-size: 1.25rem;
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+    color: rgb(255, 255, 255,0.9);
+ }
+
+ @media(max-width:910px){
+    .footer{
+       display: block;
+    }
+    .flex1{
+       width: 100%;
+    }
+    .flex2{
+       width: 100%;
+    }
+    .heading{
+       font-size: 30px;
+    }
+    body{
+       overflow: auto;
+    }
+    .cards-flex{
+        flex-direction: column;
+        width: 100%;
+                
+    }
+    .flex{
+        margin-top:20px ;
+        width: 100%;
+    }
+    .flip-card-inner,.flip-card{
+        width: 100%;
+    }
+ }
