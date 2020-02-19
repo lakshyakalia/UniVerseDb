@@ -5,26 +5,31 @@
 </div>
 <div class="sign-up-div container">
     <div class="form">
+      <form [formGroup]="invoiceForm">
       <div class="form-top">
         <div class="form-top-left-items">
           <p>
             <label class="items-left">Invoice No.</label>
-            <input type="text" />
+            <input type="text" id="invoiceNo" formControlName="invoiceNo" 
+             />
           </p>
           <p>
             <label class="items-left">Invoice Date</label>
-            <input type="text" />
+            <input type="text"  id="invoiceDate" formControlName="invoiceDate" 
+            />
           </p>
 
         </div>
         <div class="form-top-right-items">
           <p>
             <label class="items-right">Order No.</label>
-            <input type="text" />
+            <input type="text" id="orderNo" formControlName="orderNo" 
+            />
           </p>
           <p>
-            <label class="items-right">Invoice Amount</label>
-            <input type="text" />
+            <label class="items-right" >Invoice Amount</label>
+            <input type="text" id="invoiceAmount" formControlName="invoiceAmount" 
+             />
           </p>
 
         </div>
@@ -57,10 +62,11 @@
         </table>
         <div class="button-div">
             <button>Save as Draft</button>
-            <button>Receive</button>
+            <button (click)="sub()">Receive</button>
             <button>Cancel</button>
         </div>
       </div>
+    </form>
     </div>
   </div>
   
