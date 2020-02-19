@@ -8,7 +8,6 @@
     font-size: 1.7em;
     padding-top: 25px;
 }
-
 .sign-up-div{
     margin: 10px auto 30px auto;
     display: flex;
@@ -37,14 +36,20 @@ input,.input{
     display: flex;
     flex-direction: row;
 }
+
 .form-top-left-items{
     flex: 3;
     display: flex;
+    margin-right: 30px;
     flex-direction: column;
 }
 .form-top-right-items{
     flex: 3;
-    margin-left: 80px;
+    float: right;
+    
+}
+.form-top-right-items label{
+    margin-left: 60px;
 }
 .form-head{
     display: flex;
@@ -57,23 +62,36 @@ input,.input{
 }
 hr{
     height: 10px;
+    margin-bottom: 20px;
     
+}
+
+.form-head-left,.form-head-right{
+    margin-left: 20px;
+    margin-right: 20px;
 }
 .form-head,.form-top,.form-bottom{
     margin: 20px;
 }
-
+.form-top-left-items,.form-top-right-items{
+    margin-left: 20px;
+}
+.vendor-select{
+    margin-top: 20px;
+}
 .vendor-name{
-    margin-right: 40px;
     border: none;
     border-bottom: 1px solid rgb(14, 14, 14)  ;
+}
+.vendor{
+    margin-left: 40px;
 }
 ::placeholder{
     text-align: center;
 }
 
 .vendor-name:focus{
-    border-bottom: 2px solid rgb(28, 28, 224);
+    border-bottom: 2px solid blue;
     transition-duration: 0.4s;
     outline: none;
 }
@@ -101,6 +119,17 @@ option{
 img{
     color: rgba(255, 255, 255, 1);
 }
+.ship{
+    display: block;
+    margin-top: 40px;;
+}
+.vendor-select-control{
+    width: 70%;
+    float: right;
+}
+.hr-top{
+    margin-top: 40px;
+}
 td button{
     border-radius: 40%;
     border: none;
@@ -109,7 +138,6 @@ td button{
     font-weight: 400;
     cursor: pointer;
 }
-
 .button-div{
     margin-top: 30px;
     float: right;
@@ -125,6 +153,7 @@ td button{
     cursor: pointer;
     box-shadow:0 1px 8px 0 rgba(0, 0, 0, 0.2) ;
 }
+
 @media (max-width: 995px)
 {
     .form-top{
@@ -136,10 +165,22 @@ td button{
     .form{
         padding: 0;
     }
-    .form-top-right-items{
-        margin-left: 0px;
+    .form-head-left,.form-head-right{
+        margin-left: 10px;
+        margin-right: 20px;
+        margin-top: 20px;
     }
-    .vendor-name{
-        margin-right: 0px;
+    .vendor-select{
+        padding: 10px;
+    }
+    .vendor{
+        margin-left: 20px;
+    }
+    .form-top-right-items label{
+        margin: 0;
+        margin-right: 0;
+    }
+    .form-top-left-items{
+        margin-right: 0;
     }
 }
