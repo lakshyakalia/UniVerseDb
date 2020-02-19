@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SaveDataService } from '../service/save-data.service';
-import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, FormControl,Validators } from '@angular/forms';
 import { generate } from 'rxjs';
 @Component({
   selector: 'app-vendor-sign-up',
@@ -13,17 +13,16 @@ export class VendorSignUpComponent implements OnInit {
   private recordData: any;
   private recordIds: any;
   private itemArray: Array<any> = [];
-
   sno: number = 1;
   recordId: Array<any> = [];
   vendorDetailForm = new FormGroup({
-    Company: new FormControl(''),
-    Street: new FormControl(''),
-    State: new FormControl(''),
-    Phone: new FormControl(''),
-    Contact: new FormControl(''),
-    City: new FormControl(''),
-    Zip: new FormControl('')
+    Company: new FormControl('',Validators.required),
+    Street: new FormControl('',[Validators.required]),
+    State: new FormControl('',[Validators.required]),
+    Phone: new FormControl('',[Validators.required]),
+    Contact: new FormControl('',[Validators.required]),
+    City: new FormControl('',[Validators.required]),
+    Zip: new FormControl('',[Validators.required])
 
   })
   deleteRow(index) {
@@ -39,7 +38,7 @@ export class VendorSignUpComponent implements OnInit {
         this.recordIds = Object.keys(res.table)
       })
     this.items = this.fb.group({
-      itemId: new FormControl(''),
+      itemId: new FormControl('',[Validators.required]),
       items: this.fb.array([])
     });
   }
