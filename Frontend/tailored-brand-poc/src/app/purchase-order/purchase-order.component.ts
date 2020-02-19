@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import { PurchaseOrderService } from '../service/purchase-order.service'
-import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms'
+
 @Component({
   selector: 'purchase-order',
   templateUrl: './purchase-order.component.html',
@@ -42,8 +43,8 @@ export class PurchaseOrderComponent implements OnInit {
       vendorItem: new FormControl(''),
       specialRequests: this.fb.array([])
     });
+    console.log(this.itemOrderForm.get('specialRequests'))
   }
-
 
   getVendorItems(){
     let vendorName = this.purchaseOrderForm.get('vendorName').value
@@ -55,8 +56,6 @@ export class PurchaseOrderComponent implements OnInit {
 
   createNewFormControl(itemID, itemDescription){
     const control = <FormArray>this.itemOrderForm.controls['specialRequests']
-    // const control1 = <FormArray>this.itemOrderForm.get('specialRequests')
-    
     control.push(this.initiateForm(itemID,itemDescription))
   }
 
@@ -65,13 +64,17 @@ export class PurchaseOrderComponent implements OnInit {
       itemID: [itemID],
       itemDescription: [itemDescription],
       quantity: new FormControl(""),
-      unitCost: new FormControl("")
+      unitCost: new FormControl(""),
+      totalPrice : [0]
    })
   }
 
   addNewRow(){
     let vendorItem = this.itemOrderForm.get('vendorItem').value
-    if(vendorItem != 'None'){
+    let controlArray = this.itemOrderForm.get('specialRequests').value
+    let status = controlArray.find(element => element.itemID === vendorItem)
+
+    if(vendorItem != 'None' && status == undefined){
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
       .subscribe((res:any)=>{
         this.createNewFormControl(vendorItem,res.data)
@@ -84,13 +87,17 @@ export class PurchaseOrderComponent implements OnInit {
     control.removeAt(index)
   }
 
-  calculateTotalPrice(quantity){
-    console.log('calculate')
-    console.log(this.itemOrderForm.value)
+  calculateTotalPrice(index){
+    let controlArray = <FormArray>this.itemOrderForm.get('specialRequests')
+    let totalPrice = controlArray.value[index].quantity * controlArray.value[index].unitCost
+    controlArray.controls[index].get('totalPrice').setValue(totalPrice)
   }
-}
 
-export class itemObject{
-  public quantity: number
-  public unitCost : number
+  submitNewOrder(purchaseOrderForm,itemOrderForm){
+    let recordId = Math.floor(Math.random()*900000) + 100000
+    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value,itemOrderForm.value,recordId)
+    .subscribe((res)=>{
+      console.log(res)
+    })
+  }
 }

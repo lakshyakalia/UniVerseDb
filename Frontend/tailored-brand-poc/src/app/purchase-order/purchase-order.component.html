@@ -4,12 +4,12 @@
       <div class="form-head">
         <div class="form-head-left">
           <label class="items-left">Order No.</label>
-          <input type="text" class="vendor-name" placeholder="New Order" name="newOrder" formControlName="newOrder" />
+          <input type="text" class="vendor-name" placeholder="New Order" name="newOrder" formControlName="newOrder" (value)="functin" />
         </div>
         <div class="form-head-right">
           <label class="items-left">Order Date</label>
           <input type="date" class="order-date" name="orderDate" formControlName="orderDate" />
-          <i class="far fa-calendar-alt"></i>
+          <i class="fa fa-calendar-alt"></i>
         </div>
       </div>
       <div class="vendor-select">
@@ -83,10 +83,8 @@
                 <td>{{ control.value.itemID }}</td>
                 <td>{{ control.value.itemDescription }}</td>
                 <td><input type="number" name="quantity" formControlName="quantity"></td>
-                <td><input type="number" name="unitCost" formControlName="unitCost"
-                    (input)="calculateTotalPrice($event)">
-                </td>
-                <td>1</td>
+                <td><input type="number" name="unitCost" formControlName="unitCost" (input)="calculateTotalPrice(i)"></td>
+                <td>{{ control.value.totalPrice }}</td>
                 <td (click)="removeParticularItem(i)">X</td>
               </tr>
             <tr>
@@ -102,7 +100,7 @@
         </table>
         <div class="button-div">
           <button>Save as Draft</button>
-          <button>Submit</button>
+          <button (click)="submitNewOrder(purchaseOrderForm,itemOrderForm)">Submit</button>
           <button>Cancel</button>
         </div>
       </form>
