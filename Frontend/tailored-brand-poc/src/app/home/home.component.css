@@ -78,6 +78,7 @@ span{
   }
   
   .flip-card-front {
+      /* display: none; */
     /* box-shadow: 0px 0px 4px rgba(0,0,0,0.2); */
     background-color: black;
     /* box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); */
@@ -126,57 +127,13 @@ span{
       width: 80%;
       color: white;
       align-items: flex-end;
-      /* background-color: rgba(255, 255, 255, 1); */
+      /* background-color: darkblue; */
       font-weight: 100;
   }
   .flip-card-back a:hover{
       font-weight: 700;
       transition-duration: 0.1s;
   }
-  .footer{
-    display: flex;
- 
-    background-color: #202020;
- }
- .flex1{
-    flex:40%;
-    padding: 20px 20px;
-    font-weight: 700;
-    font-size: 1.25rem;
-    font-family: Roboto,"Helvetica Neue",sans-serif;
-    color: rgb(255, 255, 255,0.9);
- }
- .version{
-    font-size: .875rem;
-    margin-top: 20px;
-    font-weight: 400;
-    font-family: Roboto,"Helvetica Neue",sans-serif;
-    color: rgb(255, 255, 255,0.9);
- }
- .footb{
-    background-color: #ffc107;
-    cursor: pointer;
-    font-weight: 400!important;
-    font-family: Roboto,"Helvetica Neue",sans-serif;
-    font-size: 14px;
-    line-height: 36px;
-    min-width: 64px;
-    border-radius: 4px;
-    padding: 0 16px;
-    margin-top: 20px;
-    border: none;
- }
- .social-media i{
-    margin-top: 20px;
-    margin-left: 10px;
-    cursor: pointer;
-    
-    color: rgba(255,255,255,0.4);
- }
- .flex2{
-    flex: 27%;
-    padding: 20px 20px;
- }
  span{
     display: block;
  }
