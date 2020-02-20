@@ -9,10 +9,11 @@ export class SaveDataService {
   constructor(private http: HttpClient) { }
 
   saveItemData(itemData, shipToData){
-    return this.http.post('/http://localhost:5000/api/U2data',{
+    let data = {
       itemData: itemData,
       shipToData: shipToData
-    })
+    }
+    return this.http.post('http://localhost:5000/api/U2data',data)
   }
   readItem(){
     return this.http.get('http://localhost:5000/api/U2data')

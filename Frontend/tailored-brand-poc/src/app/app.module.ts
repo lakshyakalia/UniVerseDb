@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {MatCardModule} from '@angular/material/card';
+import {SplitLastPipe } from './stepper/splitLast.pipe'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -26,6 +26,7 @@ import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
   declarations: [
     AppComponent,
     StepperComponent,
+    SplitLastPipe,
     NavbarComponent,
     VendorSignUpComponent,
     PurchaseOrderComponent,
