@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder,  Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-invoice-detail',
@@ -20,7 +20,11 @@ export class InvoiceDetailComponent implements OnInit {
     });
   }
   sub(): void{
-    console.log(this.invoiceForm.value);
+    console.log(this.invoiceForm.value.invoiceNo);
+    if(this.invoiceForm.value.invoiceNo==null)
+    {
+      alert('enter a value')
+    }
   }
 
 }
