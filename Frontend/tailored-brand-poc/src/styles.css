@@ -3,8 +3,8 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-#img{
-    background-image: url(./assets/img-extended-1.jpg);
+body{
+    background-image: url(./assets/clothes-background.jpg);
     background-position: left top;
     background-repeat: no-repeat;
     background-size: cover;

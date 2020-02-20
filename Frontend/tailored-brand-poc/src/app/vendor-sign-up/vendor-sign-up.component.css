@@ -1,3 +1,13 @@
+/* body{
+    background-image: url(../../assets/img-extended-1.jpg);
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: #dbc8ac;
+    /* height:205px; */
+    /* height: 100%; */
+    /* filter: blur(3px); 
+} */
 .vendor-heading{
     background-color: #202020;
     height: 90px;
