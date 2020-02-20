@@ -1,5 +1,6 @@
 body{
-    background-image: none;
+    background-image: none !important;
+    background: none !important;
 }
 .main{
     overflow-x: hidden;
