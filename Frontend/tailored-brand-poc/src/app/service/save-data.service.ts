@@ -15,7 +15,7 @@ export class SaveDataService {
     })
   }
   readItem(){
-    return this.http.get('http://localhost:5000/api/U2data')
+    return this.http.get('http://localhost:5000/api/itemData')
   }
   
   vendorDetail(vendorDetail,itemId,vendorId){

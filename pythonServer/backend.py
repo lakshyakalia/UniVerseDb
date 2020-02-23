@@ -21,7 +21,7 @@ def vendorDetailU2(vendorDetails,itemsId,recordID):
 		item=item+bytes(items['items'],"utf-8")+u2py.VM
 	vendorArray.insert(5,0,0,item[:-1])
 	vendorFile.write(recordID,vendorArray)
-@app.route('/api/U2data',methods=['GET'])
+@app.route('/api/itemData',methods=['GET'])
 def readFromU2():
 	cmd=u2py.run("LIST DATA PO.ITEM.MST DESC TOXML",capture=True)
 	my_xml = cmd.strip()	

@@ -15,6 +15,7 @@ export class VendorSignUpComponent implements OnInit {
   private itemArray: Array<any> = [];
   sno: number = 1;
   recordId: Array<any> = [];
+  toggle:boolean=false;
   vendorDetailForm = new FormGroup({
     Company: new FormControl('',Validators.required),
     Street: new FormControl('',[Validators.required]),
@@ -41,6 +42,7 @@ export class VendorSignUpComponent implements OnInit {
       itemId: new FormControl('',[Validators.required]),
       items: this.fb.array([])
     });
+    console.log(this.items.controls)
   }
   initiateForm(description, id): FormGroup {
     return this.fb.group({
@@ -61,6 +63,9 @@ export class VendorSignUpComponent implements OnInit {
     }
   }
   vendorDetail(vendorDetail, items) {
+    this.toggle=true;
+    if(this.vendorDetailForm.valid){
+
     let vendorId = Math.floor(Math.random()*900000) + 100000
 
     this.saveData.vendorDetail(vendorDetail.value, items.value,vendorId)
@@ -69,10 +74,13 @@ export class VendorSignUpComponent implements OnInit {
       if(res.message=="data saved"){
         alert("Vendor Number Created- "+vendorId);
         window.location.reload();
+        
       }
       else{
         alert("error")
-      }
-    })
+     }
+   })
+  
+  }
   }
 }
