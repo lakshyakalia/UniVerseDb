@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import {SaveDataService} from '../service/save-data.service'
 @Component({
   selector: 'app-all-vendors',
   templateUrl: './all-vendors.component.html',
@@ -7,9 +7,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AllVendorsComponent implements OnInit {
 
-  constructor() { }
+  vendorData : []
+
+  vendorIDS : any
+
+  constructor(private saveData: SaveDataService) { }
 
   ngOnInit() {
+    this.saveData.allVendors()
+    .subscribe((res: any)=>{
+      this.vendorData = res.data
+      this.vendorIDS = Object.keys(res.data)
+      console.log(this.vendorData)
+    })
   }
 
 }

@@ -25,4 +25,7 @@ export class SaveDataService {
       recordID: vendorId
     })
   }
+  allVendors(){
+    return this.http.get('http://localhost:5000/api/vendorDetail')
+  }
 }
