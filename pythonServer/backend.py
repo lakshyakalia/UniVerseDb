@@ -9,7 +9,6 @@ from flask_cors import CORS,cross_origin
 app = Flask(__name__)
 CORS(app)
 
-<<<<<<< HEAD
 def vendorDetailU2(vendorDetails,itemsId,recordID):
 	vendorArray=u2py.DynArray()
 	item=bytes("","utf-8")
@@ -23,7 +22,6 @@ def vendorDetailU2(vendorDetails,itemsId,recordID):
 	vendorArray.insert(5,0,0,item[:-1])
 	vendorFile.write(recordID,vendorArray)
 @app.route('/api/itemData',methods=['GET'])
-=======
 def writePurchaseOrder(purchaseOrderDetails,itemOrderDetails,recordID):
     itemID = quantity = cost = bytes("","utf-8")
     orderFile = u2py.File("PO.ORDER.MST")
@@ -114,7 +112,6 @@ def writeToU2():
 
 
 @app.route('/api/U2data',methods=['GET'])
->>>>>>> 0ee19a57bf762c5f7c58be5d05abd7c3bb9ce786
 def readFromU2():
 	cmd=u2py.run("LIST DATA PO.ITEM.MST DESC TOXML",capture=True)
 	my_xml = cmd.strip()	
