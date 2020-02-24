@@ -11,11 +11,12 @@ import {DOCUMENT } from '@angular/common'
 })
 export class StepperComponent implements OnInit {
 
-  recordIDs : String[]
+  recordIDs: String[]
 
   recordData: {}
 
-  totalPrice : number = 0.00
+  totalPrice: number = 0.00
+  unitPrice: number
 
   unitPrice : number = 0.00
 
@@ -24,7 +25,7 @@ export class StepperComponent implements OnInit {
   constructor(private saveData: SaveDataService,@Inject(DOCUMENT) document) { }
 
   firstFormGroup = new FormGroup({
-    item: new FormControl(''),
+    item: new FormControl(),
     quantity: new FormControl('')
 
   })
@@ -50,14 +51,34 @@ export class StepperComponent implements OnInit {
 
   ngOnInit() {
     this.saveData.readItem()
-    .subscribe((res:any)=>{
-      this.recordData = res.table
-      this.recordIDs = Object.keys(res.table)
+      .subscribe((res: any) => {
+        this.recordData = res.table
+        this.recordIDs = Object.keys(res.table)
+        //console.log(this.unitPrice=this.recordData[this.item.value][0])
+        console.log(this.recordIDs);
+        console.log(this.recordData);
+        console.log(this.recordData[45623412]);
 
-     
-    })
+      })
   }
 
+<<<<<<< HEAD
+  submitData(firstFormGroup, secondFormGroup) {
+    this.saveData.saveItemData(firstFormGroup.value, secondFormGroup.value)
+      .subscribe(res => {
+
+      })
+  }
+  setUnitprice() {
+    this.unitPrice = this.recordData[this.item.value][1]
+  }
+  calculateTotalPrice(unitPrice, quantity) {
+    console.log(this.item.value);
+    console.log(this.recordData[this.item.value][0]);
+    console.log(this.recordData[this.item.value][1]);
+    this.unitPrice = this.recordData[this.item.value][1]
+    this.totalPrice = this.recordData[this.item.value][1] * quantity
+=======
   submitData(firstFormGroup, secondFormGroup){
     let splittedItem = firstFormGroup.value.item.split(',')
     firstFormGroup.value.item = splittedItem[0]
@@ -74,6 +95,7 @@ export class StepperComponent implements OnInit {
 
   onChange(){
     this.unitPrice = this.recordData[this.item.value][1]
+>>>>>>> 0ee19a57bf762c5f7c58be5d05abd7c3bb9ce786
   }
 
 }

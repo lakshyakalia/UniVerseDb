@@ -1,92 +1,113 @@
 <div class="vendor-heading">
   <div class="vendor-head container">
-    <span>Register Vendor</span>
+    <span class="heading">Register Vendor</span>
   </div>
 </div>
 <div class="sign-up-div container">
   <div class="form">
-    <div class="form-head">
-      <div class="form-head-left">
-        <label class="vendor-no-label">Vendor No.</label>
-        <input type="text" class="vendor-name" placeholder="New Vendor" />
+    <form [formGroup]="vendorDetailForm">
+      <div class="form-head">
+        <div class="form-head-left">
+          <label class="items-left">Vendor No.</label>
+          <input type="text" disabled class="vendor-name" placeholder="New Vendor" />
+        </div>
+        <div class="form-head-right"></div>
       </div>
-      <div class="form-head-right"></div>
-    </div>
-    <div class="form-top">
-      <div class="form-top-left-items">
-        <p>
-          <label class="items-left">Company</label>
-          <input type="text" />
-        </p>
-        <p>
-          <label class="items-left">Street</label>
-          <input type="text" />
-        </p>
-        <p>
-          <label class="items-left">State</label>
-          <select class="input form-control-sm">
-            <option>lo</option>
-            <option>B</option>
-            <option>C</option>
-          </select>
-        </p>
-        <p>
-          <label class="items-left">Phone</label>
-          <input type="text" />
-        </p>
+      <div class="form-top">
+        <div class="form-top-left-items">
+          <p>
+            <label class="items-left">Company</label>
+            <input type="text" formControlName="Company"/>
+            <span *ngIf= "vendorDetailForm.controls['Company'].invalid && toggle==true">
+              Company is required
+            </span>
+          </p>
+          <p>
+            <label class="items-left">Street</label>
+            <input type="text" formControlName="Street" />
+            <span *ngIf= "vendorDetailForm.controls['Street'].invalid && toggle==true">
+              Street is required
+            </span>
+          </p>
+          <p>
+            <label class="items-left">State</label>
+            <select class="input form-control-sm" formControlName="State" required>
+              <option>Texas</option>
+              <option>Claforina</option>
+              <option>Florida</option>
+            </select>
+            <span *ngIf= "vendorDetailForm.controls['State'].invalid && toggle==true">
+             State is required
+            </span>
+          </p>
+          <p>
+            <label class="items-left">Phone</label>
+            <input type="text" formControlName="Phone" required />
+            <span *ngIf= "vendorDetailForm.controls['Phone'].invalid && toggle==true">
+              Phone no is required
+            </span>
+          </p>
+        </div>
+        <div class="form-top-right-items">
+          <p>
+            <label class="items-right">Contact Name</label>
+            <input type="text" formControlName="Contact" required />
+            <span *ngIf= "vendorDetailForm.controls['Contact'].invalid && toggle==true">
+              Contact name is required
+            </span>
+          </p>
+          <p>
+            <label class="items-right">City</label>
+            <input type="text" formControlName="City" required />
+            <span *ngIf= "vendorDetailForm.controls['City'].invalid && toggle==true">
+              City is required
+            </span>
+          </p>
+          <p>
+            <label class="items-right">Zip</label>
+            <input type="text" formControlName="Zip" required />
+            <span *ngIf= "vendorDetailForm.controls['Zip'].invalid && toggle==true">
+              Zip is required
+            </span>
+          </p>
+        </div>
       </div>
-      <div class="form-top-right-items">
-        <p>
-          <label class="items-right">Contact Name</label>
-          <input type="text" />
-        </p>
-        <p>
-          <label class="items-right">City</label>
-          <input type="text" />
-        </p>
-        <p>
-          <label class="items-right">Zip</label>
-          <input type="text" />
-        </p>
-      </div>
-     
-    </div>
+    </form>
     <div class="form-bottom">
+      <form [formGroup]="items">
         <hr>
-      <label>Items :</label>
-      <table class="table vendor-item-table">
-        <thead class="thead-dark">
-          <th>SNo.</th>
-          <th>Items</th>
-          <th>Description</th>
-          <th>Remove</th>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>1234567</td>
-            <td>Hones T-shirt adasdas</td>
-            <td class="remove"><i class="fas fa-window-close"></i></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>1234567</td>
-            <td>Hones T-shirt adasdas</td>
-            <td class="remove"><i class="fas fa-window-close"></i></td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>1234567</td>
-            <td>Hones T-shirt adasdas</td>
-            <td class="remove"><i class="fas fa-window-close"></i></td>
-          </tr>
-        </tbody>
-      </table>
+        <label>Items :</label>
+        <table class="table vendor-item-table">
+          <thead class="thead-dark">
+            <th>sno</th>
+            <th>Items</th>
+            <th>Description</th>
+            <th>Remove</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let control of items.controls.items.controls;let i = index" [formGroup]="control">
+              <td>{{i + 1}}</td>
+              <td>{{ control.value.items }}</td>
+              <td>{{ control.value.description }}</td>
+              <td class="remove" (click)="deleteRow(i)">X</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="form-group">
+                <select (change)="addRecordId()" class="input form-control-sm" formControlName="itemId" required>
+                  <option disabled selected value> -- select an option -- </option>
+                  <option *ngFor="let ids of recordIds">{{ids}}</option>
+                </select></td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+        <span *ngIf= "items.controls['itemId'].invalid && toggle==true">Please select an option</span>
+        </p>
+      </form>
       <div class="button-div">
-        <button>Save as Draft</button>
-        <button>Submit</button>
-        <button routerLink="/">Cancel</button>
-    </div>
+        <button type="submit" (click)="vendorDetail(vendorDetailForm,items)">SUBMIT</button>
+      </div>
     </div>
   </div>
 </div>
