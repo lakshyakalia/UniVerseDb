@@ -4,42 +4,43 @@
   </div>
 </div>
 <div class="sign-up-div container">
-    <div class="form">
+  <div class="form">
+    <form [formGroup]="purchaseOrderForm">
       <div class="form-head">
         <div class="form-head-left">
           <label class="items-left">Order No.</label>
-          <input type="text" class="vendor-name" placeholder="New Order" />
+          <input type="text" class="vendor-name" placeholder="New Order" name="newOrder" formControlName="newOrder" />
         </div>
         <div class="form-head-right">
-            <label class="items-left">Order Date</label>
-            <input type="date" class="order-date" />
-            <i class="far fa-calendar-alt"></i>
+          <label class="items-left">Order Date</label>
+          <input type="date" class="order-date" name="orderDate" formControlName="orderDate" />
+          <i class="fa fa-calendar-alt"></i>
         </div>
       </div>
       <div class="vendor-select">
-          <label class="vendor">Vendor</label>
-          <select class="form-control-sm vendor-select-control">
-            <option>Vendor1</option>
-            <option>Vendor2</option>
-            <option>Vendor3</option>
-          </select>
-          <hr class="hr-top">
+        <label class="vendor">Vendor</label>
+        <select class="form-control-sm vendor-select-control" (change)="getVendorItems()" name="vendorName"
+          formControlName="vendorName">
+          <option>None</option>
+          <option *ngFor="let vendor of vendorNameList">{{  vendor }}</option>
+        </select>
+        <hr class="hr-top">
 
-          <label class="ship">Ship To :</label>
+        <label class="ship">Ship To :</label>
       </div>
       <div class="form-top">
         <div class="form-top-left-items">
           <p>
             <label class="items-left">Company</label>
-            <input type="text" />
+            <input type="text" name="companyName" formControlName="companyName">
           </p>
           <p>
             <label class="items-left">Street</label>
-            <input type="text" />
+            <input type="text" name="street" formControlName="street">
           </p>
           <p>
             <label class="items-left">State</label>
-            <select class="input form-control-sm">
+            <select class="input form-control-sm" name="state" formControlName="state">
               <option>lo</option>
               <option>B</option>
               <option>C</option>
@@ -47,62 +48,67 @@
           </p>
           <p>
             <label class="items-left">Phone</label>
-            <input type="text" />
+            <input type="text" name="phoneNumber" formControlName="phoneNumber">
           </p>
         </div>
         <div class="form-top-right-items">
           <p>
             <label class="items-right">Contact Name</label>
-            <input type="text" />
+            <input type="text" name="contactName" formControlName="contactName">
           </p>
           <p>
             <label class="items-right">City</label>
-            <input type="text" />
+            <input type="text" name="city" formControlName="city">
           </p>
           <p>
             <label class="items-right">Zip</label>
-            <input type="text" />
+            <input type="text" name="zipCode" formControlName="zipCode">
           </p>
         </div>
-       
+
       </div>
-      <div class="form-bottom">
-          <hr>
+    </form>
+    <div class="form-bottom">
+      <form [formGroup]="itemOrderForm">
+        <hr>
         <label>Items :</label>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th>sno</th>
+            <th>SNo.</th>
             <th>Items</th>
             <th>Description</th>
+            <th>Quantity</th>
+            <th>Unit Cost</th>
+            <th>Total Cost</th>
             <th>Remove</th>
           </thead>
           <tbody>
+              <tr *ngFor="let control of itemOrderForm.controls.specialRequests.controls; let i=index" [formGroup]="control">
+                <td>1</td>
+                <td>{{ control.value.itemID }}</td>
+                <td>{{ control.value.itemDescription }}</td>
+                <td><input type="number" name="quantity" formControlName="quantity"></td>
+                <td><input type="number" name="unitCost" formControlName="unitCost" (input)="calculateTotalPrice(i)"></td>
+                <td>{{ control.value.totalPrice }}</td>
+                <td (click)="removeParticularItem(i)">X</td>
+              </tr>
             <tr>
               <td>1</td>
-              <td>1234567</td>
-              <td>Hones T-shirt adasdas</td>
-              <td class="remove">X</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>1234567</td>
-              <td>Hones T-shirt adasdas</td>
-              <td class="remove">X</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>1234567</td>
-              <td>Hones T-shirt adasdas</td>
-              <td class="remove">X</td>
+              <td>
+                <select formControlName="vendorItem" (change)="addNewRow()">
+                  <option>None</option>
+                  <option *ngFor="let items of vendorItemIDList">{{ items }}</option>
+                </select>
+              </td>
             </tr>
           </tbody>
         </table>
         <div class="button-div">
-            <button>Save as Draft</button>
-            <button>Submit</button>
-            <button>Cancel</button>
+          <button>Save as Draft</button>
+          <button (click)="submitNewOrder(purchaseOrderForm,itemOrderForm)">Submit</button>
+          <button routerLink="/">Cancel</button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
-  
+</div>
