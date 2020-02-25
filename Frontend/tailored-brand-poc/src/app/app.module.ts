@@ -32,7 +32,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     AllPurchaseOrdersComponent,
     FooterComponent,
     AllVendorsComponent,
-    AllInvoicesComponent,
+    AllInvoicesComponent
   ],
   imports: [
     BrowserModule,

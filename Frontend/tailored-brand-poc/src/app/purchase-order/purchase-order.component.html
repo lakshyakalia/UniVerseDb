@@ -41,9 +41,10 @@
           <p>
             <label class="items-left">State</label>
             <select class="input form-control-sm" name="state" formControlName="state">
-              <option>lo</option>
-              <option>B</option>
-              <option>C</option>
+              <option>California</option>
+              <option>Florida</option>
+              <option>Texas</option>
+              <option>Hawaii</option>
             </select>
           </p>
           <p>
@@ -87,7 +88,7 @@
                 <td>1</td>
                 <td>{{ control.value.itemID }}</td>
                 <td>{{ control.value.itemDescription }}</td>
-                <td><input type="number" name="quantity" formControlName="quantity" (input)="calculateTotalPrice(I)"></td>
+                <td><input type="number" name="quantity" formControlName="quantity" (input)="calculateTotalPrice(i)"></td>
                 <td><input type="number" name="unitCost" formControlName="unitCost" (input)="calculateTotalPrice(i)"></td>
                 <td>{{ control.value.totalPrice }}</td>
                 <td (click)="removeParticularItem(i)"><i class="fas fa-window-close"></i></td>
@@ -104,8 +105,8 @@
           </tbody>
         </table>
         <div class="button-div">
-          <button>Save as Draft</button>
-          <button (click)="submitNewOrder(purchaseOrderForm,itemOrderForm)">Submit</button>
+          <button (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'draft')">Save as Draft</button>
+          <button (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'submit')">Submit</button>
           <button routerLink="/">Cancel</button>
         </div>
       </form>

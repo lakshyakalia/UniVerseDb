@@ -23,7 +23,11 @@ export class PurchaseOrderComponent implements OnInit {
 
   editForm : boolean
 
-  constructor(private purchaseOrderService: PurchaseOrderService, private fb : FormBuilder,private router: Router) { }
+  constructor(
+    private purchaseOrderService: PurchaseOrderService,
+    private fb: FormBuilder,
+    private router: Router
+  ) { }
 
   purchaseOrderForm = new FormGroup({
     newOrder :  new FormControl(''),
@@ -75,7 +79,7 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
 
-  initiateForm(itemID, itemDescription,quantity,unitCost) : FormGroup{
+  initiateForm(itemID,itemDescription,quantity,unitCost) : FormGroup{
     return this.fb.group({
       itemID: [itemID],
       itemDescription: [itemDescription],
@@ -85,14 +89,17 @@ export class PurchaseOrderComponent implements OnInit {
    })
   }
 
-
   getItemOrderDetail(event){
     let orderID = this.purchaseOrderForm.get('newOrder').value
     if(event.keyCode === 13 && this.editForm && orderID != ''){
-      orderID = '150344'
       this.purchaseOrderService.getParticularOrder(orderID)
       .subscribe((res:any)=>{
-        this.setItemOrderDetails(res)
+        if(res.status  === 404){
+          alert(res.msg)
+        }
+        else{
+          this.setItemOrderDetails(res)
+        }
       })
     }
   }
@@ -108,6 +115,7 @@ export class PurchaseOrderComponent implements OnInit {
       let vendorItem = res.itemList[j].itemID
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
       .subscribe((res:any)=>{
+        
         this.createNewFormControl(vendorItem,res.data,quantity,cost)
         this.calculateTotalPrice(j)
       })
@@ -142,11 +150,23 @@ export class PurchaseOrderComponent implements OnInit {
     }
   }
 
-  submitNewOrder(purchaseOrderForm,itemOrderForm){
-    let recordId = Math.floor(Math.random()*900000) + 100000
-    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value,itemOrderForm.value,recordId)
+  submitNewOrder(purchaseOrderForm,itemOrderForm,submitStatus){
+    let recordId
+    if(this.editForm){
+      recordId = this.purchaseOrderForm.get('newOrder').value
+    }
+    else{
+      recordId = Math.floor(Math.random()*900000) + 100000
+    }
+    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value,itemOrderForm.value,recordId,submitStatus)
     .subscribe((res)=>{
-      console.log(res)
+      if(this.editForm){
+        alert('Existing order updated')
+      }
+      else{
+        alert(`New Order No - ${recordId} Created`)
+      }
+      window.location.reload()
     })
   }
 }
