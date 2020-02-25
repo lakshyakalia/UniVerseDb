@@ -91,6 +91,16 @@ def vendorDetails():
 		'message':"data saved",
 		'data':vendorData
 		}
+@app.route('/api/vendor',methods=['PUT'])
+def updateVendor():
+	vendorData =request.get_json()
+	itemsId=vendorData['itemId']['items']
+	vendorDetails=vendorData['vendorDetail']
+	vendorDetailU2(vendorDetails,itemsId,vendorData['recordID'])
+	return{	'status':200,
+		'message':"data saved",
+		'data':vendorData
+		}
 @app.route('/api/vendor',methods=['GET'])
 def allVendors():
 	ids={}

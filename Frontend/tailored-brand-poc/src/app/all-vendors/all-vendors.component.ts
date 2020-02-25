@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {SaveDataService} from '../service/save-data.service'
+import {SaveDataService} from '../service/vendor.service'
 @Component({
   selector: 'app-all-vendors',
   templateUrl: './all-vendors.component.html',
