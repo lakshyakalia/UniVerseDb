@@ -9,7 +9,7 @@ export class PurchaseOrderService {
   constructor(private http: HttpClient) { }
 
   getAllVendorName(){
-    return this.http.get('http://localhost:5000/api/vendorDetail')
+    return this.http.get('http://localhost:5000/api/vendor')
   }
 
   getParticularItemDetails(itemID){

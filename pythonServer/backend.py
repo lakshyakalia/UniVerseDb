@@ -63,13 +63,8 @@ def getAllVendors():
         'vendorName': vendorList
     }
 
-@app.route('/api/U2data',methods=['POST'])
-def writeToU2():
-	print(request.form)
-	return "string",200
 
-
-@app.route('/api/U2data',methods=['GET'])
+@app.route('/api/item',methods=['GET'])
 def readFromU2():
 	cmd=u2py.run("LIST DATA PO.ITEM.MST DESC TOXML",capture=True)
 	my_xml = cmd.strip()	
@@ -86,7 +81,7 @@ def readFromU2():
 		itemData=[]
 	return{"table": dictItems },200
 
-@app.route('/api/vendorDetail',methods=['POST'])
+@app.route('/api/vendor',methods=['POST'])
 def vendorDetails():
 	vendorData =request.get_json()
 	itemsId=vendorData['itemId']['items']
@@ -96,7 +91,7 @@ def vendorDetails():
 		'message':"data saved",
 		'data':vendorData
 		}
-@app.route('/api/vendorDetail',methods=['GET'])
+@app.route('/api/vendor',methods=['GET'])
 def allVendors():
 	ids={}
 	cost=[]

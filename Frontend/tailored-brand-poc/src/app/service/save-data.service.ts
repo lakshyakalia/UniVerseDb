@@ -7,29 +7,21 @@ import { HttpClient } from '@angular/common/http'
 export class SaveDataService {
 
   constructor(private http: HttpClient) { }
-
-  saveItemData(itemData, shipToData){
-    let data = {
-      itemData: itemData,
-      shipToData: shipToData
-    }
-    return this.http.post('http://localhost:5000/api/U2data',data)
-  }
   readItem(){
-    return this.http.get('http://localhost:5000/api/itemData')
+    return this.http.get('http://localhost:5000/api/item')
   }
   
   vendorDetail(vendorDetail,itemId,vendorId){
-    return this.http.post('http://localhost:5000/api/vendorDetail',{
+    return this.http.post('http://localhost:5000/api/vendor',{
       vendorDetail:vendorDetail,
       itemId:itemId,
       recordID: vendorId
     })
   }
   particularVendor(vendorId){
-    return this.http.get(`http://localhost:5000/api/vendorDetail/${vendorId}`)
+    return this.http.get(`http://localhost:5000/api/vendor/${vendorId}`)
   }
   allVendors(){
-    return this.http.get('http://localhost:5000/api/vendorDetail')
+    return this.http.get('http://localhost:5000/api/vendor')
   }
 }
