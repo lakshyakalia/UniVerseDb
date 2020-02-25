@@ -20,11 +20,12 @@ export class PurchaseOrderService {
     })
   }
 
-  submitNewOrder(purchaseOrderValues, itemOrderValues,recordId){
+  submitNewOrder(purchaseOrderValues, itemOrderValues,recordId,submitStatus){
     return this.http.post('http://localhost:5000/api/order',{
       purchaseOrderDetails: purchaseOrderValues,
       itemOrderDetails: itemOrderValues,
-      recordID: recordId
+      recordID: recordId,
+      submitStatus: submitStatus
     })
   }
 

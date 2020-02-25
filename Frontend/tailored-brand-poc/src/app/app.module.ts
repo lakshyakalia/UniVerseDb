@@ -1,11 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {SplitLastPipe } from './stepper/splitLast.pipe'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { StepperComponent } from './stepper/stepper.component';
 import { MatStepperModule } from '@angular/material/stepper'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
@@ -26,8 +24,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 @NgModule({
   declarations: [
     AppComponent,
-    StepperComponent,
-    SplitLastPipe,
     NavbarComponent,
     VendorSignUpComponent,
     PurchaseOrderComponent,
@@ -36,7 +32,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     AllPurchaseOrdersComponent,
     FooterComponent,
     AllVendorsComponent,
-    AllInvoicesComponent,
+    AllInvoicesComponent
   ],
   imports: [
     BrowserModule,

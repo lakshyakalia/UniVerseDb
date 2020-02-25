@@ -104,7 +104,7 @@ def allVendors():
 	vendorDetail=[]
 	dictItems={}
 	itemId=[]
-	cmd=u2py.run("LIST DATA PO.VENDOR.MST VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML	",capture=True)
+	cmd=u2py.run("LIST DATA PO.VENDOR.MST VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML",capture=True)
 	my_xml=cmd.strip()
 	data = xmltodict.parse(my_xml)['ROOT']['PO.VENDOR.MST']
 	for i in range(len(data)):
