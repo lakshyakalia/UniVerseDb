@@ -9,7 +9,7 @@
       <div class="form-head">
         <div class="form-head-left">
           <label class="items-left">Order No.</label>
-          <input type="text" class="vendor-name" placeholder="New Order" name="newOrder" formControlName="newOrder" (keydown)="getItemOrderDetail($event)" />
+          <input type="text" class="order-no" placeholder="New Order" name="newOrder" formControlName="newOrder" (keydown)="getItemOrderDetail($event)" />
         </div>
         <div class="form-head-right">
           <label class="items-left">Order Date</label>
@@ -90,12 +90,12 @@
                 <td><input type="number" name="quantity" formControlName="quantity" (input)="calculateTotalPrice(I)"></td>
                 <td><input type="number" name="unitCost" formControlName="unitCost" (input)="calculateTotalPrice(i)"></td>
                 <td>{{ control.value.totalPrice }}</td>
-                <td (click)="removeParticularItem(i)">X</td>
+                <td (click)="removeParticularItem(i)"><i class="fas fa-window-close"></i></td>
               </tr>
             <tr>
               <td>1</td>
               <td>
-                <select formControlName="vendorItem" (change)="addNewRow()" class="vendor-select">
+                <select formControlName="vendorItem" (change)="addNewRow()" class="input form-control-sm">
                   <option>None</option>
                   <option *ngFor="let items of vendorItemIDList">{{ items }}</option>
                 </select>

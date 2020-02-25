@@ -27,4 +27,15 @@ export class InvoiceDetailComponent implements OnInit {
     console.log(res)
   })
   }
+  getItemOrderDetail(event){
+    let orderID = this.invoiceForm.get('orderNo').value
+    if(event.keyCode === 13 && orderID != ''){
+      // orderID = '150344'
+      this.invoiceService.getParticularOrder(orderID)
+      .subscribe((res:any)=>{
+        console.log(res)
+        // this.setItemOrderDetails(res)
+      })
+    }
+  }
 }

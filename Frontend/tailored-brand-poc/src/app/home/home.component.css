@@ -2,10 +2,16 @@ body{
     background-image: none !important;
     background: none !important;
 }
+button{
+    outline: none !important;
+}
 .main{
     overflow-x: hidden;
 
     /* padding-bottom: 70px; */
+}
+.flip-card-front{
+    opacity: 0.77;
 }
 .body-img{
     padding-top: 50px;
