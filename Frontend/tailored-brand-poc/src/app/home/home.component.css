@@ -1,7 +1,19 @@
+body{
+    background-image: none !important;
+    background: none !important;
+}
 .main{
     overflow-x: hidden;
-    background-color: #eee;
+
+    /* padding-bottom: 70px; */
+}
+.body-img{
+    padding-top: 50px;
     padding-bottom: 70px;
+    background-image: url(../../assets/clothes-background.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 .intro-div{
     height: 30%;
@@ -18,8 +30,9 @@ span{
 .body-text{
     text-align: center;
     font-weight: 100;
-    margin-top: 50px;
+    /* margin-top: 50px; */
     font-size: 24px;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.4);
 }
 .heading{
     color: rgba(255, 255, 255, 1);
@@ -177,4 +190,5 @@ span{
     .flip-card-inner,.flip-card{
         width: 100%;
     }
+
  }

@@ -8,13 +8,24 @@
                     <div class="full-width">
                         <mat-form-field>
                             <mat-label>Item</mat-label>
+<<<<<<< HEAD
+                            <mat-select name="item" formControlName="item" required>
+                                <mat-option value="{{ id }}" (click)="setUnitprice()" *ngFor="let id of recordIDs">
+                                    {{ recordData[id][0] }}</mat-option>
+=======
                             <mat-select name="item" [formControl]="item" [(ngModel)]="unitPrice">
                                 <mat-option value="{{ id }}" (click)="onChange()" *ngFor="let id of recordIDs" >{{ recordData[id][0] }}</mat-option>
+>>>>>>> 0ee19a57bf762c5f7c58be5d05abd7c3bb9ce786
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field>
                             <mat-label>Quantity</mat-label>
+<<<<<<< HEAD
+                            <input matInput type="number" placeholder="Enter Quantity" name="quantity"
+                                (input)="calculateTotalPrice(unitPrice, $event.target.value)" [formControl]="quantity"
+=======
                             <input matInput type="number" placeholder="Enter Quantity" name="quantity" (input)="calculateTotalPrice($event.target.value)" [formControl]="quantity"
+>>>>>>> 0ee19a57bf762c5f7c58be5d05abd7c3bb9ce786
                                 required>
                         </mat-form-field>
                         <div>

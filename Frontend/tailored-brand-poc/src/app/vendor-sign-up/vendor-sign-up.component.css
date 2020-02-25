@@ -1,14 +1,35 @@
+/* body{
+    background-image: url(../../assets/img-extended-1.jpg);
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: #dbc8ac;
+    /* height:205px; */
+    /* height: 100%; */
+    /* filter: blur(3px); 
+} */
 .vendor-heading{
     background-color: #202020;
     height: 90px;
 }
 .vendor-head{
-    color: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 1) !important;
     font-weight: 100;
     font-size: 1.7em;
     padding-top: 25px;
 }
-
+.heading{
+    color: rgba(255, 255, 255, 1);
+}
+p span{
+    color: red;
+    float: right;
+    margin-right: 5px;
+    font-size: 12px;
+    font-weight: 300;
+    margin-top: 5px;
+    vertical-align: middle;
+}
 .sign-up-div{
     margin: 10px auto 30px auto;
     display: flex;

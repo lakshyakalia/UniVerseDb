@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder,  Validators } from '@angular/forms';
+import { InvoiceService } from '../service/invoice.service';
 
 @Component({
   selector: 'app-invoice-detail',
@@ -8,7 +9,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class InvoiceDetailComponent implements OnInit {
   invoiceForm : FormGroup;
-  constructor() { }
+  constructor(private invoiceService : InvoiceService) { }
 
   ngOnInit() {
     this.invoiceForm = new FormGroup({
@@ -19,8 +20,11 @@ export class InvoiceDetailComponent implements OnInit {
 
     });
   }
-  sub(): void{
-    console.log(this.invoiceForm.value);
+  sub(){
+    console.log(this.invoiceForm.value.invoiceNo);
+   this.invoiceService.submitNewInvoice(this.invoiceForm.value)
+   .subscribe((res)=>{
+    console.log(res)
+  })
   }
-
 }

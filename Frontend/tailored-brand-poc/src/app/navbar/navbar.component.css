@@ -9,3 +9,6 @@
 a{
         font-weight: 300;
 }
+img{
+        filter: blur(3px);
+}

@@ -9,24 +9,24 @@
         <label>Vendors List :</label>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th>sno</th>
+            <th>SNo.</th>
             <th>Vendor no.</th>
             <th>Vendor Company</th>
             <th>Vendor Name</th>
             <th>Phone no.</th>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>1234567</td>
-              <td>FSociety</td>
-              <td>Mr. Elliot Alderson</td>
-              <td>(463) 271 5344</td>
+            <tr *ngFor="let vendor of vendorIDS;let i = index">
+              <td>{{i+1}}</td>
+              <td>{{ vendor }}</td>
+              <td>{{ vendorData[vendor][0][0]}}</td>
+              <td>{{ vendorData[vendor][0][1]}}</td>
+              <td>{{ vendorData[vendor][0][2]}}</td>
             </tr>
           </tbody>
         </table>
         <div class="button-div">
-            <button routerLink="/">Close</button>
+            <button routerLink="/"><i class="fas fa-arrow-circle-left"></i> Back</button>
         </div>
       </div>
     </div>

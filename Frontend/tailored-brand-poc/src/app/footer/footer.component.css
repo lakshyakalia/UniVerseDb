@@ -2,6 +2,7 @@
     display: flex;
     background-color: #202020;
     box-shadow: 0 50vh 0 50vh #202020;
+    
  }
  .flex1{
     flex:40%;
