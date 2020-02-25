@@ -9,7 +9,7 @@
         <div class="form-top-left-items">
           <p>
             <label class="items-left">Invoice No.</label>
-            <input type="text" />
+            <input type="text" (keydown)="getItemOrderDetail($event)" />
           </p>
           <p>
             <label class="items-left">Invoice Date</label>
