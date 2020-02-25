@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core'
+import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms'
+import { Router } from '@angular/router'
 
 import { PurchaseOrderService } from '../service/purchase-order.service'
-import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms'
 
 @Component({
   selector: 'purchase-order',
@@ -18,7 +19,11 @@ export class PurchaseOrderComponent implements OnInit {
 
   vendorItemIDList = []
 
-  constructor(private purchaseOrderService: PurchaseOrderService, private fb : FormBuilder) { }
+  vendorObject = []
+
+  editForm : boolean
+
+  constructor(private purchaseOrderService: PurchaseOrderService, private fb : FormBuilder,private router: Router) { }
 
   purchaseOrderForm = new FormGroup({
     newOrder :  new FormControl(''),
@@ -36,37 +41,77 @@ export class PurchaseOrderComponent implements OnInit {
   ngOnInit() {
     this.purchaseOrderService.getAllVendorName()
     .subscribe((res: any)=>{
-      this.vendorNameList = res.vendorName
+      let key = Object.keys(res.data)
+      for(let i=0;i<key.length;i++){
+        this.vendorNameList.push(res.data[key[i]][0][1])
+      }
+      this.vendorObject = res.data
     })
 
     this.itemOrderForm = this.fb.group({
       vendorItem: new FormControl(''),
       specialRequests: this.fb.array([])
-    });
-    console.log(this.itemOrderForm.get('specialRequests'))
+    })
+
+    this.editForm = this.router.url.endsWith('/editPurchaseOrder')
+    if(!this.editForm){
+      this.purchaseOrderForm.controls['newOrder'].disable()
+    }
   }
 
   getVendorItems(){
     let vendorName = this.purchaseOrderForm.get('vendorName').value
-    this.purchaseOrderService.getParticularVendorItems(vendorName)
-    .subscribe((res:any)=>{
-      this.vendorItemIDList = res.itemList
-    })
+    let key = Object.keys(this.vendorObject)
+    for(let i=0;i<key.length;i++){
+      if(this.vendorObject[key[i]][0][1] === vendorName){
+        this.vendorItemIDList = this.vendorObject[key[i]][1]
+      }
+    }
   }
 
-  createNewFormControl(itemID, itemDescription){
+  createNewFormControl(itemID, itemDescription,quantity,unitCost){
     const control = <FormArray>this.itemOrderForm.controls['specialRequests']
-    control.push(this.initiateForm(itemID,itemDescription))
+    control.push(this.initiateForm(itemID,itemDescription,quantity,unitCost))
   }
 
-  initiateForm(itemID, itemDescription) : FormGroup{
+
+  initiateForm(itemID, itemDescription,quantity,unitCost) : FormGroup{
     return this.fb.group({
       itemID: [itemID],
       itemDescription: [itemDescription],
-      quantity: new FormControl(""),
-      unitCost: new FormControl(""),
+      quantity: new FormControl(quantity),
+      unitCost: new FormControl(unitCost),
       totalPrice : [0]
    })
+  }
+
+
+  getItemOrderDetail(event){
+    let orderID = this.purchaseOrderForm.get('newOrder').value
+    if(event.keyCode === 13 && this.editForm && orderID != ''){
+      orderID = '150344'
+      this.purchaseOrderService.getParticularOrder(orderID)
+      .subscribe((res:any)=>{
+        this.setItemOrderDetails(res)
+      })
+    }
+  }
+
+  setItemOrderDetails(res:any){
+    for(let i in res.data){
+      this.purchaseOrderForm.controls[i].setValue(res.data[i])
+    }
+
+    for(let j in res.itemList){
+      let cost = res.itemList[j].cost
+      let quantity = res.itemList[j].quantity
+      let vendorItem = res.itemList[j].itemID
+      this.purchaseOrderService.getParticularItemDetails(vendorItem)
+      .subscribe((res:any)=>{
+        this.createNewFormControl(vendorItem,res.data,quantity,cost)
+        this.calculateTotalPrice(j)
+      })
+    }
   }
 
   addNewRow(){
@@ -77,7 +122,7 @@ export class PurchaseOrderComponent implements OnInit {
     if(vendorItem != 'None' && status == undefined){
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
       .subscribe((res:any)=>{
-        this.createNewFormControl(vendorItem,res.data)
+        this.createNewFormControl(vendorItem,res.data,"","")
       })
     }
   }
@@ -89,8 +134,12 @@ export class PurchaseOrderComponent implements OnInit {
 
   calculateTotalPrice(index){
     let controlArray = <FormArray>this.itemOrderForm.get('specialRequests')
-    let totalPrice = controlArray.value[index].quantity * controlArray.value[index].unitCost
-    controlArray.controls[index].get('totalPrice').setValue(totalPrice)
+    let quantity = controlArray.value[index].quantity
+    let unitCost = controlArray.value[index].unitCost
+    if(quantity != "" || unitCost != ""){
+      let totalPrice = quantity * unitCost
+      controlArray.controls[index].get('totalPrice').setValue(totalPrice)
+    }
   }
 
   submitNewOrder(purchaseOrderForm,itemOrderForm){

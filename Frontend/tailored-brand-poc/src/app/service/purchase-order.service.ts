@@ -9,19 +9,11 @@ export class PurchaseOrderService {
   constructor(private http: HttpClient) { }
 
   getAllVendorName(){
-    return this.http.get('http://localhost:5000/api/vendor')
-  }
-
-  getParticularVendorItems(vendorName){
-    return this.http.get('http://localhost:5000/api/vendor/items',{
-      params: {
-        vendorName: vendorName
-      }
-    })
+    return this.http.get('http://localhost:5000/api/vendorDetail')
   }
 
   getParticularItemDetails(itemID){
-    return this.http.get('http://localhost:5000/api/vendor/item',{
+    return this.http.get('http://localhost:5000/api/item',{
       params: {
         item : itemID
       }
@@ -34,5 +26,13 @@ export class PurchaseOrderService {
       itemOrderDetails: itemOrderValues,
       recordID: recordId
     })
+  }
+
+  getAllOrders(){
+    return this.http.get('http://localhost:5000/api/order')
+  }
+  
+  getParticularOrder(orderID){
+    return this.http.get(`http://localhost:5000/api/order/${orderID}`)
   }
 }

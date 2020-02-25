@@ -15,23 +15,11 @@
             <th>Vendor Name</th>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>1234567</td>
-              <td>Hones T-shirt adasdas</td>
-              <td class="remove">X</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>1234567</td>
-              <td>Hones T-shirt adasdas</td>
-              <td class="remove">X</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>1234567</td>
-              <td>Hones T-shirt adasdas</td>
-              <td class="remove">X</td>
+            <tr *ngFor= "let item of itemOrderList; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ item['purchaseOrderNo'] }}</td>
+              <td>{{ item['orderDate'] }}</td>
+              <td>{{ item['companyName'] }}</td>
             </tr>
           </tbody>
         </table>

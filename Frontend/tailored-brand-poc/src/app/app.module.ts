@@ -17,10 +17,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
 import { InvoiceDetailComponent } from './invoice-detail/invoice-detail.component';
 import { HomeComponent } from './home/home.component';
-import { AllPurchaseOrdersComponent } from './all-purchase-orders/all-purchase-orders.component';
+import { AllPurchaseOrdersComponent } from './purchase-order/all-purchase-orders/all-purchase-orders.component';
 import { FooterComponent } from './footer/footer.component';
 import { AllVendorsComponent } from './all-vendors/all-vendors.component';
 import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
     MatSelectModule,
     MatInputModule,
     MatButtonModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

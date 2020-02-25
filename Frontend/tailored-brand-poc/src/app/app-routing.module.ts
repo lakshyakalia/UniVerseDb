@@ -4,7 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { VendorSignUpComponent } from './vendor-sign-up/vendor-sign-up.component';
 import { InvoiceDetailComponent } from './invoice-detail/invoice-detail.component';
 import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
-import { AllPurchaseOrdersComponent } from './all-purchase-orders/all-purchase-orders.component';
+import { AllPurchaseOrdersComponent } from './purchase-order/all-purchase-orders/all-purchase-orders.component';
 import { AllVendorsComponent } from './all-vendors/all-vendors.component';
 import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
 
@@ -17,6 +17,7 @@ const routes: Routes = [
   { path: 'allPurchaseOrders' , component: AllPurchaseOrdersComponent},
   { path: 'allVendors' , component : AllVendorsComponent},
   { path: 'allInvoices' , component : AllInvoicesComponent},
+  { path: 'editPurchaseOrder', component: PurchaseOrderComponent}
 ];
 
 @NgModule({
