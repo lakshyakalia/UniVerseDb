@@ -8,6 +8,9 @@
     /* height: 100%; */
     /* filter: blur(3px); 
 } */
+button{
+    outline: none !important;
+}
 .vendor-heading{
     background-color: #202020;
     height: 90px;
@@ -88,6 +91,8 @@ hr{
     margin-right: 40px;
     border: none;
     border-bottom: 1px solid rgb(14, 14, 14)  ;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 ::placeholder{
     text-align: center;

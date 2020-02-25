@@ -9,9 +9,13 @@ export class InvoiceService {
 
   constructor(private http: HttpClient) { }
   submitNewInvoice(invoiceDetails){
-    return this.http.post('http://localhost:5000/api/order',{
+    return this.http.get('http://localhost:5000/api/invoice',{
+
 
     })
 
+  }
+  getParticularOrder(orderID){
+    return this.http.get(`http://localhost:5000/api/invoice/order/${orderID}`)
   }
 }

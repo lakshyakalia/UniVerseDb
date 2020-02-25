@@ -1,3 +1,6 @@
+button{
+    outline: none !important;
+}
 .purchase-order-heading{
     background-color: #202020;
     height: 90px;

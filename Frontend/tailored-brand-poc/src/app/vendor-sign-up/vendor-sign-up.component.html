@@ -9,7 +9,7 @@
       <div class="form-head">
         <div class="form-head-left">
           <label class="items-left">Vendor No.</label>
-          <input type="text" disabled class="vendor-name" placeholder="New Vendor" />
+          <input type="text"  class="vendor-name" placeholder="New Vendor" (keydown)="setVendorId($event)" formControlName='vendorNo' />
         </div>
         <div class="form-head-right"></div>
       </div>
@@ -79,7 +79,7 @@
         <label>Items :</label>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th>sno</th>
+            <th>Sno</th>
             <th>Items</th>
             <th>Description</th>
             <th>Remove</th>
@@ -93,7 +93,7 @@
             </tr>
             <tr>
               <td></td>
-              <td class="form-group">
+              <td class="form-group" style="width:1px;">
                 <select (change)="addRecordId()" class="input form-control-sm" formControlName="itemId" required>
                   <option disabled selected value> -- select an option -- </option>
                   <option *ngFor="let ids of recordIds">{{ids}}</option>
