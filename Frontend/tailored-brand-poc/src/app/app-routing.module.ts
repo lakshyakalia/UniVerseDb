@@ -17,7 +17,8 @@ const routes: Routes = [
   { path: 'allPurchaseOrders' , component: AllPurchaseOrdersComponent},
   { path: 'allVendors' , component : AllVendorsComponent},
   { path: 'allInvoices' , component : AllInvoicesComponent},
-  { path: 'editPurchaseOrder', component: PurchaseOrderComponent}
+  { path: 'editPurchaseOrder', component: PurchaseOrderComponent},
+  { path: 'editVendorDetails', component: VendorSignUpComponent}
 ];
 
 @NgModule({

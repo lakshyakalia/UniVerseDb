@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { SaveDataService } from '../service/save-data.service';
-import { FormGroup, FormBuilder, FormArray, FormControl,Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 import { generate } from 'rxjs';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-vendor-sign-up',
   templateUrl: './vendor-sign-up.component.html',
@@ -9,28 +10,47 @@ import { generate } from 'rxjs';
 })
 export class VendorSignUpComponent implements OnInit {
   items: FormGroup;
-  constructor(private saveData: SaveDataService, private fb: FormBuilder) { }
+  constructor(private saveData: SaveDataService, private fb: FormBuilder, private router: Router) { }
   private recordData: any;
   private recordIds: any;
   private itemArray: Array<any> = [];
   sno: number = 1;
   recordId: Array<any> = [];
-  toggle:boolean=false;
+  toggle: boolean = false;
+  editVendor: boolean;
+  vendorId:number;
   vendorDetailForm = new FormGroup({
-    Company: new FormControl('',Validators.required),
-    Street: new FormControl('',[Validators.required]),
-    State: new FormControl('',[Validators.required]),
-    Phone: new FormControl('',[Validators.required]),
-    Contact: new FormControl('',[Validators.required]),
-    City: new FormControl('',[Validators.required]),
-    Zip: new FormControl('',[Validators.required])
+    vendorNo: new FormControl(),
+    Company: new FormControl('', Validators.required),
+    Street: new FormControl('', [Validators.required]),
+    State: new FormControl('', [Validators.required]),
+    Phone: new FormControl('', [Validators.required]),
+    Contact: new FormControl('', [Validators.required]),
+    City: new FormControl('', [Validators.required]),
+    Zip: new FormControl('', [Validators.required])
 
   })
   deleteRow(index) {
     console.log(index)
-    const control = <FormArray>this.items.get('users');
+    const control = <FormArray>this.items.get('items');
     control.removeAt(index)
     this.itemArray.splice(index, 1);
+  }
+  setVendorId(event){
+    if(event.keyCode===13){
+      this.vendorId=this.vendorDetailForm.get('vendorNo').value
+      console.log(this.vendorId)
+      this.saveData.particularVendor(this.vendorId)
+        .subscribe((res: any) => {
+          if(res.status === 404){
+            alert(res.msg)
+          }
+          else{
+            this.setItemdOrderDetails(res)
+          }
+          
+        })
+    }
   }
   ngOnInit() {
     this.saveData.readItem()
@@ -38,10 +58,19 @@ export class VendorSignUpComponent implements OnInit {
         this.recordData = res.table;
         this.recordIds = Object.keys(res.table)
       })
+
     this.items = this.fb.group({
-      itemId: new FormControl('',[Validators.required]),
+      itemId: new FormControl('', [Validators.required]),
       items: this.fb.array([])
     });
+    this.editVendor = this.router.url.endsWith('/editVendorDetails')
+    console.log(this.editVendor)
+    if (this.editVendor) {
+      console.log("---")
+    }
+    else{
+      this.vendorDetailForm.controls['vendorNo'].disable()
+    }
     console.log(this.items.controls)
   }
   initiateForm(description, id): FormGroup {
@@ -50,7 +79,23 @@ export class VendorSignUpComponent implements OnInit {
       description: new FormControl(description)
     });
   }
+  setItemdOrderDetails(res: any) {
+    for (let i in res.data) {
+      this.vendorDetailForm.controls[i].setValue(res.data[i])
+    }
+    for (let j in res.itemIds){
+      let id =res.itemIds[j].itemId
+      let desc=this.recordData[id][0]
+      this.createFormControl(id,desc)
+      console.log(id)
+      
+    }
 
+  }
+  createFormControl(id,desc){
+    const control =<FormArray> this.items.controls['items']
+    control.push(this.initiateForm(desc,id))  
+  }
   addRecordId() {
     let id = this.items.get('itemId').value
     let description = this.recordData[id][0]
@@ -63,24 +108,36 @@ export class VendorSignUpComponent implements OnInit {
     }
   }
   vendorDetail(vendorDetail, items) {
-    this.toggle=true;
-    if(this.vendorDetailForm.valid){
-
-    let vendorId = Math.floor(Math.random()*900000) + 100000
-
-    this.saveData.vendorDetail(vendorDetail.value, items.value,vendorId)
-    .subscribe((res:any)=>{
-      console.log(res)
-      if(res.message=="data saved"){
-        alert("Vendor Number Created- "+vendorId);
-        window.location.reload();
-        
+    this.toggle = true;
+    if (this.vendorDetailForm.valid) {
+      if(this.editVendor){
+        this.saveData.vendorDetail(vendorDetail.value,items.value,this.vendorId)
+        .subscribe((res:any)=>{
+          if(res.message=="data saved")
+          {
+            alert("user updated");
+            window.location.reload();
+          }
+        })
       }
       else{
-        alert("error")
-     }
-   })
-  
-  }
+
+      let vendorId = Math.floor(Math.random() * 900000) + 100000
+
+      this.saveData.vendorDetail(vendorDetail.value, items.value, vendorId)
+        .subscribe((res: any) => {
+          
+          if (res.message == "data saved") {
+            alert("Vendor Number Created- " + vendorId);
+            window.location.reload();
+
+          }
+          else {
+            alert("error")
+          }
+        
+        })
+      }
+    }
   }
 }
