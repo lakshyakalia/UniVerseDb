@@ -21,11 +21,13 @@ def vendorDetailU2(vendorDetails,itemsId,recordID):
 		item=item+bytes(items['items'],"utf-8")+u2py.VM
 	vendorArray.insert(5,0,0,item[:-1])
 	vendorFile.write(recordID,vendorArray)
-@app.route('/api/itemData',methods=['GET'])
+
 def writePurchaseOrder(purchaseOrderDetails,itemOrderDetails,recordID):
     itemID = quantity = cost = bytes("","utf-8")
     orderFile = u2py.File("PO.ORDER.MST")
     orderData = u2py.DynArray()
+    orderData.insert(1,0,0,purchaseOrderDetails['orderDate'])
+    orderData.insert(2,0,0,"SUBMIT")
     orderData.insert(7,0,0,purchaseOrderDetails['companyName'])
     orderData.insert(8,0,0,purchaseOrderDetails['contactName'])
     orderData.insert(9,0,0,bytes(purchaseOrderDetails['street'],"utf-8") + 
@@ -34,27 +36,15 @@ def writePurchaseOrder(purchaseOrderDetails,itemOrderDetails,recordID):
                 u2py.VM+bytes(purchaseOrderDetails['zipCode'],"utf-8"))
     orderData.insert(10,0,0,purchaseOrderDetails['phoneNumber'])
 
-
     for item in itemOrderDetails:
         itemID = itemID + bytes(item['itemID'],"utf-8")+u2py.VM
         quantity = quantity + bytes(str(item['quantity']),"utf-8")+u2py.VM
         cost = cost + bytes(str(item['unitCost']),"utf-8")+u2py.VM
     
-    orderData.insert(11,0,0,itemID)
-    orderData.insert(12,0,0,quantity)
-    orderData.insert(13,0,0,cost)
-    print(recordID)
+    orderData.insert(11,0,0,itemID[:-1])
+    orderData.insert(12,0,0,quantity[:-1])
+    orderData.insert(13,0,0,cost[:-1])
     orderFile.write(recordID,orderData)
-
-@app.route('/api/order',methods=['POST'])
-def saveNewOrder(): 
-    data = request.get_json()
-    writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['specialRequests'],data['recordID'])
-    return { 
-        'status': 200,
-        'msg':'data saved successfully',
-        'data':data
-    }
 
 @app.route('/api/vendor',methods=['GET'])
 def getAllVendors():
@@ -72,38 +62,6 @@ def getAllVendors():
         'msg':'success',
         'vendorName': vendorList
     }
-
-@app.route('/api/vendor/items',methods=['GET'])
-def getVendorItems():
-    vendorItemIDList = []
-    vendorName = request.args.get('vendorName')
-    vendorItemData = u2py.run("LIST PO.VENDOR.MST WITH VEND.NAME = "+vendorName+ " ITEM.IDS TOXML",capture=True)
-
-    xmldata = vendorItemData.strip()
-    vendordictdata = xmltodict.parse(xmldata)['ROOT']['PO.VENDOR.MST']['ITEM.IDS_MV']
-    length = len(vendordictdata)
-    
-    for i in range(length):
-        vendorItemIDList.append(vendordictdata[i]['@ITEM.IDS'])
-    return{
-        'status':200,
-        'msg':'success',
-        'itemList': vendorItemIDList
-    }
-
-@app.route('/api/vendor/item',methods=['GET'])
-def getvendorItemDetails():
-    itemID = request.args.get('item')
-    itemDescriptionXML = u2py.run("LIST PO.ITEM.MST WITH @ID = "+itemID+" DESC TOXML",capture=True)
-
-    xmldata = itemDescriptionXML.strip()
-    itemDescription = xmltodict.parse(xmldata)['ROOT']['PO.ITEM.MST']['@DESC']
-    return {
-        'status':200,
-        'msg':'success',
-        'data':itemDescription
-    }
-
 
 @app.route('/api/U2data',methods=['POST'])
 def writeToU2():
@@ -130,10 +88,9 @@ def readFromU2():
 
 @app.route('/api/vendorDetail',methods=['POST'])
 def vendorDetails():
-	print("yes")
 	vendorData =request.get_json()
-	itemsId=vendorData['itemId']['items'];
-	vendorDetails=vendorData['vendorDetail'];
+	itemsId=vendorData['itemId']['items']
+	vendorDetails=vendorData['vendorDetail']
 	vendorDetailU2(vendorDetails,itemsId,vendorData['recordID'])
 	return{	'status':200,
 		'message':"data saved",
@@ -164,8 +121,85 @@ def allVendors():
 		itemData=[]
 		itemId=[]
 		vendorDetail=[]
-	return{'status':200,
+	return{
+		'status':200,
 		'data':dictItems	
-		}
+	}
+
+#-----------Purchase Order Routes-----------------
+@app.route('/api/order',methods=['POST'])
+def saveNewOrder(): 
+    data = request.get_json()
+    writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['specialRequests'],data['recordID'])
+    return { 
+        'status': 200,
+        'msg':'data saved successfully',
+        'data':data
+    }
+
+@app.route('/api/order',methods=['GET'])
+def getAllOrders():
+    itemList = []
+    itemOrderDataXML = u2py.run("LIST DATA PO.ORDER.MST ORDER.DATE COMP.NAME TOXML",capture=True)
+    xmldata = itemOrderDataXML.strip()
+    itemOrderDict = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
+    for i in itemOrderDict:
+        tempDict = {}
+        tempDict['purchaseOrderNo'] = i['@_ID']
+        tempDict['orderDate'] = i['@ORDER.DATE']
+        tempDict['companyName'] = i['@COMP.NAME']
+        itemList.append(tempDict)
+
+    return {
+        'status': 200,
+        'msg':'success',
+        'list': itemList
+    }
+
+@app.route('/api/order/<orderID>',methods=['GET'])
+def particularOrderDetails(orderID):
+    orderDetailsXML = u2py.run("LIST DATA PO.ORDER.MST "+orderID+" ORDER.DATE COMP.NAME COMP.CONTACT.NAME COMP.ADDRESS COMP.PHONE ORDER.ITEM.IDS ORDER.ITEM.QTY ORDER.ITEM.COST TOXML",capture=True)
+    xmldata = orderDetailsXML.strip()
+    orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
+    orderDetailsDict = itemDict = {}
+    
+    itemList = []
+    orderDetailsDict['orderDate'] = orderDetail['@ORDER.DATE']
+    orderDetailsDict['companyName'] = orderDetail['@COMP.NAME']
+    orderDetailsDict['phoneNumber'] = orderDetail['@COMP.PHONE']
+    orderDetailsDict['contactName'] = orderDetail['@COMP.CONTACT.NAME']
+
+    orderDetailsDict['street'] = orderDetail['COMP.ADDRESS_MV'][0]['@COMP.ADDRESS']
+    orderDetailsDict['city'] = orderDetail['COMP.ADDRESS_MV'][1]['@COMP.ADDRESS']
+    orderDetailsDict['state'] = orderDetail['COMP.ADDRESS_MV'][2]['@COMP.ADDRESS']
+    orderDetailsDict['zipCode'] = orderDetail['COMP.ADDRESS_MV'][3]['@COMP.ADDRESS']
+    
+    for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
+        itemDict = {}
+        itemDict['itemID'] = orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS']
+        itemDict['cost'] = orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST']
+        itemDict['quantity'] = orderDetail['ORDER.ITEM.QTY_MV'][i]['@ORDER.ITEM.QTY']
+        itemList.append(itemDict)
+    return {
+        'status': 200,
+        'data': orderDetailsDict,
+        'itemList': itemList
+    }
+
+@app.route('/api/item',methods=['GET'])
+def getvendorItemDetails():
+    itemID = request.args.get('item')
+    itemDescriptionXML = u2py.run("LIST PO.ITEM.MST WITH @ID = "+itemID+" DESC TOXML",capture=True)
+
+    xmldata = itemDescriptionXML.strip()
+    itemDescription = xmltodict.parse(xmldata)['ROOT']['PO.ITEM.MST']['@DESC']
+    return {
+        'status':200,
+        'msg':'success',
+        'data':itemDescription
+    }
+#-----------Purchase Order Routes-----------------
+
+
 if __name__ == '__main__':
 	app.run()
