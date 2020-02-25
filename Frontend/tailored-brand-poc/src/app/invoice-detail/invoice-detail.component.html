@@ -15,7 +15,7 @@
           </p>
           <p>
             <label class="items-left">Invoice Date</label>
-            <input type="text"  id="invoiceDate" formControlName="invoiceDate" 
+            <input type="date"  id="invoiceDate" formControlName="invoiceDate" style="width: 205px;"
             />
           </p>
 
@@ -23,7 +23,7 @@
         <div class="form-top-right-items">
           <p>
             <label class="items-right">Order No.</label>
-            <input type="text" id="orderNo" formControlName="orderNo" 
+            <input type="text" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" 
             />
           </p>
           <p>
@@ -46,7 +46,6 @@
             <th>Quantity Ordered</th>
             <th>Quantity Pending</th>
             <th>Quantity Received</th>
-            <th>Remove</th>
           </thead>
           <tbody>
             <tr>
@@ -56,7 +55,6 @@
               <td>50</td>
               <td>30</td>
               <td>0</td>
-              <td class="remove"><i class="fas fa-window-close"></i></td>
             </tr>
           </tbody>
         </table>

@@ -1,3 +1,9 @@
+button{
+    outline: none !important;
+}
+i{
+    cursor: pointer;
+}
 .purchase-order-heading{
     background-color: #202020;
     height: 90px;
@@ -80,9 +86,11 @@ hr{
 .vendor-select{
     margin-top: 20px;
 }
-.vendor-name{
+.order-no{
     border: none;
     border-bottom: 1px solid rgb(14, 14, 14)  ;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 .vendor{
     margin-left: 40px;
