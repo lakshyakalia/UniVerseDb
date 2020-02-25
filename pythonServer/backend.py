@@ -9,6 +9,14 @@ from flask_cors import CORS,cross_origin
 app = Flask(__name__)
 CORS(app)
 
+def checkExistingRecord(filename,recordID):
+    fileObject = u2py.File(filename)
+    try:
+        recordObject = fileObject.read(recordID)
+        return True
+    except u2py.U2Error as e:
+        return False
+
 def vendorDetailU2(vendorDetails,itemsId,recordID):
 	vendorArray=u2py.DynArray()
 	item=bytes("","utf-8")
@@ -22,12 +30,12 @@ def vendorDetailU2(vendorDetails,itemsId,recordID):
 	vendorArray.insert(5,0,0,item[:-1])
 	vendorFile.write(recordID,vendorArray)
 
-def writePurchaseOrder(purchaseOrderDetails,itemOrderDetails,recordID):
+def writePurchaseOrder(purchaseOrderDetails,itemOrderDetails,recordID,submitStatus):
     itemID = quantity = cost = bytes("","utf-8")
     orderFile = u2py.File("PO.ORDER.MST")
     orderData = u2py.DynArray()
     orderData.insert(1,0,0,purchaseOrderDetails['orderDate'])
-    orderData.insert(2,0,0,"SUBMIT")
+    orderData.insert(2,0,0,submitStatus)
     orderData.insert(7,0,0,purchaseOrderDetails['companyName'])
     orderData.insert(8,0,0,purchaseOrderDetails['contactName'])
     orderData.insert(9,0,0,bytes(purchaseOrderDetails['street'],"utf-8") + 
@@ -105,7 +113,7 @@ def allVendors():
 	for i in range(len(data)):
 		data = xmltodict.parse(my_xml)['ROOT']['PO.VENDOR.MST'][i]
 		for j in data['ITEM.IDS_MV']:
-			itemId.append(j['@ITEM.IDS'])	
+			itemId.append(j['@ITEM.IDS'])		
 			ids=data['@_ID']
 		vendorDetail.append(data['@VEND.COMPANY'])
 		vendorDetail.append(data['@VEND.NAME'])
@@ -125,7 +133,7 @@ def allVendors():
 @app.route('/api/order',methods=['POST'])
 def saveNewOrder(): 
     data = request.get_json()
-    writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['specialRequests'],data['recordID'])
+    writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['specialRequests'],data['recordID'],data['submitStatus'])
     return { 
         'status': 200,
         'msg':'data saved successfully',
@@ -153,33 +161,40 @@ def getAllOrders():
 
 @app.route('/api/order/<orderID>',methods=['GET'])
 def particularOrderDetails(orderID):
-    orderDetailsXML = u2py.run("LIST DATA PO.ORDER.MST "+orderID+" ORDER.DATE COMP.NAME COMP.CONTACT.NAME COMP.ADDRESS COMP.PHONE ORDER.ITEM.IDS ORDER.ITEM.QTY ORDER.ITEM.COST TOXML",capture=True)
-    xmldata = orderDetailsXML.strip()
-    orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
-    orderDetailsDict = itemDict = {}
-    
-    itemList = []
-    orderDetailsDict['orderDate'] = orderDetail['@ORDER.DATE']
-    orderDetailsDict['companyName'] = orderDetail['@COMP.NAME']
-    orderDetailsDict['phoneNumber'] = orderDetail['@COMP.PHONE']
-    orderDetailsDict['contactName'] = orderDetail['@COMP.CONTACT.NAME']
+    status = checkExistingRecord('PO.ORDER.MST',orderID)
+    if(status):
+        orderDetailsXML = u2py.run("LIST DATA PO.ORDER.MST "+orderID+" ORDER.DATE COMP.NAME COMP.CONTACT.NAME COMP.ADDRESS COMP.PHONE ORDER.ITEM.IDS ORDER.ITEM.QTY ORDER.ITEM.COST TOXML",capture=True)
+        xmldata = orderDetailsXML.strip()
+        orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
+        orderDetailsDict = itemDict = {}
+        
+        itemList = []
+        orderDetailsDict['orderDate'] = orderDetail['@ORDER.DATE']
+        orderDetailsDict['companyName'] = orderDetail['@COMP.NAME']
+        orderDetailsDict['phoneNumber'] = orderDetail['@COMP.PHONE']
+        orderDetailsDict['contactName'] = orderDetail['@COMP.CONTACT.NAME']
 
-    orderDetailsDict['street'] = orderDetail['COMP.ADDRESS_MV'][0]['@COMP.ADDRESS']
-    orderDetailsDict['city'] = orderDetail['COMP.ADDRESS_MV'][1]['@COMP.ADDRESS']
-    orderDetailsDict['state'] = orderDetail['COMP.ADDRESS_MV'][2]['@COMP.ADDRESS']
-    orderDetailsDict['zipCode'] = orderDetail['COMP.ADDRESS_MV'][3]['@COMP.ADDRESS']
-    
-    for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
-        itemDict = {}
-        itemDict['itemID'] = orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS']
-        itemDict['cost'] = orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST']
-        itemDict['quantity'] = orderDetail['ORDER.ITEM.QTY_MV'][i]['@ORDER.ITEM.QTY']
-        itemList.append(itemDict)
-    return {
-        'status': 200,
-        'data': orderDetailsDict,
-        'itemList': itemList
-    }
+        orderDetailsDict['street'] = orderDetail['COMP.ADDRESS_MV'][0]['@COMP.ADDRESS']
+        orderDetailsDict['city'] = orderDetail['COMP.ADDRESS_MV'][1]['@COMP.ADDRESS']
+        orderDetailsDict['state'] = orderDetail['COMP.ADDRESS_MV'][2]['@COMP.ADDRESS']
+        orderDetailsDict['zipCode'] = orderDetail['COMP.ADDRESS_MV'][3]['@COMP.ADDRESS']
+        
+        for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
+            itemDict = {}
+            itemDict['itemID'] = orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS']
+            itemDict['cost'] = orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST']
+            itemDict['quantity'] = orderDetail['ORDER.ITEM.QTY_MV'][i]['@ORDER.ITEM.QTY']
+            itemList.append(itemDict)
+        return {
+            'status': 200,
+            'data': orderDetailsDict,
+            'itemList': itemList
+        }
+    else:
+        return{
+            'status':404,
+            'msg': 'Order no not found'
+        }
 
 @app.route('/api/item',methods=['GET'])
 def getvendorItemDetails():
