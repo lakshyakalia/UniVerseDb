@@ -195,3 +195,13 @@ td button{
         margin-right: 0;
     }
 }
+
+p span{
+    color: red;
+    float: right;
+    margin-right: 5px;
+    font-size: 12px;
+    font-weight: 300;
+    margin-top: 5px;
+    vertical-align: middle;
+}

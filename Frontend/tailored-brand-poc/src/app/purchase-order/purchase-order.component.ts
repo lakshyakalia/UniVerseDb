@@ -35,13 +35,13 @@ export class PurchaseOrderComponent implements OnInit {
     newOrder :  new FormControl(''),
     orderDate : new FormControl(''),
     vendorName : new FormControl(''),
-    companyName : new FormControl(''),
-    street : new FormControl(''),
-    state : new FormControl(''),
-    phoneNumber : new FormControl(''),
-    contactName : new FormControl(''),
-    city : new FormControl(''),
-    zipCode : new FormControl('')
+    companyName : new FormControl('',Validators.required),
+    street : new FormControl('',Validators.required),
+    state : new FormControl('',Validators.required),
+    phoneNumber : new FormControl('',Validators.required),
+    contactName : new FormControl('',Validators.required),
+    city : new FormControl('',Validators.required),
+    zipCode : new FormControl('',Validators.required)
   })
 
   ngOnInit() {

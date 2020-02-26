@@ -33,10 +33,12 @@
           <p>
             <label class="items-left">Company</label>
             <input type="text" name="companyName" formControlName="companyName">
+            <span *ngIf="purchaseOrderForm.controls['companyName'].touched && purchaseOrderForm.controls['companyName'].invalid">Field is required</span>
           </p>
           <p>
             <label class="items-left">Street</label>
             <input type="text" name="street" formControlName="street">
+            <span *ngIf="purchaseOrderForm.controls['street'].touched && purchaseOrderForm.controls['street'].invalid">Field is required</span>
           </p>
           <p>
             <label class="items-left">State</label>
@@ -46,24 +48,29 @@
               <option>Texas</option>
               <option>Hawaii</option>
             </select>
+            <span *ngIf="purchaseOrderForm.controls['state'].touched && purchaseOrderForm.controls['state'].invalid">Field is required</span>
           </p>
           <p>
             <label class="items-left">Phone</label>
             <input type="text" name="phoneNumber" formControlName="phoneNumber">
+            <span *ngIf="purchaseOrderForm.controls['phoneNumber'].touched && purchaseOrderForm.controls['phoneNumber'].invalid">Field is required</span>
           </p>
         </div>
         <div class="form-top-right-items">
           <p>
             <label class="items-right">Contact Name</label>
             <input type="text" name="contactName" formControlName="contactName">
+            <span *ngIf="purchaseOrderForm.controls['contactName'].touched && purchaseOrderForm.controls['contactName'].invalid">*</span>
           </p>
           <p>
             <label class="items-right">City</label>
             <input type="text" name="city" formControlName="city">
+            <span *ngIf="purchaseOrderForm.controls['city'].touched && purchaseOrderForm.controls['city'].invalid">Field is required</span>
           </p>
           <p>
             <label class="items-right">Zip</label>
             <input type="text" name="zipCode" formControlName="zipCode">
+            <span *ngIf="purchaseOrderForm.controls['zipCode'].touched && purchaseOrderForm.controls['zipCode'].invalid">Field is required</span>
           </p>
         </div>
 
