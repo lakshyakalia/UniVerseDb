@@ -112,21 +112,10 @@ export class VendorSignUpComponent implements OnInit {
   vendorDetail(vendorDetail, items) {
     this.toggle = true;
     if (this.vendorDetailForm.valid) {
-      if(this.editVendor){
-        this.saveData.vendorDetail(vendorDetail.value,items.value,this.vendorId)
-        .subscribe((res:any)=>{
-          if(res.message=="data saved")
-          {
-            alert("user updated");
-            window.location.reload();
-          }
-        })
-      }
-      else{
-
-      let vendorId = Math.floor(Math.random() * 900000) + 100000
-
-      this.saveData.vendorUpdate(vendorDetail.value, items.value, vendorId)
+      if(!this.editVendor){
+        let vendorId = Math.floor(Math.random() * 900000) + 100000
+        console.log(vendorId)
+      this.saveData.vendorDetail(vendorDetail.value, items.value, vendorId)
         .subscribe((res: any) => {
           
           if (res.message == "data saved") {
@@ -138,6 +127,16 @@ export class VendorSignUpComponent implements OnInit {
             alert("error")
           }
         
+        })
+      }
+      else{
+        this.saveData.vendorUpdate(vendorDetail.value,items.value,this.vendorId)
+        .subscribe((res:any)=>{
+          if(res.message=="data saved")
+          {
+            alert("user updated");
+            window.location.reload();
+          }
         })
       }
     }
