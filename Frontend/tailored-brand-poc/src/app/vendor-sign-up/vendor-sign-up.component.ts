@@ -19,6 +19,7 @@ export class VendorSignUpComponent implements OnInit {
   toggle: boolean = false;
   editVendor: boolean;
   vendorId:number;
+  heading:string='Register Vendor';
   vendorDetailForm = new FormGroup({
     vendorNo: new FormControl(),
     Company: new FormControl('', Validators.required),
@@ -63,10 +64,11 @@ export class VendorSignUpComponent implements OnInit {
       itemId: new FormControl('', [Validators.required]),
       items: this.fb.array([])
     });
-    this.editVendor = this.router.url.endsWith('/editVendorDetails')
+    this.editVendor = this.router.url.endsWith('/vendor/edit')
     console.log(this.editVendor)
     if (this.editVendor) {
       console.log("---")
+      this.heading='Edit Vendor';
     }
     else{
       this.vendorDetailForm.controls['vendorNo'].disable()
