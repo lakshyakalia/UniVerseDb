@@ -33,8 +33,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   purchaseOrderForm = new FormGroup({
     newOrder :  new FormControl(''),
-    orderDate : new FormControl(''),
-    vendorName : new FormControl(''),
+    orderDate : new FormControl('',Validators.required),
+    vendorName : new FormControl('',Validators.required),
     companyName : new FormControl('',Validators.required),
     street : new FormControl('',Validators.required),
     state : new FormControl('',Validators.required),
@@ -89,8 +89,8 @@ export class PurchaseOrderComponent implements OnInit {
     return this.fb.group({
       itemID: [itemID],
       itemDescription: [itemDescription],
-      quantity: new FormControl(quantity),
-      unitCost: new FormControl(unitCost),
+      quantity: new FormControl(quantity,Validators.required),
+      unitCost: new FormControl(unitCost,Validators.required),
       totalPrice : [0]
    })
   }
@@ -139,7 +139,6 @@ export class PurchaseOrderComponent implements OnInit {
     let vendorItem = this.itemOrderForm.get('vendorItem').value
     let controlArray = this.itemOrderForm.get('specialRequests').value
     let status = controlArray.find(element => element.itemID === vendorItem)
-
     if(vendorItem != 'None' && status == undefined){
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
       .subscribe((res:any)=>{
@@ -175,6 +174,10 @@ export class PurchaseOrderComponent implements OnInit {
     else{
       recordId = Math.floor(Math.random()*900000) + 100000
     }
+    if(!this.checkValidation()){
+      return;
+    }
+    
     this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value,itemOrderForm.value,recordId,submitStatus,this.editForm)
     .subscribe((res)=>{
       if(this.editForm){
@@ -185,5 +188,34 @@ export class PurchaseOrderComponent implements OnInit {
       }
       window.location.reload()
     })
+  }
+
+  checkForExponential(event){
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 ? false : true
+  }
+
+  checkValidation(){
+    let status = true
+    if(this.purchaseOrderForm.invalid){
+      this.purchaseOrderForm.get('companyName').markAsTouched()
+      this.purchaseOrderForm.get('city').markAsTouched()
+      this.purchaseOrderForm.get('zipCode').markAsTouched()
+      this.purchaseOrderForm.get('phoneNumber').markAsTouched()
+      this.purchaseOrderForm.get('contactName').markAsTouched()
+      this.purchaseOrderForm.get('street').markAsTouched()
+      this.purchaseOrderForm.get('state').markAsTouched()
+      this.purchaseOrderForm.get('vendorName').markAsTouched()
+      this.purchaseOrderForm.get('orderDate').markAsTouched()
+      status = false
+    }
+    if(this.itemOrderForm.invalid){
+      (<FormArray>this.itemOrderForm.get('specialRequests')).controls.forEach((group: FormGroup) =>{
+        (<any>Object).values(group.controls).forEach((control:FormControl)=>{
+          control.markAsTouched()
+        })
+      })
+      status = false
+    }
+    return status
   }
 }

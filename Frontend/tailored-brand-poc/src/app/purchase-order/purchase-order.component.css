@@ -196,7 +196,7 @@ td button{
     }
 }
 
-p span{
+p span, .error-field{
     color: red;
     float: right;
     margin-right: 5px;
@@ -204,4 +204,15 @@ p span{
     font-weight: 300;
     margin-top: 5px;
     vertical-align: middle;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance:textfield;
 }
