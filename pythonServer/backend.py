@@ -77,7 +77,7 @@ def vendorDetails():
 	vendorDetails=vendorData['vendorDetail']
 	vendorDetailU2(vendorDetails,itemsId,vendorData['recordID'])
 	return{	'status':200,
-		'message':"data saved",
+		'message':"user Updated",
 		'data':vendorData
 		}
 @app.route('/api/vendor',methods=['PUT'])

@@ -19,6 +19,7 @@ export class VendorSignUpComponent implements OnInit {
   toggle: boolean = false;
   editVendor: boolean;
   vendorId:number;
+  heading:string='Register Vendor';
   vendorDetailForm = new FormGroup({
     vendorNo: new FormControl(),
     Company: new FormControl('', Validators.required),
@@ -63,10 +64,11 @@ export class VendorSignUpComponent implements OnInit {
       itemId: new FormControl('', [Validators.required]),
       items: this.fb.array([])
     });
-    this.editVendor = this.router.url.endsWith('/editVendorDetails')
+    this.editVendor = this.router.url.endsWith('/vendor/edit')
     console.log(this.editVendor)
     if (this.editVendor) {
       console.log("---")
+      this.heading='Edit Vendor';
     }
     else{
       this.vendorDetailForm.controls['vendorNo'].disable()
@@ -110,21 +112,10 @@ export class VendorSignUpComponent implements OnInit {
   vendorDetail(vendorDetail, items) {
     this.toggle = true;
     if (this.vendorDetailForm.valid) {
-      if(this.editVendor){
-        this.saveData.vendorDetail(vendorDetail.value,items.value,this.vendorId)
-        .subscribe((res:any)=>{
-          if(res.message=="data saved")
-          {
-            alert("user updated");
-            window.location.reload();
-          }
-        })
-      }
-      else{
-
-      let vendorId = Math.floor(Math.random() * 900000) + 100000
-
-      this.saveData.vendorUpdate(vendorDetail.value, items.value, vendorId)
+      if(!this.editVendor){
+        let vendorId = Math.floor(Math.random() * 900000) + 100000
+        console.log(vendorId)
+      this.saveData.vendorDetail(vendorDetail.value, items.value, vendorId)
         .subscribe((res: any) => {
           
           if (res.message == "data saved") {
@@ -136,6 +127,16 @@ export class VendorSignUpComponent implements OnInit {
             alert("error")
           }
         
+        })
+      }
+      else{
+        this.saveData.vendorUpdate(vendorDetail.value,items.value,this.vendorId)
+        .subscribe((res:any)=>{
+          if(res.message=="data saved")
+          {
+            alert("user updated");
+            window.location.reload();
+          }
         })
       }
     }
