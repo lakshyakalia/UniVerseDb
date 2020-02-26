@@ -10,7 +10,13 @@ export class SaveDataService {
   readItem(){
     return this.http.get('http://localhost:5000/api/item')
   }
-  
+  vendorUpdate(vendorDetail,itemId,vendorId){
+    return this.http.put('http://localhost:5000/api/vendor',{
+      vendorDetail:vendorDetail,
+      itemId:itemId,
+      recordID: vendorId
+    })
+  }
   vendorDetail(vendorDetail,itemId,vendorId){
     return this.http.post('http://localhost:5000/api/vendor',{
       vendorDetail:vendorDetail,

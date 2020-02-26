@@ -53,25 +53,6 @@ def writePurchaseOrder(purchaseOrderDetails,itemOrderDetails,recordID,submitStat
     orderData.insert(12,0,0,quantity[:-1])
     orderData.insert(13,0,0,cost[:-1])
     orderFile.write(recordID,orderData)
-
-@app.route('/api/vendor',methods=['GET'])
-def getAllVendors():
-    vendorList = []
-    data = u2py.run("LIST DATA PO.VENDOR.MST VEND.NAME TOXML",capture=True)
-    
-    xmldata = data.strip()
-    dictdata = xmltodict.parse(xmldata)['ROOT']['PO.VENDOR.MST']
-    length = len(dictdata)
-    for i in range(length):
-	    vendorList.append(dictdata[i]['@VEND.NAME'])
-
-    return{
-        'status':200,
-        'msg':'success',
-        'vendorName': vendorList
-    }
-
-
 @app.route('/api/item',methods=['GET'])
 def readFromU2():
 	cmd=u2py.run("LIST DATA PO.ITEM.MST DESC TOXML",capture=True)
@@ -91,6 +72,16 @@ def readFromU2():
 
 @app.route('/api/vendor',methods=['POST'])
 def vendorDetails():
+	vendorData =request.get_json()
+	itemsId=vendorData['itemId']['items']
+	vendorDetails=vendorData['vendorDetail']
+	vendorDetailU2(vendorDetails,itemsId,vendorData['recordID'])
+	return{	'status':200,
+		'message':"data saved",
+		'data':vendorData
+		}
+@app.route('/api/vendor',methods=['PUT'])
+def updateVendor():
 	vendorData =request.get_json()
 	itemsId=vendorData['itemId']['items']
 	vendorDetails=vendorData['vendorDetail']

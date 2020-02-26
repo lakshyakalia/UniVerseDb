@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SaveDataService } from '../service/save-data.service';
+import { SaveDataService } from '../service/vendor.service';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 import { generate } from 'rxjs';
 import { Router } from '@angular/router';
@@ -124,7 +124,7 @@ export class VendorSignUpComponent implements OnInit {
 
       let vendorId = Math.floor(Math.random() * 900000) + 100000
 
-      this.saveData.vendorDetail(vendorDetail.value, items.value, vendorId)
+      this.saveData.vendorUpdate(vendorDetail.value, items.value, vendorId)
         .subscribe((res: any) => {
           
           if (res.message == "data saved") {
