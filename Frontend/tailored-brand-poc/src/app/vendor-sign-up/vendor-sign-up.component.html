@@ -1,6 +1,6 @@
 <div class="vendor-heading">
   <div class="vendor-head container">
-    <span class="heading">Register Vendor</span>
+    <span class="heading">{{heading}}</span>
   </div>
 </div>
 <div class="sign-up-div container">
@@ -74,12 +74,12 @@
       </div>
     </form>
     <div class="form-bottom">
-      <form [formGroup]="items">
+      <form novalidate [formGroup]="items">
         <hr>
         <label>Items :</label>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th>Sno</th>
+            <th>SNo.</th>
             <th>Items</th>
             <th>Description</th>
             <th>Remove</th>

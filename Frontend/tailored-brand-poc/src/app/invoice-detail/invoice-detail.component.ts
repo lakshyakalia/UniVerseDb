@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder,  Validators } from '@angular/forms';
 import { InvoiceService } from '../service/invoice.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-invoice-detail',
@@ -9,7 +11,10 @@ import { InvoiceService } from '../service/invoice.service';
 })
 export class InvoiceDetailComponent implements OnInit {
   invoiceForm : FormGroup;
-  constructor(private invoiceService : InvoiceService) { }
+  editInvoice : boolean;
+  heading:string='New Invoice Update';
+
+  constructor(private invoiceService : InvoiceService, private router: Router) { }
 
   ngOnInit() {
     this.invoiceForm = new FormGroup({
@@ -19,6 +24,16 @@ export class InvoiceDetailComponent implements OnInit {
        invoiceAmount : new FormControl()
 
     });
+    this.editInvoice = this.router.url.endsWith('/invoice/edit')
+    console.log(this.editInvoice)
+    if (this.editInvoice) {
+      console.log("---")
+      this.heading='Edit Invoice';
+    }
+    // else{
+    //   this.vendorDetailForm.controls['vendorNo'].disable()
+    // }
+    // console.log(this.items.controls)
   }
   sub(){
     console.log(this.invoiceForm.value.invoiceNo);

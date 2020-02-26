@@ -11,14 +11,15 @@ import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
 
 const routes: Routes = [
   { path: '' , component: HomeComponent},
-  { path: 'vendorRegistration' , component: VendorSignUpComponent},
-  { path: 'newInvoice' , component: InvoiceDetailComponent },
+  { path: 'vendor/new' , component: VendorSignUpComponent},
+  { path: 'invoice/new' , component: InvoiceDetailComponent },
   { path: 'order/new' , component: PurchaseOrderComponent },
   { path: 'order' , component: AllPurchaseOrdersComponent},
-  { path: 'allVendors' , component : AllVendorsComponent},
-  { path: 'allInvoices' , component : AllInvoicesComponent},
+  { path: 'vendors' , component : AllVendorsComponent},
+  { path: 'invoices' , component : AllInvoicesComponent},
   { path: 'order/edit', component: PurchaseOrderComponent},
-  { path: 'editVendorDetails', component: VendorSignUpComponent}
+  { path: 'vendor/edit', component: VendorSignUpComponent},
+  { path: 'invoice/edit', component: InvoiceDetailComponent }
 ];
 
 @NgModule({

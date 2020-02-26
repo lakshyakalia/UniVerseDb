@@ -130,7 +130,9 @@ img{
 }
 .ship{
     display: block;
-    margin-top: 40px;;
+    margin-top: 40px;
+    font-weight: 400;
+    margin-left: 40px;
 }
 .vendor-select-control{
     width: 70%;
