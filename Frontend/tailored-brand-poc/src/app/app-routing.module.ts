@@ -13,11 +13,11 @@ const routes: Routes = [
   { path: '' , component: HomeComponent},
   { path: 'vendorRegistration' , component: VendorSignUpComponent},
   { path: 'newInvoice' , component: InvoiceDetailComponent },
-  { path: 'newPurchaseOrder' , component: PurchaseOrderComponent },
-  { path: 'allPurchaseOrders' , component: AllPurchaseOrdersComponent},
+  { path: 'order/new' , component: PurchaseOrderComponent },
+  { path: 'order' , component: AllPurchaseOrdersComponent},
   { path: 'allVendors' , component : AllVendorsComponent},
   { path: 'allInvoices' , component : AllInvoicesComponent},
-  { path: 'editPurchaseOrder', component: PurchaseOrderComponent},
+  { path: 'order/edit', component: PurchaseOrderComponent},
   { path: 'editVendorDetails', component: VendorSignUpComponent}
 ];
 

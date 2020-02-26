@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms'
+import { FormGroup, FormControl, FormBuilder, FormArray, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
 
 import { PurchaseOrderService } from '../service/purchase-order.service'
@@ -22,6 +22,8 @@ export class PurchaseOrderComponent implements OnInit {
   vendorObject = []
 
   editForm : boolean
+
+  purchaseOrderTitle : string
 
   constructor(
     private purchaseOrderService: PurchaseOrderService,
@@ -57,9 +59,13 @@ export class PurchaseOrderComponent implements OnInit {
       specialRequests: this.fb.array([])
     })
 
-    this.editForm = this.router.url.endsWith('/editPurchaseOrder')
+    this.editForm = this.router.url.endsWith('/edit')
     if(!this.editForm){
       this.purchaseOrderForm.controls['newOrder'].disable()
+      this.purchaseOrderTitle = 'Create Purchase Order'
+    }
+    else{
+      this.purchaseOrderTitle = 'Update Purchase Order'
     }
   }
 
@@ -105,8 +111,16 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   setItemOrderDetails(res:any){
+    let submitBool = false
     for(let i in res.data){
       this.purchaseOrderForm.controls[i].setValue(res.data[i])
+      if(res.submitStatus === 'submit'){
+        this.purchaseOrderForm.controls[i].disable()
+      } 
+    }
+
+    if(res.submitStatus === 'submit'){
+      submitBool = true
     }
 
     for(let j in res.itemList){
@@ -115,9 +129,8 @@ export class PurchaseOrderComponent implements OnInit {
       let vendorItem = res.itemList[j].itemID
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
       .subscribe((res:any)=>{
-        
         this.createNewFormControl(vendorItem,res.data,quantity,cost)
-        this.calculateTotalPrice(j)
+        this.calculateTotalPrice(j,submitBool)
       })
     }
   }
@@ -140,13 +153,17 @@ export class PurchaseOrderComponent implements OnInit {
     control.removeAt(index)
   }
 
-  calculateTotalPrice(index){
+  calculateTotalPrice(index,submitBool){
     let controlArray = <FormArray>this.itemOrderForm.get('specialRequests')
     let quantity = controlArray.value[index].quantity
     let unitCost = controlArray.value[index].unitCost
     if(quantity != "" || unitCost != ""){
       let totalPrice = quantity * unitCost
       controlArray.controls[index].get('totalPrice').setValue(totalPrice)
+      if(submitBool){
+        controlArray.controls[index].get('quantity').disable()
+        controlArray.controls[index].get('unitCost').disable()
+      }
     }
   }
 
@@ -158,7 +175,7 @@ export class PurchaseOrderComponent implements OnInit {
     else{
       recordId = Math.floor(Math.random()*900000) + 100000
     }
-    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value,itemOrderForm.value,recordId,submitStatus)
+    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value,itemOrderForm.value,recordId,submitStatus,this.editForm)
     .subscribe((res)=>{
       if(this.editForm){
         alert('Existing order updated')
