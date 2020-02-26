@@ -4,29 +4,28 @@
   </div>
 </div>
 <div class="sign-up-div container">
-    <div class="form">
-      <div class="form-bottom">
-        <label>Purchase Orders List :</label>
-        <table class="table vendor-item-table">
-          <thead class="thead-dark">
-            <th>SNo.</th>
-            <th>Purchase Order No.</th>
-            <th>Order Date</th>
-            <th>Vendor Name</th>
-          </thead>
-          <tbody>
-            <tr *ngFor= "let item of itemOrderList; let i = index">
-              <td>{{ i + 1 }}</td>
-              <td>{{ item['purchaseOrderNo'] }}</td>
-              <td>{{ item['orderDate'] }}</td>
-              <td>{{ item['companyName'] }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="button-div">
-          <button routerLink="/"><i class="fas fa-arrow-circle-left"></i> Back</button>
-        </div>
+  <div class="form">
+    <div class="form-bottom">
+      <label>Purchase Orders List :</label>
+      <table class="table vendor-item-table">
+        <thead class="thead-dark">
+          <th>SNo.</th>
+          <th>Purchase Order No.</th>
+          <th>Order Date</th>
+          <th>Vendor Name</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of itemOrderList; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item['purchaseOrderNo'] }}</td>
+            <td>{{ item['orderDate'] }}</td>
+            <td>{{ item['companyName'] }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="button-div">
+        <button routerLink="/"><i class="fas fa-arrow-circle-left"></i> Back</button>
       </div>
     </div>
   </div>
-  
+</div>

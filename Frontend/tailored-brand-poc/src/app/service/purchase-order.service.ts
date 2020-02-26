@@ -9,7 +9,7 @@ export class PurchaseOrderService {
   constructor(private http: HttpClient) { }
 
   getAllVendorName(){
-    return this.http.get('http://localhost:5000/api/vendorDetail')
+    return this.http.get('http://localhost:5000/api/vendor')
   }
 
   getParticularItemDetails(itemID){
@@ -20,11 +20,12 @@ export class PurchaseOrderService {
     })
   }
 
-  submitNewOrder(purchaseOrderValues, itemOrderValues,recordId){
+  submitNewOrder(purchaseOrderValues, itemOrderValues,recordId,submitStatus){
     return this.http.post('http://localhost:5000/api/order',{
       purchaseOrderDetails: purchaseOrderValues,
       itemOrderDetails: itemOrderValues,
-      recordID: recordId
+      recordID: recordId,
+      submitStatus: submitStatus
     })
   }
 
