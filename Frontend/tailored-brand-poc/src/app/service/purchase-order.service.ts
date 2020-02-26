@@ -13,11 +13,7 @@ export class PurchaseOrderService {
   }
 
   getParticularItemDetails(itemID){
-    return this.http.get('http://localhost:5000/api/item',{
-      params: {
-        item : itemID
-      }
-    })
+    return this.http.get(`http://localhost:5000/api/order/item/${itemID}`)
   }
 
   submitNewOrder(purchaseOrderValues, itemOrderValues,recordId,submitStatus){
