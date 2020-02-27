@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms'
+import { FormGroup, FormControl, FormBuilder, FormArray, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
 
 import { PurchaseOrderService } from '../service/purchase-order.service'
@@ -23,6 +23,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   editForm : boolean
 
+  purchaseOrderTitle : string
+
   constructor(
     private purchaseOrderService: PurchaseOrderService,
     private fb: FormBuilder,
@@ -31,15 +33,15 @@ export class PurchaseOrderComponent implements OnInit {
 
   purchaseOrderForm = new FormGroup({
     newOrder :  new FormControl(''),
-    orderDate : new FormControl(''),
-    vendorName : new FormControl(''),
-    companyName : new FormControl(''),
-    street : new FormControl(''),
-    state : new FormControl(''),
-    phoneNumber : new FormControl(''),
-    contactName : new FormControl(''),
-    city : new FormControl(''),
-    zipCode : new FormControl('')
+    orderDate : new FormControl('',Validators.required),
+    vendorName : new FormControl('',Validators.required),
+    companyName : new FormControl('',Validators.required),
+    street : new FormControl('',Validators.required),
+    state : new FormControl('',Validators.required),
+    phoneNumber : new FormControl('',Validators.required),
+    contactName : new FormControl('',Validators.required),
+    city : new FormControl('',Validators.required),
+    zipCode : new FormControl('',Validators.required)
   })
 
   ngOnInit() {
@@ -57,9 +59,13 @@ export class PurchaseOrderComponent implements OnInit {
       specialRequests: this.fb.array([])
     })
 
-    this.editForm = this.router.url.endsWith('/editPurchaseOrder')
+    this.editForm = this.router.url.endsWith('/edit')
     if(!this.editForm){
       this.purchaseOrderForm.controls['newOrder'].disable()
+      this.purchaseOrderTitle = 'Create Purchase Order'
+    }
+    else{
+      this.purchaseOrderTitle = 'Update Purchase Order'
     }
   }
 
@@ -83,8 +89,8 @@ export class PurchaseOrderComponent implements OnInit {
     return this.fb.group({
       itemID: [itemID],
       itemDescription: [itemDescription],
-      quantity: new FormControl(quantity),
-      unitCost: new FormControl(unitCost),
+      quantity: new FormControl(quantity,Validators.required),
+      unitCost: new FormControl(unitCost,Validators.required),
       totalPrice : [0]
    })
   }
@@ -105,8 +111,16 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   setItemOrderDetails(res:any){
+    let submitBool = false
     for(let i in res.data){
       this.purchaseOrderForm.controls[i].setValue(res.data[i])
+      if(res.submitStatus === 'submit'){
+        this.purchaseOrderForm.controls[i].disable()
+      } 
+    }
+
+    if(res.submitStatus === 'submit'){
+      submitBool = true
     }
 
     for(let j in res.itemList){
@@ -115,9 +129,8 @@ export class PurchaseOrderComponent implements OnInit {
       let vendorItem = res.itemList[j].itemID
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
       .subscribe((res:any)=>{
-        
         this.createNewFormControl(vendorItem,res.data,quantity,cost)
-        this.calculateTotalPrice(j)
+        this.calculateTotalPrice(j,submitBool)
       })
     }
   }
@@ -126,7 +139,6 @@ export class PurchaseOrderComponent implements OnInit {
     let vendorItem = this.itemOrderForm.get('vendorItem').value
     let controlArray = this.itemOrderForm.get('specialRequests').value
     let status = controlArray.find(element => element.itemID === vendorItem)
-
     if(vendorItem != 'None' && status == undefined){
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
       .subscribe((res:any)=>{
@@ -140,13 +152,17 @@ export class PurchaseOrderComponent implements OnInit {
     control.removeAt(index)
   }
 
-  calculateTotalPrice(index){
+  calculateTotalPrice(index,submitBool){
     let controlArray = <FormArray>this.itemOrderForm.get('specialRequests')
     let quantity = controlArray.value[index].quantity
     let unitCost = controlArray.value[index].unitCost
     if(quantity != "" || unitCost != ""){
       let totalPrice = quantity * unitCost
       controlArray.controls[index].get('totalPrice').setValue(totalPrice)
+      if(submitBool){
+        controlArray.controls[index].get('quantity').disable()
+        controlArray.controls[index].get('unitCost').disable()
+      }
     }
   }
 
@@ -158,7 +174,11 @@ export class PurchaseOrderComponent implements OnInit {
     else{
       recordId = Math.floor(Math.random()*900000) + 100000
     }
-    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value,itemOrderForm.value,recordId,submitStatus)
+    if(!this.checkValidation()){
+      return;
+    }
+    
+    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value,itemOrderForm.value,recordId,submitStatus,this.editForm)
     .subscribe((res)=>{
       if(this.editForm){
         alert('Existing order updated')
@@ -168,5 +188,34 @@ export class PurchaseOrderComponent implements OnInit {
       }
       window.location.reload()
     })
+  }
+
+  checkForExponential(event){
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 ? false : true
+  }
+
+  checkValidation(){
+    let status = true
+    if(this.purchaseOrderForm.invalid){
+      this.purchaseOrderForm.get('companyName').markAsTouched()
+      this.purchaseOrderForm.get('city').markAsTouched()
+      this.purchaseOrderForm.get('zipCode').markAsTouched()
+      this.purchaseOrderForm.get('phoneNumber').markAsTouched()
+      this.purchaseOrderForm.get('contactName').markAsTouched()
+      this.purchaseOrderForm.get('street').markAsTouched()
+      this.purchaseOrderForm.get('state').markAsTouched()
+      this.purchaseOrderForm.get('vendorName').markAsTouched()
+      this.purchaseOrderForm.get('orderDate').markAsTouched()
+      status = false
+    }
+    if(this.itemOrderForm.invalid){
+      (<FormArray>this.itemOrderForm.get('specialRequests')).controls.forEach((group: FormGroup) =>{
+        (<any>Object).values(group.controls).forEach((control:FormControl)=>{
+          control.markAsTouched()
+        })
+      })
+      status = false
+    }
+    return status
   }
 }

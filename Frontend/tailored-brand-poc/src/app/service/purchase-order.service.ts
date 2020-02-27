@@ -16,13 +16,23 @@ export class PurchaseOrderService {
     return this.http.get(`http://localhost:5000/api/order/item/${itemID}`)
   }
 
-  submitNewOrder(purchaseOrderValues, itemOrderValues,recordId,submitStatus){
-    return this.http.post('http://localhost:5000/api/order',{
-      purchaseOrderDetails: purchaseOrderValues,
-      itemOrderDetails: itemOrderValues,
-      recordID: recordId,
-      submitStatus: submitStatus
-    })
+  submitNewOrder(purchaseOrderValues, itemOrderValues,recordId,submitStatus,editFormStatus){
+    if(editFormStatus){
+      return this.http.put('http://localhost:5000/api/order',{
+        purchaseOrderDetails: purchaseOrderValues,
+        itemOrderDetails: itemOrderValues,
+        recordID: recordId,
+        submitStatus: submitStatus
+      })
+    }
+    else{
+      return this.http.post('http://localhost:5000/api/order',{
+        purchaseOrderDetails: purchaseOrderValues,
+        itemOrderDetails: itemOrderValues,
+        recordID: recordId,
+        submitStatus: submitStatus
+      })
+    }
   }
 
   getAllOrders(){

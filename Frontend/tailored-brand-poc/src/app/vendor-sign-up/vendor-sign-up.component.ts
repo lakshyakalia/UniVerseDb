@@ -114,7 +114,6 @@ export class VendorSignUpComponent implements OnInit {
     if (this.vendorDetailForm.valid) {
       if(!this.editVendor){
         let vendorId = Math.floor(Math.random() * 900000) + 100000
-        console.log(vendorId)
       this.saveData.vendorDetail(vendorDetail.value, items.value, vendorId)
         .subscribe((res: any) => {
           
