@@ -155,7 +155,8 @@ img {
 }
 
 .vendor-select-control {
-    width: 70%;
+    width: 69%;
+    margin-right: 20px;
     float: right;
 }
 
