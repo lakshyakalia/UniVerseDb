@@ -51,9 +51,9 @@ export class InvoiceDetailComponent implements OnInit {
     control.push(this.initiateForm(ids,quantity))
   }
 
-  sub() {
-    console.log(this.invoiceForm.value.invoiceNo);
-    this.invoiceService.submitNewInvoice(this.invoiceForm.value)
+  submitInvoice(submitStatus) {
+    console.log(this.invoiceForm.value);
+    this.invoiceService.submitNewInvoice(this.invoiceForm.value,submitStatus)
       .subscribe((res) => {
         console.log(res)
       })

@@ -39,8 +39,8 @@
           <hr>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th>SNo.</th>
-            <th>Items</th>
+            <th>S.No.</th>
+            <th>Item No.</th>
             <th>Description</th>
             <th>Quantity Ordered</th>
             <th>Quantity Pending</th>
@@ -59,7 +59,7 @@
         </table>
         <div class="button-div">
             <button>Save as Draft</button>
-            <button (click)="sub()">Receive</button>
+            <button (click)="submitInvoice('receive')">Receive</button>
             <button routerLink="/">Cancel</button>
         </div>
       </div>
