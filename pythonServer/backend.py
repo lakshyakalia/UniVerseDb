@@ -79,7 +79,7 @@ def vendorDetails():
 	vendorDetails=vendorData['vendorDetail']
 	vendorDetailU2(vendorDetails,itemsId,vendorData['recordID'])
 	return{	'status':200,
-		'message':"user Updated",
+		'msg':"user Updated",
 		'data':vendorData
 		}
 @app.route('/api/vendor',methods=['PUT'])
@@ -89,7 +89,7 @@ def updateVendor():
 	vendorDetails=vendorData['vendorDetail']
 	vendorDetailU2(vendorDetails,itemsId,vendorData['recordID'])
 	return{	'status':200,
-		'message':"data saved",
+		'msg':"data saved",
 		'data':vendorData
 		}
 @app.route('/api/vendor',methods=['GET'])
