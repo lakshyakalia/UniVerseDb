@@ -59,8 +59,7 @@
           </p>
           <p>
             <label class="items-left">Phone</label>
-            <input type="number" name="phoneNumber" formControlName="phoneNumber"
-              (keydown)="checkForExponential($event)">
+            <input type="text" maxlength="10" name="phoneNumber" formControlName="phoneNumber" (keydown)="checkForExponential($event)">
             <span
               *ngIf="purchaseOrderForm.controls['phoneNumber'].touched && purchaseOrderForm.controls['phoneNumber'].invalid">Required</span>
           </p>
@@ -79,7 +78,7 @@
           </p>
           <p>
             <label class="items-right">Zip</label>
-            <input type="number" name="zipCode" formControlName="zipCode" (keydown)="checkForExponential($event)">
+            <input type="text" name="zipCode" formControlName="zipCode" (keydown)="checkForExponential($event)" maxlength="6">
             <span
               *ngIf="purchaseOrderForm.controls['zipCode'].touched && purchaseOrderForm.controls['zipCode'].invalid">Required</span>
           </p>

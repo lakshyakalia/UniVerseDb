@@ -20,6 +20,7 @@ import { FooterComponent } from './footer/footer.component';
 import { AllVendorsComponent } from './all-vendors/all-vendors.component';
 import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box.component'
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     AllPurchaseOrdersComponent,
     FooterComponent,
     AllVendorsComponent,
-    AllInvoicesComponent
+    AllInvoicesComponent,
+    PurchaseDialogBoxComponent
   ],
   imports: [
     BrowserModule,
@@ -49,6 +51,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatDialogModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents:[PurchaseDialogBoxComponent]
 })
 export class AppModule { }

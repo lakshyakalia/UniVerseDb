@@ -3,6 +3,8 @@ import { FormGroup, FormControl, FormBuilder, FormArray, Validators } from '@ang
 import { Router } from '@angular/router'
 
 import { PurchaseOrderService } from '../service/purchase-order.service'
+import { MatDialog } from '@angular/material/dialog'
+import { PurchaseDialogBoxComponent } from './purchase-dialog-box.component'
 
 @Component({
   selector: 'purchase-order',
@@ -32,7 +34,8 @@ export class PurchaseOrderComponent implements OnInit {
   constructor(
     private purchaseOrderService: PurchaseOrderService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) { }
 
   purchaseOrderForm = new FormGroup({
@@ -45,7 +48,7 @@ export class PurchaseOrderComponent implements OnInit {
     phoneNumber: new FormControl('', Validators.required),
     contactName: new FormControl('', Validators.required),
     city: new FormControl('', Validators.required),
-    zipCode: new FormControl('', Validators.required)
+    zipCode: new FormControl('', [Validators.required,Validators.max(6)])
   })
 
   ngOnInit() {
@@ -192,18 +195,19 @@ export class PurchaseOrderComponent implements OnInit {
 
     this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value, itemOrderForm.value, recordId, submitStatus, this.editForm)
       .subscribe((res) => {
+        let msg
         if (this.editForm) {
-          alert('Existing order updated')
+          msg = 'Existing order updated'
         }
         else {
-          alert(`New Order No - ${recordId} Created`)
+          msg = `New Order No - ${recordId} Created`
         }
-        window.location.reload()
+        this.openDialogBox(msg)
       })
   }
 
   checkForExponential(event) {
-    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 ? false : true
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90) ? false : true
   }
 
   checkValidation() {
@@ -229,5 +233,12 @@ export class PurchaseOrderComponent implements OnInit {
       status = false
     }
     return status
+  }
+
+  openDialogBox(msg){
+    const dialogRef = this.dialog.open(PurchaseDialogBoxComponent,{
+      width: '250px',
+      data:{ msg: msg}
+    })
   }
 }
