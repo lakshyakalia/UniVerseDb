@@ -9,27 +9,39 @@
       <div class="form-top">
         <div class="form-top-left-items">
           <p>
-            <label class="items-left">Invoice No.</label>
+            <label class="items-left">Invoice Number</label>
             <input type="text" id="invoiceNo" formControlName="invoiceNo" 
              />
+             <span *ngIf= "invoiceForm.controls['invoiceNo'].invalid && toggle==true">
+              required
+              </span>
           </p>
           <p>
             <label class="items-left">Invoice Date</label>
             <input type="date"  id="invoiceDate" formControlName="invoiceDate" style="width: 205px;"
             />
+            <span *ngIf= "invoiceForm.controls['invoiceDate'].invalid && toggle==true">
+              required
+              </span>
           </p>
 
         </div>
         <div class="form-top-right-items">
           <p>
-            <label class="items-right">Order No.</label>
+            <label class="items-right">Order Number</label>
             <input type="text" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" 
             />
+            <span *ngIf= "invoiceForm.controls['orderNo'].invalid && toggle==true">
+              required
+              </span>
           </p>
           <p>
             <label class="items-right" >Invoice Amount</label>
             <input type="text" id="invoiceAmount" formControlName="invoiceAmount" 
              />
+             <span *ngIf= "invoiceForm.controls['invoiceAmount'].invalid && toggle==true">
+              required
+              </span>
           </p>
 
         </div>
@@ -40,21 +52,25 @@
         <label>Items :</label>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th>SNo.</th>
-            <th>Items</th>
-            <th>Description</th>
-            <th>Quantity Ordered</th>
-            <th>Quantity Pending</th>
-            <th>Quantity Received</th>
+            <th width="10%" class="right">S.No.</th>
+            <th width="12%" class="right">Items</th>
+            <th width="30%" class="left">Description</th>
+            <th width="15%" class="right">Quantity Ordered</th>
+            <th width="15%" class="right">Quantity Pending</th>
+            <th width="20%" class="right">Quantity Received</th>
+            <th width="10%" >Remove</th>
+            
           </thead>
           <tbody>
             <tr>
-              <td>1</td>
-              <td>1234567</td>
-              <td>Hones T-shirt adasdas</td>
-              <td>50</td>
-              <td>30</td>
-              <td>0</td>
+              <td width="10%" class="right">1</td>
+              <td width="12%" class="right">1234567</td>
+              <td width="30%" class="left">Hones T-shirt adasdas</td>
+              <td width="15%" class="right">50</td>
+              <td width="15%" class="right">30</td>
+              <td width="20%" class="right">0</td>
+              <td class="remove" (click)="deleteRow(i)"><i class="fas fa-window-close"></i></td>
+
             </tr>
           </tbody>
         </table>

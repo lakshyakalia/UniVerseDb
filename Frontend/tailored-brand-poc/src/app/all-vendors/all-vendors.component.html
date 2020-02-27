@@ -8,19 +8,19 @@
       <div class="form-bottom">
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th>S.No.</th>
-            <th>Vendor No.</th>
-            <th>Vendor Company</th>
-            <th>Vendor</th>
-            <th>Phone No.</th>
+            <th width="10%" class="right">S.No.</th>
+            <th width="30%" class="right">Vendor No.</th>
+            <th width="30%" class="left">Vendor Company</th>
+            <th width="15%" class="left">Vendor</th>
+            <th width="20%" class="left">Phone No.</th>
           </thead>
           <tbody>
             <tr *ngFor="let vendor of vendorIDS;let i = index">
-              <td>{{i+1}}</td>
-              <td>{{ vendor }}</td>
-              <td>{{ vendorData[vendor][0][0]}}</td>
-              <td>{{ vendorData[vendor][0][1]}}</td>
-              <td>{{ vendorData[vendor][0][2]}}</td>
+              <td width="10%" class="right">{{i+1}}</td>
+              <td width="30%" class="right">{{ vendor }}</td>
+              <td width="30%" class="left">{{ vendorData[vendor][0][0]}}</td>
+              <td width="15%" class="left">{{ vendorData[vendor][0][1]}}</td>
+              <td width="20%" class="left">{{ vendorData[vendor][0][2]}}</td>
             </tr>
           </tbody>
         </table>
