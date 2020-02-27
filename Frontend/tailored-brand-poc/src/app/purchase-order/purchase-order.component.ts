@@ -31,6 +31,10 @@ export class PurchaseOrderComponent implements OnInit {
 
   date: string
 
+  itemOrderError : boolean
+
+  states = ['California','Florida','Texas','Hawaii']
+
   constructor(
     private purchaseOrderService: PurchaseOrderService,
     private fb: FormBuilder,
@@ -44,11 +48,11 @@ export class PurchaseOrderComponent implements OnInit {
     vendorName: new FormControl('', Validators.required),
     companyName: new FormControl('', Validators.required),
     street: new FormControl('', Validators.required),
-    state: new FormControl('-- Select State --', Validators.required),
+    state: new FormControl('', Validators.required),
     phoneNumber: new FormControl('', Validators.required),
     contactName: new FormControl('', Validators.required),
     city: new FormControl('', Validators.required),
-    zipCode: new FormControl('', [Validators.required,Validators.max(6)])
+    zipCode: new FormControl('', [Validators.required])
   })
 
   ngOnInit() {
@@ -112,7 +116,7 @@ export class PurchaseOrderComponent implements OnInit {
             alert(res.msg)
           }
           else {
-            this.purchaseOrderTitle = "Update Purchase Order - "+orderID
+            this.purchaseOrderTitle = "Update Purchase Order "+orderID
             this.setItemOrderDetails(res)
           }
         })
@@ -146,9 +150,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   addNewRow() {
     let vendorItem = this.itemOrderForm.get('vendorItem').value
-    let controlArray = this.itemOrderForm.get('specialRequests').value
-    let status = controlArray.find(element => element.itemID === vendorItem)
-    if (vendorItem != 'None' && status == undefined) {
+    if (vendorItem != 'None') {
+      this.itemOrderError = false
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
         .subscribe((res: any) => {
           this.createNewFormControl(vendorItem, res.data, "", "")
@@ -219,11 +222,15 @@ export class PurchaseOrderComponent implements OnInit {
       this.purchaseOrderForm.get('phoneNumber').markAsTouched()
       this.purchaseOrderForm.get('contactName').markAsTouched()
       this.purchaseOrderForm.get('street').markAsTouched()
-      this.purchaseOrderForm.get('state').markAsTouched()
       this.purchaseOrderForm.get('vendorName').markAsTouched()
+      this.purchaseOrderForm.get('state').markAsTouched()
       this.purchaseOrderForm.get('orderDate').markAsTouched()
       status = false
     }
+
+    if(this.itemOrderForm.untouched) this.itemOrderError = true
+    else this.itemOrderError = false
+
     if (this.itemOrderForm.invalid || this.itemOrderForm.untouched) {
       (<FormArray>this.itemOrderForm.get('specialRequests')).controls.forEach((group: FormGroup) => {
         (<any>Object).values(group.controls).forEach((control: FormControl) => {
@@ -231,13 +238,14 @@ export class PurchaseOrderComponent implements OnInit {
         })
       })
       status = false
+
     }
     return status
   }
 
   openDialogBox(msg){
-    const dialogRef = this.dialog.open(PurchaseDialogBoxComponent,{
-      width: '250px',
+    this.dialog.open(PurchaseDialogBoxComponent,{
+      width: '450px',
       data:{ msg: msg}
     })
   }
