@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder,  Validators } from '@angular/forms';
 import { InvoiceService } from '../service/invoice.service';
 import { Router } from '@angular/router';
+import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
+import { MatDialog } from '@angular/material/dialog'
 
 
 @Component({
@@ -14,7 +16,7 @@ export class InvoiceDetailComponent implements OnInit {
   editInvoice : boolean;
   heading:string='New Invoice';
   toggle: boolean = false;
-  constructor(private invoiceService : InvoiceService, private router: Router) { }
+  constructor(private invoiceService : InvoiceService, private router: Router , private dialog : MatDialog) { }
 
   ngOnInit() {
     this.invoiceForm = new FormGroup({
@@ -53,5 +55,14 @@ export class InvoiceDetailComponent implements OnInit {
         // this.setItemOrderDetails(res)
       })
     }
+  }
+  checkForExponential(event) {
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
+  }
+  openDialogBox(msg){
+    this.dialog.open(PurchaseDialogBoxComponent,{
+      width: '250px',
+      data:{ msg: msg}
+    })
   }
 }
