@@ -16,5 +16,6 @@ export class PurchaseDialogBoxComponent{
 	
 	closeDialogBox() {
 		this.dialogRef.close();
+		window.location.reload()
 	}
 }
