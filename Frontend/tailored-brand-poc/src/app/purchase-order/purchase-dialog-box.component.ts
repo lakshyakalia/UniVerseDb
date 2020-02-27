@@ -3,8 +3,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 
 @Component({
 	selector: 'dialog-box',
+	styles:['.heading{font-weight:100; font-size: 18px}','button{background-color: #77cc6d; color : white; font-weight: 500; margin-left: 90%; padding-left: 18px; padding-right:18px; border-radius : 4px; border:none ; }'],
 	templateUrl: './purchase-dialog-box.component.ts',
-	template:'<span mat-dialog-title>{{ data.msg }}</span><div mat-dialog-actions><button mat-button (click)="closeDialogBox()">Ok</button></div>'
+	template:'<span class="heading">Congrats ! {{ data.msg }}</span><div><button (click)="closeDialogBox()">Ok</button></div>'
 	
 })
 export class PurchaseDialogBoxComponent{
