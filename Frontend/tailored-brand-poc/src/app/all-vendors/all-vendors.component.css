@@ -15,6 +15,12 @@ button{
     margin: 10px auto 30px auto;
     display: flex;
 }
+.left{
+    text-align: left;
+}
+.right{
+    text-align: right;
+}
 .form{
     
     width: 100%;

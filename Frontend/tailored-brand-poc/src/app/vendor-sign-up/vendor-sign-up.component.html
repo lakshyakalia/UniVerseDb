@@ -9,7 +9,7 @@
       <div class="form-head">
         <div class="form-head-left">
           <label class="items-left">Vendor No.</label>
-          <input type="text"  class="vendor-name" placeholder="New Vendor" (keydown)="setVendorId($event)" formControlName='vendorNo' />
+          <input type="text"  class="vendor-name" placeholder="New Vendor" (keydown)="setVendorId($event)" formControlName='vendorNo' style="text-align: right;" />
         </div>
         <div class="form-head-right"></div>
       </div>
@@ -19,55 +19,55 @@
             <label class="items-left">Company</label>
             <input type="text" formControlName="Company"/>
             <span *ngIf= "vendorDetailForm.controls['Company'].invalid && toggle==true">
-              Company is required
+            required
             </span>
           </p>
           <p>
             <label class="items-left">Street</label>
             <input type="text" formControlName="Street" />
             <span *ngIf= "vendorDetailForm.controls['Street'].invalid && toggle==true">
-              Street is required
+            required
             </span>
           </p>
           <p>
             <label class="items-left">State</label>
             <select class="input form-control-sm" formControlName="State" required>
               <option>Texas</option>
-              <option>Claforina</option>
+              <option>California</option>
               <option>Florida</option>
             </select>
             <span *ngIf= "vendorDetailForm.controls['State'].invalid && toggle==true">
-             State is required
+             required
             </span>
           </p>
           <p>
-            <label class="items-left">Phone</label>
-            <input type="text" formControlName="Phone" required />
+            <label class="items-left" >Phone</label>
+            <input type="text" formControlName="Phone" required style="text-align: right;" (keydown)="checkForPhone($event)"  placeholder="(123) 456-7890" name="phone" class="phone" maxlength="10"/>
             <span *ngIf= "vendorDetailForm.controls['Phone'].invalid && toggle==true">
-              Phone no is required
+            required
             </span>
           </p>
         </div>
         <div class="form-top-right-items">
           <p>
             <label class="items-right">Contact Name</label>
-            <input type="text" formControlName="Contact" required />
+            <input type="text" formControlName="Contact" required (keydown)="checkForAlphabets($event)"/>
             <span *ngIf= "vendorDetailForm.controls['Contact'].invalid && toggle==true">
-              Contact name is required
+            required
             </span>
           </p>
           <p>
             <label class="items-right">City</label>
             <input type="text" formControlName="City" required />
             <span *ngIf= "vendorDetailForm.controls['City'].invalid && toggle==true">
-              City is required
+            required
             </span>
           </p>
           <p>
             <label class="items-right">Zip</label>
-            <input type="text" formControlName="Zip" required />
-            <span *ngIf= "vendorDetailForm.controls['Zip'].invalid && toggle==true">
-              Zip is required
+            <input type="text" formControlName="Zip" required style="text-align: right;" (keydown)="checkForExponential($event)" maxlength="6"/>
+            <span *ngIf= "vendorDetailForm.controls['Zip'].invalid && toggle==true" >
+            required
             </span>
           </p>
         </div>
@@ -79,17 +79,17 @@
         <label>Items :</label>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th>SNo.</th>
-            <th>Items</th>
-            <th>Description</th>
+            <th width="10%" class="right">SNo.</th>
+            <th width="25%" class="right">Items</th>
+            <th width="40%" class="left">Description</th>
             <th>Remove</th>
           </thead>
           <tbody>
             <tr *ngFor="let control of items.controls.items.controls;let i = index" [formGroup]="control">
-              <td>{{i + 1}}</td>
-              <td>{{ control.value.items }}</td>
-              <td>{{ control.value.description }}</td>
-              <td class="remove" (click)="deleteRow(i)">X</td>
+              <td class="right">{{i + 1}}</td>
+              <td class="right">{{ control.value.items }}</td>
+              <td class="left">{{ control.value.description }}</td>
+              <td class="remove" (click)="deleteRow(i)"><i class="fas fa-window-close"></i></td>
             </tr>
             <tr>
               <td></td>
@@ -112,3 +112,8 @@
     </div>
   </div>
 </div>
+<!-- <script>
+  $("input[name='phone']").keyup(function() {
+    $(this).val($(this).val().replace(/^(\d{3})(\d{3})(\d)+$/, "($1)$2-$3"));
+});
+</script> -->

@@ -12,16 +12,16 @@ import { Router } from '@angular/router';
 export class InvoiceDetailComponent implements OnInit {
   invoiceForm : FormGroup;
   editInvoice : boolean;
-  heading:string='New Invoice Update';
-
+  heading:string='New Invoice';
+  toggle: boolean = false;
   constructor(private invoiceService : InvoiceService, private router: Router) { }
 
   ngOnInit() {
     this.invoiceForm = new FormGroup({
-       invoiceNo : new FormControl(),
-       invoiceDate: new FormControl(),
-       orderNo : new FormControl(),
-       invoiceAmount : new FormControl()
+       invoiceNo : new FormControl('', [Validators.required]),
+       invoiceDate: new FormControl('', [Validators.required]),
+       orderNo : new FormControl('', [Validators.required]),
+       invoiceAmount : new FormControl('', [Validators.required])
 
     });
     this.editInvoice = this.router.url.endsWith('/invoice/edit')
@@ -36,6 +36,7 @@ export class InvoiceDetailComponent implements OnInit {
     // console.log(this.items.controls)
   }
   sub(){
+    this.toggle=true;
     console.log(this.invoiceForm.value.invoiceNo);
    this.invoiceService.submitNewInvoice(this.invoiceForm.value)
    .subscribe((res)=>{

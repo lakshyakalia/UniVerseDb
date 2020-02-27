@@ -140,4 +140,13 @@ export class VendorSignUpComponent implements OnInit {
       }
     }
   }
+  checkForExponential(event) {
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
+  }
+  checkForAlphabets(event) {
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || ( event.keyCode >= 49 && event.keyCode <=57 ) ? false : true
+  }
+  checkForPhone(event) {
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
+  }
 }

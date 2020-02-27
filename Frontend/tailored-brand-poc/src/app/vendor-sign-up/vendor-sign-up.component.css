@@ -24,6 +24,12 @@ button{
 .heading{
     color: rgba(255, 255, 255, 1);
 }
+.right{
+    text-align: right;
+}
+.left{
+    text-align: left;
+}
 p span{
     color: red;
     float: right;
@@ -96,6 +102,9 @@ hr{
 }
 ::placeholder{
     text-align: center;
+}
+.phone::placeholder{
+    text-align: right !important;
 }
 
 .vendor-name:focus{

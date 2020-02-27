@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
-
+import { HttpClient } from '@angular/common/http' 
+import{environment} from'../../environments/environment'
 @Injectable({
   providedIn: 'root'
 })
 export class SaveDataService {
 
   constructor(private http: HttpClient) { }
-  baseUri:string='http://localhost:5000/';
+  baseUri:string=environment.baseUrl;
   readItem(){
     return this.http.get(this.baseUri+'api/item')
   }
