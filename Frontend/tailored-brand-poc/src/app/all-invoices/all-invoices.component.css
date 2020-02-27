@@ -15,6 +15,18 @@ button{
     margin: 10px auto 30px auto;
     display: flex;
 }
+.right{
+    text-align: right;
+}
+p span{
+    color: red;
+    float: right;
+    margin-right: 5px;
+    font-size: 12px;
+    font-weight: 300;
+    margin-top: 5px;
+    vertical-align: middle;
+}
 .form{
     
     width: 100%;
@@ -146,12 +158,15 @@ td button{
     float: right;
 
 }
-.button-div button{
+.button-div button, .btnn{
     margin: 10px;
     border: none;
     background-color: #282936;
     border-radius: 30px;
     color: white;
+    float: right !important;
+    margin-left: 88%;
+    width: 10%;
     padding: 10px 24px;
     cursor: pointer;
     box-shadow:0 1px 8px 0 rgba(0, 0, 0, 0.2) ;

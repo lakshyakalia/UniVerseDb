@@ -9,68 +9,74 @@
       <div class="form-head">
         <div class="form-head-left">
           <label class="items-left">Order No.</label>
-          <input type="text" class="order-no" placeholder="New Order" name="newOrder" formControlName="newOrder" (keydown)="getItemOrderDetail($event)" />
+          <input type="text" class="order-no" placeholder="Order No." name="newOrder" formControlName="newOrder"
+            (keydown)="getItemOrderDetail($event)" />
         </div>
         <div class="form-head-right">
           <label class="items-left">Order Date</label>
-          <input type="date" class="order-date" name="orderDate" formControlName="orderDate" />
+          <input type="date" class="order-date" name="orderDate" min="{{ date }}" formControlName="orderDate" />
           <i class="fa fa-calendar-alt"></i>
+          <span class="error-field" *ngIf="purchaseOrderForm.controls['orderDate'].touched && purchaseOrderForm.controls['orderDate'].invalid">Required</span>
         </div>
       </div>
       <div class="vendor-select">
         <label class="vendor">Vendor</label>
         <select class="form-control-sm vendor-select-control" (change)="getVendorItems()" name="vendorName"
           formControlName="vendorName">
-          <option>None</option>
+          <option>-- Select Vendor --</option>
           <option *ngFor="let vendor of vendorNameList">{{  vendor }}</option>
         </select>
-        <hr class="hr-top">
-
-        <label class="ship">Ship To: </label>
+        <span *ngIf="purchaseOrderForm.controls['vendorName'].touched && purchaseOrderForm.controls['vendorName'].invalid"class="error-field">Required</span>
       </div>
+      <hr class="hr-top">
+
+      <label class="ship">Ship To: </label>
       <div class="form-top">
         <div class="form-top-left-items">
           <p>
             <label class="items-left">Company</label>
             <input type="text" name="companyName" formControlName="companyName">
-            <span *ngIf="purchaseOrderForm.controls['companyName'].touched && purchaseOrderForm.controls['companyName'].invalid">Field is required</span>
+            <span
+              *ngIf="purchaseOrderForm.controls['companyName'].touched && purchaseOrderForm.controls['companyName'].invalid">Required</span>
           </p>
           <p>
             <label class="items-left">Street</label>
             <input type="text" name="street" formControlName="street">
-            <span *ngIf="purchaseOrderForm.controls['street'].touched && purchaseOrderForm.controls['street'].invalid">Field is required</span>
+            <span
+              *ngIf="purchaseOrderForm.controls['street'].touched && purchaseOrderForm.controls['street'].invalid">Required</span>
           </p>
           <p>
             <label class="items-left">State</label>
-            <select class="input form-control-sm" name="state" formControlName="state">
-              <option>California</option>
-              <option>Florida</option>
-              <option>Texas</option>
-              <option>Hawaii</option>
+            <select class="input form-control-sm" name="state" formControlName="state" required>
+              <option>Select State</option>
+              <option *ngFor="let state of states">{{ state }}</option>
             </select>
-            <span *ngIf="purchaseOrderForm.controls['state'].touched && purchaseOrderForm.controls['state'].invalid">Field is required</span>
+            <span *ngIf="purchaseOrderForm.controls['state'].touched && purchaseOrderForm.controls['state'].invalid">Required</span>
           </p>
           <p>
             <label class="items-left">Phone</label>
-            <input type="text" name="phoneNumber" formControlName="phoneNumber">
-            <span *ngIf="purchaseOrderForm.controls['phoneNumber'].touched && purchaseOrderForm.controls['phoneNumber'].invalid">Field is required</span>
+            <input type="text" maxlength="10" name="phoneNumber" formControlName="phoneNumber" (keydown)="checkForExponential($event)">
+            <span
+              *ngIf="purchaseOrderForm.controls['phoneNumber'].touched && purchaseOrderForm.controls['phoneNumber'].invalid">Required</span>
           </p>
         </div>
         <div class="form-top-right-items">
           <p>
             <label class="items-right">Contact Name</label>
             <input type="text" name="contactName" formControlName="contactName">
-            <span *ngIf="purchaseOrderForm.controls['contactName'].touched && purchaseOrderForm.controls['contactName'].invalid">*</span>
+            <span
+              *ngIf="purchaseOrderForm.controls['contactName'].touched && purchaseOrderForm.controls['contactName'].invalid">Required</span>
           </p>
           <p>
             <label class="items-right">City</label>
             <input type="text" name="city" formControlName="city">
-            <span *ngIf="purchaseOrderForm.controls['city'].touched && purchaseOrderForm.controls['city'].invalid">Field is required</span>
+            <span *ngIf="purchaseOrderForm.controls['city'].touched && purchaseOrderForm.controls['city'].invalid">Required</span>
           </p>
           <p>
             <label class="items-right">Zip</label>
-            <input type="text" name="zipCode" formControlName="zipCode">
-            <span *ngIf="purchaseOrderForm.controls['zipCode'].touched && purchaseOrderForm.controls['zipCode'].invalid">Field is required</span>
+            <input class="align-right" type="text" name="zipCode" formControlName="zipCode" (keydown)="checkForExponential($event)" maxlength="6">
+            <span
+              *ngIf="purchaseOrderForm.controls['zipCode'].touched && purchaseOrderForm.controls['zipCode'].invalid">Required</span>
           </p>
         </div>
 
@@ -82,35 +88,52 @@
         <label>Items :</label>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th>SNo.</th>
-            <th>Items</th>
-            <th>Description</th>
-            <th>Quantity</th>
-            <th>Unit Cost</th>
-            <th>Total Cost</th>
+            <th>S.No</th>
+            <th class="align-right">Item No</th>
+            <th class="align-left">Description</th>
+            <th class="align-right">Quantity</th>
+            <th class="align-right">Unit Cost($)</th>
+            <th class="align-right">Total Cost</th>
             <th>Remove</th>
           </thead>
           <tbody>
-              <tr *ngFor="let control of itemOrderForm.controls.specialRequests.controls; let i=index" [formGroup]="control">
-                <td>1</td>
-                <td>{{ control.value.itemID }}</td>
-                <td>{{ control.value.itemDescription }}</td>
-                <td><input type="number" name="quantity" formControlName="quantity" (input)="calculateTotalPrice(i)"></td>
-                <td><input type="number" name="unitCost" formControlName="unitCost" (input)="calculateTotalPrice(i)"></td>
-                <td>{{ control.value.totalPrice }}</td>
-                <td (click)="removeParticularItem(i)"><i class="fas fa-window-close"></i></td>
-              </tr>
-            <tr>
-              <td>1</td>
+            <tr *ngFor="let control of itemOrderForm.controls.specialRequests.controls; let i=index"
+              [formGroup]="control">
+              <td>{{ i+1 }}</td>
+              <td class="itemID-width align-right">{{ control.value.itemID }}</td>
+              <td class="align-left">{{ control.value.itemDescription }}</td>
               <td>
+                <input type="number" name="quantity" formControlName="quantity" (input)="calculateTotalPrice(i)" class="input-width align-right">
+                <span class="error-field" *ngIf="control.controls.quantity.errors?.required && control.controls.quantity.touched">Required Field</span>
+              </td>
+              <td class="input-width">
+                <input type="number" name="unitCost" formControlName="unitCost" (input)="calculateTotalPrice(i)" class="input-width align-right">
+                <span class="error-field" *ngIf="control.controls.unitCost.errors?.required && control.controls.unitCost.touched">Required Field</span>
+              </td>
+              <td class="align-right">$ {{ control.value.totalPrice| number:'1.2-5' }}</td>
+              <td (click)="removeParticularItem(i)"><i class="fas fa-window-close"></i></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="itemID-width">
                 <select formControlName="vendorItem" (change)="addNewRow()" class="input form-control-sm">
-                  <option>None</option>
+                  <option>-- Item # --</option>
                   <option *ngFor="let items of vendorItemIDList">{{ items }}</option>
                 </select>
               </td>
             </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td>Grand Total</td>
+              <td></td>
+              <td></td>
+              <td class="align-right">$ {{grandTotal| number:'1.2-5'}}</td>
+              <td></td>
+            </tr>
           </tbody>
         </table>
+        <p *ngIf="itemOrderError" class="item-order-error">Select atleast 1 item</p>
         <div class="button-div">
           <button (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'draft')">Save as Draft</button>
           <button (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'submit')">Submit</button>

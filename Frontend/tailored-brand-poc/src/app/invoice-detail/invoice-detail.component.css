@@ -11,10 +11,24 @@ button{
     font-size: 1.7em;
     padding-top: 25px;
 }
-
+.right{
+    text-align: right;
+}
+.left{
+    text-align: left;
+}
 .sign-up-div{
     margin: 10px auto 30px auto;
     display: flex;
+}
+p span{
+    color: red;
+    float: right;
+    margin-right: 5px;
+    font-size: 12px;
+    font-weight: 300;
+    margin-top: 5px;
+    vertical-align: middle;
 }
 .form{
     

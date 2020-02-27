@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {SaveDataService} from '../service/vendor.service'
+import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
+import { MatDialog } from '@angular/material/dialog'
+
 @Component({
   selector: 'app-all-vendors',
   templateUrl: './all-vendors.component.html',
@@ -11,7 +14,7 @@ export class AllVendorsComponent implements OnInit {
 
   vendorIDS : any
 
-  constructor(private saveData: SaveDataService) { }
+  constructor(private saveData: SaveDataService , private dialog : MatDialog) { }
 
   ngOnInit() {
     this.saveData.allVendors()
@@ -21,5 +24,10 @@ export class AllVendorsComponent implements OnInit {
       console.log(this.vendorData)
     })
   }
-
+  openDialogBox(msg){
+    this.dialog.open(PurchaseDialogBoxComponent,{
+      width: '250px',
+      data:{ msg: msg}
+    })
+  }
 }

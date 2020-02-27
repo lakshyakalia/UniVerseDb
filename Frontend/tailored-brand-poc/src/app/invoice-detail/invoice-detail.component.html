@@ -9,27 +9,35 @@
       <div class="form-top">
         <div class="form-top-left-items">
           <p>
-            <label class="items-left">Invoice No.</label>
-            <input type="text" id="invoiceNo" formControlName="invoiceNo" 
+            <label class="items-left">Invoice Number</label>
+            <input type="number" id="invoiceNo" formControlName="invoiceNo" (keydown)="checkForExponential($event)" 
              />
+             <span
+             *ngIf="invoiceForm.controls['invoiceNo'].touched && invoiceForm.controls['invoiceNo'].invalid">Required</span>
           </p>
           <p>
             <label class="items-left">Invoice Date</label>
-            <input type="date"  id="invoiceDate" formControlName="invoiceDate" style="width: 205px;"
+            <input type="date"  id="invoiceDate" formControlName="invoiceDate" style="width: 205px;" 
             />
+            <span
+            *ngIf="invoiceForm.controls['invoiceDate'].touched && invoiceForm.controls['invoiceDate'].invalid">Required</span>
           </p>
 
         </div>
         <div class="form-top-right-items">
           <p>
-            <label class="items-right">Order No.</label>
-            <input type="text" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" 
+            <label class="items-right">Order Number</label>
+            <input type="number" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" 
             />
+            <span
+            *ngIf="invoiceForm.controls['orderNo'].touched && invoiceForm.controls['orderNo'].invalid">Required</span>
           </p>
           <p>
             <label class="items-right" >Invoice Amount</label>
-            <input type="text" id="invoiceAmount" formControlName="invoiceAmount" 
+            <input type="number" id="invoiceAmount" formControlName="invoiceAmount" (keydown)="checkForExponential($event)"
              />
+             <span
+             *ngIf="invoiceForm.controls['invoiceAmount'].touched && invoiceForm.controls['invoiceAmount'].invalid">Required</span>
           </p>
 
         </div>
@@ -37,30 +45,29 @@
       </div>
       <div class="form-bottom">
           <hr>
-        <label>Items :</label>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th>SNo.</th>
-            <th>Items</th>
+            <th>S.No.</th>
+            <th>Item No.</th>
             <th>Description</th>
             <th>Quantity Ordered</th>
             <th>Quantity Pending</th>
             <th>Quantity Received</th>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>1234567</td>
-              <td>Hones T-shirt adasdas</td>
-              <td>50</td>
-              <td>30</td>
-              <td>0</td>
+            <tr *ngFor="let control of invoiceForm.controls.invoiceDetails.controls;let i=index" [formGroup]="control">
+              <td>{{ i+1 }}</td>
+              <td>{{ control.value.itemNo }}</td>
+              <td>{{description[control.value.itemNo]}}</td>
+              <td>{{ control.value.quantityOrdered }}</td>
+              <td>{{ control.value.quantityPending }}</td>
+              <td><input type="text" formControlName="quantityReceived" (input)="calculatePendingQuantity(i)"></td>
             </tr>
           </tbody>
         </table>
         <div class="button-div">
             <button>Save as Draft</button>
-            <button (click)="sub()">Receive</button>
+            <button (click)="submitInvoice('receive')">Receive</button>
             <button routerLink="/">Cancel</button>
         </div>
       </div>
