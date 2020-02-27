@@ -103,24 +103,39 @@ def allVendors():
 	cmd=u2py.run("LIST DATA PO.VENDOR.MST VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML",capture=True)
 	my_xml=cmd.strip()
 	data = xmltodict.parse(my_xml)['ROOT']['PO.VENDOR.MST']
-	for i in range(len(data)):
-		data = xmltodict.parse(my_xml)['ROOT']['PO.VENDOR.MST'][i]
-		for j in data['ITEM.IDS_MV']:
-			itemId.append(j['@ITEM.IDS'])		
-			ids=data['@_ID']
+	if(type(data) is list):
+		for i in range(len(data)):
+			data = xmltodict.parse(my_xml)['ROOT']['PO.VENDOR.MST'][i]
+		
+			for j in data['ITEM.IDS_MV']:
+				itemId.append(j['@ITEM.IDS'])		
+				ids=data['@_ID']
+			vendorDetail.append(data['@VEND.COMPANY'])
+			vendorDetail.append(data['@VEND.NAME'])
+			vendorDetail.append(data['@VEND.PHONE'])
+			itemData.append(vendorDetail)
+			itemData.append(itemId)
+			dictItems[ids]=itemData
+			itemData=[]
+			itemId=[]
+			vendorDetail=[]
+	else:
+		if(type(data['ITEM.IDS_MV']) is list):
+			for j in data['ITEM.IDS_MV']:
+				itemId.append(j['@ITEM.IDS'])		
+				ids=data['@_ID']
+		else:
+			itemId.append(data['ITEM.IDS_MV']['@ITEM.IDS'])
+			ids=data['ITEM.IDS_MV']['@_ID']   
 		vendorDetail.append(data['@VEND.COMPANY'])
 		vendorDetail.append(data['@VEND.NAME'])
 		vendorDetail.append(data['@VEND.PHONE'])
 		itemData.append(vendorDetail)
 		itemData.append(itemId)
 		dictItems[ids]=itemData
-		itemData=[]
-		itemId=[]
-		vendorDetail=[]
-	return{
-		'status':200,
+	return{'status':200,
 		'data':dictItems	
-	}
+		}
 @app.route('/api/vendor/<vendorId>',methods=['GET'])
 def particularVendor(vendorId):
 	status = checkExistingRecord("PO.VENDOR.MST",vendorId)

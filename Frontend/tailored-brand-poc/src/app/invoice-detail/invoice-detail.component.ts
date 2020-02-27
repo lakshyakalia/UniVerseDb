@@ -4,6 +4,8 @@ import { InvoiceService } from '../service/invoice.service';
 import {SaveDataService} from '../service/vendor.service';
 import { Router } from '@angular/router';
 import { from } from 'rxjs';
+import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
+import { MatDialog } from '@angular/material/dialog'
 
 
 @Component({
@@ -14,17 +16,18 @@ import { from } from 'rxjs';
 export class InvoiceDetailComponent implements OnInit {
   invoiceForm: FormGroup;
   editInvoice: boolean;
-  heading: string = 'New Invoice Update';
+  heading: string = 'New Invoice';
   description:string;
+  lastId:number;
 
-  constructor(private vendorService:SaveDataService,private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder) { }
+  constructor(private vendorService:SaveDataService,private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder,private dialog: MatDialog) { }
 
   ngOnInit() {
     this.invoiceForm = this.fb.group({
-      invoiceNo : new FormControl(),
-       invoiceDate: new FormControl(),
-       orderNo : new FormControl(),
-       invoiceAmount : new FormControl(),
+      invoiceNo : new FormControl('',[Validators.required]),
+       invoiceDate: new FormControl('',[Validators.required]),
+       orderNo : new FormControl('',[Validators.required]),
+       invoiceAmount : new FormControl('',[Validators.required]),
       invoiceDetails: this.fb.array([])
     })
     // this.invoiceForm = new FormGroup({
@@ -59,16 +62,21 @@ export class InvoiceDetailComponent implements OnInit {
   }
 
   submitInvoice(submitStatus) {
+
+    
     console.log(this.invoiceForm.value);
     this.invoiceService.submitNewInvoice(this.invoiceForm.value,submitStatus)
       .subscribe((res) => {
         console.log(res)
+        this.openDialogBox('Invoice Created')
+        // window.location.reload();
       })
   }
 
   getItemOrderDetail(event) {
     let orderID = this.invoiceForm.get('orderNo').value
-    if (event.keyCode === 13 && orderID != '') {
+    if (event.keyCode === 13 && orderID != '' && this.lastId!=orderID) {
+      this.lastId=this.invoiceForm.get('orderNo').value
       this.invoiceService.getParticularOrder(orderID)
         .subscribe((res: any) => {
           if(res.status==200){
@@ -103,5 +111,14 @@ export class InvoiceDetailComponent implements OnInit {
     let quantityOrdered = controlArray.value[index].quantityOrdered
     let leftQuantity = quantityOrdered - pendingQuantity
     controlArray.controls[index].get('quantityPending').setValue(leftQuantity)
+  }
+  checkForExponential(event) {
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
+  }
+  openDialogBox(msg){
+    this.dialog.open(PurchaseDialogBoxComponent,{
+      width: '250px',
+      data:{ msg: msg}
+    })
   }
 }

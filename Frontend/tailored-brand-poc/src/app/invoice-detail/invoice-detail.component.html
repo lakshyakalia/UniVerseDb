@@ -9,27 +9,35 @@
       <div class="form-top">
         <div class="form-top-left-items">
           <p>
-            <label class="items-left">Invoice No.</label>
-            <input type="text" id="invoiceNo" formControlName="invoiceNo" 
+            <label class="items-left">Invoice Number</label>
+            <input type="number" id="invoiceNo" formControlName="invoiceNo" (keydown)="checkForExponential($event)" 
              />
+             <span
+             *ngIf="invoiceForm.controls['invoiceNo'].touched && invoiceForm.controls['invoiceNo'].invalid">Required</span>
           </p>
           <p>
             <label class="items-left">Invoice Date</label>
-            <input type="date"  id="invoiceDate" formControlName="invoiceDate" style="width: 205px;"
+            <input type="date"  id="invoiceDate" formControlName="invoiceDate" style="width: 205px;" 
             />
+            <span
+            *ngIf="invoiceForm.controls['invoiceDate'].touched && invoiceForm.controls['invoiceDate'].invalid">Required</span>
           </p>
 
         </div>
         <div class="form-top-right-items">
           <p>
-            <label class="items-right">Order No.</label>
-            <input type="text" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" 
+            <label class="items-right">Order Number</label>
+            <input type="number" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" 
             />
+            <span
+            *ngIf="invoiceForm.controls['orderNo'].touched && invoiceForm.controls['orderNo'].invalid">Required</span>
           </p>
           <p>
             <label class="items-right" >Invoice Amount</label>
-            <input type="text" id="invoiceAmount" formControlName="invoiceAmount" 
+            <input type="number" id="invoiceAmount" formControlName="invoiceAmount" (keydown)="checkForExponential($event)"
              />
+             <span
+             *ngIf="invoiceForm.controls['invoiceAmount'].touched && invoiceForm.controls['invoiceAmount'].invalid">Required</span>
           </p>
 
         </div>

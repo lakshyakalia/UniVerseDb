@@ -3,6 +3,8 @@ import { SaveDataService } from '../service/vendor.service';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 import { generate } from 'rxjs';
 import { Router } from '@angular/router';
+import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
+import { MatDialog } from '@angular/material/dialog'
 @Component({
   selector: 'app-vendor-sign-up',
   templateUrl: './vendor-sign-up.component.html',
@@ -10,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class VendorSignUpComponent implements OnInit {
   items: FormGroup;
-  constructor(private saveData: SaveDataService, private fb: FormBuilder, private router: Router) { }
+  constructor(private saveData: SaveDataService, private fb: FormBuilder, private router: Router, private dialog : MatDialog) { }
   private recordData: any;
   private recordIds: any;
   private itemArray: Array<any> = [];
@@ -44,7 +46,8 @@ export class VendorSignUpComponent implements OnInit {
       this.saveData.particularVendor(this.vendorId)
         .subscribe((res: any) => {
           if(res.status === 404){
-            alert(res.msg)
+            // alert(res.msg)
+            this.openDialogBox(res.msg)
           }
           else{
             this.setItemdOrderDetails(res)
@@ -118,12 +121,14 @@ export class VendorSignUpComponent implements OnInit {
         .subscribe((res: any) => {
           
           if (res.message == "data saved") {
-            alert("Vendor Number Created- " + vendorId);
-            window.location.reload();
+            // alert("Vendor Number Created- " + vendorId);
+            this.openDialogBox("Vendor Created !. Vendor No. -" + vendorId)
+            // window.location.reload();
 
           }
           else {
-            alert("error")
+            // alert("error")
+            this.openDialogBox("error")
           }
         
         })
@@ -133,11 +138,28 @@ export class VendorSignUpComponent implements OnInit {
         .subscribe((res:any)=>{
           if(res.message=="data saved")
           {
-            alert("user updated");
-            window.location.reload();
+            // alert("user updated");
+            this.openDialogBox("User Updated !")
+            // window.location.reload();
           }
         })
       }
     }
+  }
+  checkForExponential(event) {
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
+  }
+  checkForAlphabets(event) {
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || ( event.keyCode >= 49 && event.keyCode <=57 ) ? false : true
+  }
+  checkForPhone(event) {
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
+  }
+    
+  openDialogBox(msg){
+    this.dialog.open(PurchaseDialogBoxComponent,{
+      width: '250px',
+      data:{ msg: msg}
+    })
   }
 }

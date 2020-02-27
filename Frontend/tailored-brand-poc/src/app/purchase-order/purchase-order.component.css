@@ -155,7 +155,8 @@ img {
 }
 
 .vendor-select-control {
-    width: 70%;
+    width: 69%;
+    margin-right: 20px;
     float: right;
 }
 
@@ -242,7 +243,7 @@ input[type=number] {
 }
 
 .input-width {
-    width: 5vw;
+    width: 7vw!important;
 }
 
 .itemID-width {
@@ -255,4 +256,11 @@ input[type=number] {
 
 .align-left {
     text-align: left;
+}
+
+.item-order-error{
+    font-size: 16px;
+    color: red;
+    font-weight: 400;
+    margin-bottom: 0px;
 }
