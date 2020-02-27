@@ -120,9 +120,13 @@ def allVendors():
 			itemId=[]
 			vendorDetail=[]
 	else:
-		for j in data['ITEM.IDS_MV']:
-			itemId.append(j['@ITEM.IDS'])		
-		ids=data['@_ID']
+		if(type(data['ITEM.IDS_MV']) is list):
+			for j in data['ITEM.IDS_MV']:
+				itemId.append(j['@ITEM.IDS'])		
+				ids=data['@_ID']
+		else:
+			itemId.append(data['ITEM.IDS_MV']['@ITEM.IDS'])
+			ids=data['ITEM.IDS_MV']['@_ID']   
 		vendorDetail.append(data['@VEND.COMPANY'])
 		vendorDetail.append(data['@VEND.NAME'])
 		vendorDetail.append(data['@VEND.PHONE'])
