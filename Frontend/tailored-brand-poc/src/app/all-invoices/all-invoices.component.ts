@@ -19,9 +19,9 @@ export class AllInvoicesComponent implements OnInit {
   orderNo 
   ngOnInit() {
     this.invoiceForm = new FormGroup({
-      invoiceNo : new FormControl(),
-      invoiceDate: new FormControl(),
-      orderNo : new FormControl(),
+      invoiceNo : new FormControl('',[Validators.required]),
+      invoiceDate: new FormControl('',[Validators.required]),
+      orderNo : new FormControl('',[Validators.required]),
       invoiceAmount : new FormControl()
 
    });

@@ -11,9 +11,9 @@ import { PurchaseOrderService } from '../service/purchase-order.service'
 })
 export class PurchaseOrderComponent implements OnInit {
 
-  itemList : Array <any> = []
+  itemList: Array<any> = []
 
-  itemOrderForm : FormGroup
+  itemOrderForm: FormGroup
 
   vendorNameList = []
 
@@ -21,9 +21,13 @@ export class PurchaseOrderComponent implements OnInit {
 
   vendorObject = []
 
-  editForm : boolean
+  editForm: boolean
 
-  purchaseOrderTitle : string
+  purchaseOrderTitle: string
+
+  grandTotal: number = 0.00
+
+  date: string
 
   constructor(
     private purchaseOrderService: PurchaseOrderService,
@@ -32,27 +36,28 @@ export class PurchaseOrderComponent implements OnInit {
   ) { }
 
   purchaseOrderForm = new FormGroup({
-    newOrder :  new FormControl(''),
-    orderDate : new FormControl('',Validators.required),
-    vendorName : new FormControl('',Validators.required),
-    companyName : new FormControl('',Validators.required),
-    street : new FormControl('',Validators.required),
-    state : new FormControl('',Validators.required),
-    phoneNumber : new FormControl('',Validators.required),
-    contactName : new FormControl('',Validators.required),
-    city : new FormControl('',Validators.required),
-    zipCode : new FormControl('',Validators.required)
+    newOrder: new FormControl(''),
+    orderDate: new FormControl('', Validators.required),
+    vendorName: new FormControl('', Validators.required),
+    companyName: new FormControl('', Validators.required),
+    street: new FormControl('', Validators.required),
+    state: new FormControl('-- Select State --', Validators.required),
+    phoneNumber: new FormControl('', Validators.required),
+    contactName: new FormControl('', Validators.required),
+    city: new FormControl('', Validators.required),
+    zipCode: new FormControl('', Validators.required)
   })
 
   ngOnInit() {
     this.purchaseOrderService.getAllVendorName()
-    .subscribe((res: any)=>{
-      let key = Object.keys(res.data)
-      for(let i=0;i<key.length;i++){
-        this.vendorNameList.push(res.data[key[i]][0][1])
-      }
-      this.vendorObject = res.data
-    })
+      .subscribe((res: any) => {
+        let key = Object.keys(res.data)
+        for (let i = 0; i < key.length; i++) {
+          this.vendorNameList.push(res.data[key[i]][0][1])
+        }
+        this.vendorObject = res.data
+        this.date = new Date().toISOString().substr(0, 10);
+      })
 
     this.itemOrderForm = this.fb.group({
       vendorItem: new FormControl(''),
@@ -60,143 +65,150 @@ export class PurchaseOrderComponent implements OnInit {
     })
 
     this.editForm = this.router.url.endsWith('/edit')
-    if(!this.editForm){
+    if (!this.editForm) {
       this.purchaseOrderForm.controls['newOrder'].disable()
       this.purchaseOrderTitle = 'Create Purchase Order'
     }
-    else{
+    else {
       this.purchaseOrderTitle = 'Update Purchase Order'
     }
   }
 
-  getVendorItems(){
+  getVendorItems() {
     let vendorName = this.purchaseOrderForm.get('vendorName').value
     let key = Object.keys(this.vendorObject)
-    for(let i=0;i<key.length;i++){
-      if(this.vendorObject[key[i]][0][1] === vendorName){
+    for (let i = 0; i < key.length; i++) {
+      if (this.vendorObject[key[i]][0][1] === vendorName) {
         this.vendorItemIDList = this.vendorObject[key[i]][1]
       }
     }
   }
 
-  createNewFormControl(itemID, itemDescription,quantity,unitCost){
+  createNewFormControl(itemID, itemDescription, quantity, unitCost) {
     const control = <FormArray>this.itemOrderForm.controls['specialRequests']
-    control.push(this.initiateForm(itemID,itemDescription,quantity,unitCost))
+    control.push(this.initiateForm(itemID, itemDescription, quantity, unitCost))
   }
 
 
-  initiateForm(itemID,itemDescription,quantity,unitCost) : FormGroup{
+  initiateForm(itemID, itemDescription, quantity, unitCost): FormGroup {
     return this.fb.group({
       itemID: [itemID],
       itemDescription: [itemDescription],
-      quantity: new FormControl(quantity,Validators.required),
-      unitCost: new FormControl(unitCost,Validators.required),
-      totalPrice : [0]
-   })
+      quantity: new FormControl(quantity, Validators.required),
+      unitCost: new FormControl(unitCost, Validators.required),
+      totalPrice: [0]
+    })
   }
 
-  getItemOrderDetail(event){
+  getItemOrderDetail(event) {
     let orderID = this.purchaseOrderForm.get('newOrder').value
-    if(event.keyCode === 13 && this.editForm && orderID != ''){
+    if (event.keyCode === 13 && this.editForm && orderID != '') {
       this.purchaseOrderService.getParticularOrder(orderID)
-      .subscribe((res:any)=>{
-        if(res.status  === 404){
-          alert(res.msg)
-        }
-        else{
-          this.setItemOrderDetails(res)
-        }
-      })
+        .subscribe((res: any) => {
+          if (res.status === 404) {
+            alert(res.msg)
+          }
+          else {
+            this.purchaseOrderTitle = "Update Purchase Order - "+orderID
+            this.setItemOrderDetails(res)
+          }
+        })
     }
   }
 
-  setItemOrderDetails(res:any){
+  setItemOrderDetails(res: any) {
     let submitBool = false
-    for(let i in res.data){
+    for (let i in res.data) {
       this.purchaseOrderForm.controls[i].setValue(res.data[i])
-      if(res.submitStatus === 'submit'){
+      if (res.submitStatus === 'submit') {
         this.purchaseOrderForm.controls[i].disable()
-      } 
+      }
     }
 
-    if(res.submitStatus === 'submit'){
+    if (res.submitStatus === 'submit') {
       submitBool = true
     }
 
-    for(let j in res.itemList){
+    for (let j in res.itemList) {
       let cost = res.itemList[j].cost
       let quantity = res.itemList[j].quantity
       let vendorItem = res.itemList[j].itemID
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
-      .subscribe((res:any)=>{
-        this.createNewFormControl(vendorItem,res.data,quantity,cost)
-        this.calculateTotalPrice(j,submitBool)
-      })
+        .subscribe((res: any) => {
+          this.createNewFormControl(vendorItem, res.data, quantity, cost)
+          this.calculateTotalPrice(j, submitBool)
+        })
     }
   }
 
-  addNewRow(){
+  addNewRow() {
     let vendorItem = this.itemOrderForm.get('vendorItem').value
     let controlArray = this.itemOrderForm.get('specialRequests').value
     let status = controlArray.find(element => element.itemID === vendorItem)
-    if(vendorItem != 'None' && status == undefined){
+    if (vendorItem != 'None' && status == undefined) {
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
-      .subscribe((res:any)=>{
-        this.createNewFormControl(vendorItem,res.data,"","")
-      })
+        .subscribe((res: any) => {
+          this.createNewFormControl(vendorItem, res.data, "", "")
+        })
     }
   }
 
-  removeParticularItem(index: number){
+  removeParticularItem(index: number) {
     let control = <FormArray>this.itemOrderForm.get('specialRequests')
     control.removeAt(index)
   }
 
-  calculateTotalPrice(index,submitBool){
+  calculateTotalPrice(index, submitBool) {
     let controlArray = <FormArray>this.itemOrderForm.get('specialRequests')
     let quantity = controlArray.value[index].quantity
     let unitCost = controlArray.value[index].unitCost
-    if(quantity != "" || unitCost != ""){
+    this.grandTotal = 0
+    if (quantity != "" || unitCost != "") {
       let totalPrice = quantity * unitCost
       controlArray.controls[index].get('totalPrice').setValue(totalPrice)
-      if(submitBool){
+      if (submitBool) {
         controlArray.controls[index].get('quantity').disable()
         controlArray.controls[index].get('unitCost').disable()
       }
+      controlArray.controls.forEach(control => {
+        let price = parseInt(control.get('totalPrice').value)
+        this.grandTotal += price
+      })
     }
+
   }
 
-  submitNewOrder(purchaseOrderForm,itemOrderForm,submitStatus){
+  submitNewOrder(purchaseOrderForm, itemOrderForm, submitStatus) {
     let recordId
-    if(this.editForm){
+    if (this.editForm) {
       recordId = this.purchaseOrderForm.get('newOrder').value
     }
-    else{
-      recordId = Math.floor(Math.random()*900000) + 100000
+    else {
+      recordId = Math.floor(Math.random() * 900000) + 100000
     }
-    if(!this.checkValidation()){
+    if (!this.checkValidation()) {
       return;
     }
-    
-    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value,itemOrderForm.value,recordId,submitStatus,this.editForm)
-    .subscribe((res)=>{
-      if(this.editForm){
-        alert('Existing order updated')
-      }
-      else{
-        alert(`New Order No - ${recordId} Created`)
-      }
-      window.location.reload()
-    })
+
+    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value, itemOrderForm.value, recordId, submitStatus, this.editForm)
+      .subscribe((res) => {
+        if (this.editForm) {
+          alert('Existing order updated')
+        }
+        else {
+          alert(`New Order No - ${recordId} Created`)
+        }
+        window.location.reload()
+      })
   }
 
-  checkForExponential(event){
+  checkForExponential(event) {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 ? false : true
   }
 
-  checkValidation(){
+  checkValidation() {
     let status = true
-    if(this.purchaseOrderForm.invalid){
+    if (this.purchaseOrderForm.invalid) {
       this.purchaseOrderForm.get('companyName').markAsTouched()
       this.purchaseOrderForm.get('city').markAsTouched()
       this.purchaseOrderForm.get('zipCode').markAsTouched()
@@ -208,9 +220,9 @@ export class PurchaseOrderComponent implements OnInit {
       this.purchaseOrderForm.get('orderDate').markAsTouched()
       status = false
     }
-    if(this.itemOrderForm.invalid){
-      (<FormArray>this.itemOrderForm.get('specialRequests')).controls.forEach((group: FormGroup) =>{
-        (<any>Object).values(group.controls).forEach((control:FormControl)=>{
+    if (this.itemOrderForm.invalid || this.itemOrderForm.untouched) {
+      (<FormArray>this.itemOrderForm.get('specialRequests')).controls.forEach((group: FormGroup) => {
+        (<any>Object).values(group.controls).forEach((control: FormControl) => {
           control.markAsTouched()
         })
       })

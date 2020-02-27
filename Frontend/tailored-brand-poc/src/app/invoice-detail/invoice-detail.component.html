@@ -50,7 +50,7 @@
             <tr *ngFor="let control of invoiceForm.controls.invoiceDetails.controls;let i=index" [formGroup]="control">
               <td>{{ i+1 }}</td>
               <td>{{ control.value.itemNo }}</td>
-              <td>Hones T-shirt adasdas</td>
+              <td>{{description[control.value.itemNo]}}</td>
               <td>{{ control.value.quantityOrdered }}</td>
               <td>{{ control.value.quantityPending }}</td>
               <td><input type="text" formControlName="quantityReceived" (input)="calculatePendingQuantity(i)"></td>

@@ -11,18 +11,27 @@
         <div class="form-top-left-items">
           <p>
             <label class="items-left">Invoice No.</label>
-            <input type="text"  />
+            <input type="number" formControlName="invoiceNo" />
+            <span
+            *ngIf="invoiceForm.controls['invoiceNo'].touched && invoiceForm.controls['invoiceNo'].invalid">Required</span>
+
           </p>
           <p>
             <label class="items-left">Invoice Date</label>
-            <input type="text" />
+            <input type="date" formControlName="invoiceDate" style="width: 206px;"/>
+            <span
+            *ngIf="invoiceForm.controls['invoiceDate'].touched && invoiceForm.controls['invoiceDate'].invalid">Required</span>
+
           </p>
 
         </div>
         <div class="form-top-right-items">
           <p>
             <label class="items-right">Order No.</label>
-            <input type="text" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" />
+            <input type="number" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" />
+            <span
+            *ngIf="invoiceForm.controls['orderNo'].touched && invoiceForm.controls['orderNo'].invalid">Required</span>
+
           </p>
         </div>
        
@@ -49,10 +58,11 @@
           </tbody>
         </table>
         <div class="button-div">
-          <!-- <button routerLink="/"><i class="fas fa-arrow-circle-left"></i> Back</button> -->
         </div>
       </div>
     </form>
+    <button class="btnn" routerLink="/"><i class="fas fa-arrow-circle-left"></i> Back</button>
+
     </div>
    
   </div>

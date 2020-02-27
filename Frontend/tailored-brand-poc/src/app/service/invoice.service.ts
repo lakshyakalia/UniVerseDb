@@ -15,7 +15,10 @@ export class InvoiceService {
       submitStatus: submitStatus
 
     })
-
+    
+  }
+  getInvoice(invoiceId){
+    return this.http.get(`http://localhost:5000/api/invoice/${invoiceId}`)
   }
   getParticularOrder(orderID){
     return this.http.get(`http://localhost:5000/api/invoice/order/${orderID}`)

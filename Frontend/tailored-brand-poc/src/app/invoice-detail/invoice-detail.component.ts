@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { InvoiceService } from '../service/invoice.service';
+import {SaveDataService} from '../service/vendor.service';
 import { Router } from '@angular/router';
+import { from } from 'rxjs';
 
 
 @Component({
@@ -13,8 +15,9 @@ export class InvoiceDetailComponent implements OnInit {
   invoiceForm: FormGroup;
   editInvoice: boolean;
   heading: string = 'New Invoice Update';
+  description:string;
 
-  constructor(private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder) { }
+  constructor(private vendorService:SaveDataService,private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder) { }
 
   ngOnInit() {
     this.invoiceForm = this.fb.group({
@@ -34,6 +37,10 @@ export class InvoiceDetailComponent implements OnInit {
       console.log("---")
       this.heading = 'Edit Invoice';
     }
+    this.vendorService.readItem()
+    .subscribe((res:any)=>{
+      this.description=res.table
+    })
   }
 
   initiateForm(ids,quantity): FormGroup{
@@ -46,7 +53,7 @@ export class InvoiceDetailComponent implements OnInit {
     })
   }
 
-  createNewFormControl(cost,ids,quantity){
+  createNewFormControl(ids,quantity){
     const control = <FormArray>this.invoiceForm.controls['invoiceDetails']
     control.push(this.initiateForm(ids,quantity))
   }
@@ -64,11 +71,29 @@ export class InvoiceDetailComponent implements OnInit {
     if (event.keyCode === 13 && orderID != '') {
       this.invoiceService.getParticularOrder(orderID)
         .subscribe((res: any) => {
+          if(res.status==200){
           let len = res.ids.length
           for(let i=0;i<len;i++){
-            this.createNewFormControl(res.cost[i],res.ids[i],res.quantity[i])
+            this.createNewFormControl(res.ids[i],res.quantity[i])
           }
+        }
+        if(res.status==404){
+          alert(res.message)
+          window.location.reload()
+        }
         })
+    }
+  }
+  getInvoiceDetail(event){
+    let invoiceId = this.invoiceForm.get('invoiceNo').value
+    if(event.keyCode === 13 && invoiceId != ''){
+      this.invoiceService.getInvoice(invoiceId)
+      .subscribe((res:any)=>{
+        let len = res.ids.length
+          for(let i=0;i<len;i++){
+            this.createNewFormControl(res.ids[i],res.quantity[i])
+          }
+      })
     }
   }
 
