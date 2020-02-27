@@ -37,7 +37,6 @@
       </div>
       <div class="form-bottom">
           <hr>
-        <label>Items :</label>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
             <th>SNo.</th>
@@ -48,13 +47,13 @@
             <th>Quantity Received</th>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>1234567</td>
+            <tr *ngFor="let control of invoiceForm.controls.invoiceDetails.controls;let i=index" [formGroup]="control">
+              <td>{{ i+1 }}</td>
+              <td>{{ control.value.itemNo }}</td>
               <td>Hones T-shirt adasdas</td>
-              <td>50</td>
-              <td>30</td>
-              <td>0</td>
+              <td>{{ control.value.quantityOrdered }}</td>
+              <td>{{ control.value.quantityPending }}</td>
+              <td><input type="text" formControlName="quantityReceived" (input)="calculatePendingQuantity(i)"></td>
             </tr>
           </tbody>
         </table>
