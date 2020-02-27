@@ -32,6 +32,7 @@ export class PurchaseOrderComponent implements OnInit {
   date: string
 
   itemOrderError : boolean
+  lastId:number;
 
   states = ['California','Florida','Texas','Hawaii']
 
@@ -109,7 +110,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   getItemOrderDetail(event) {
     let orderID = this.purchaseOrderForm.get('newOrder').value
-    if (event.keyCode === 13 && this.editForm && orderID != '') {
+    if (event.keyCode === 13 && this.editForm && orderID != '' && orderID !=this.lastId) {
+      this.lastId=orderID
       this.purchaseOrderService.getParticularOrder(orderID)
         .subscribe((res: any) => {
           if (res.status === 404) {
