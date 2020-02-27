@@ -213,7 +213,7 @@ def particularOrderDetails(orderID):
         orderDetailsDict['state'] = orderDetail['COMP.ADDRESS_MV'][2]['@COMP.ADDRESS']
         orderDetailsDict['zipCode'] = orderDetail['COMP.ADDRESS_MV'][3]['@COMP.ADDRESS']
         
-        if(type(orderDetailsDict) is list):
+        if(type(orderDetail['ORDER.ITEM.IDS_MV']) is list):   
             for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
                 itemDict = {}
                 itemDict['itemID'] = orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS']
