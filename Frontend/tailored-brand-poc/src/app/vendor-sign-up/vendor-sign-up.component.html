@@ -31,11 +31,8 @@
           </p>
           <p>
             <label class="items-left">State</label>
-            <select class="input form-control-sm" formControlName="State" required>
-              <option>Texas</option>
-              <option>California</option>
-              <option>Florida</option>
-            </select>
+            <input type="text" placeholder=" -- State -- " ngxTypeahead [value]="selectedState" [taList]="stateList" (taSelected)="selectState($event)" autocomplete="doNotAutoComplete">
+            <input type="hidden" formControlName="State">
             <span *ngIf= "vendorDetailForm.controls['State'].invalid && toggle==true">
              required
             </span>
@@ -94,7 +91,7 @@
             <tr>
               <td></td>
               <td class="form-group" style="width:1px;">
-                <input type="text" placeholder=" -- Item # -- " ngxTypeahead [value]="itemToAdd" [taList]="recordIds" (taSelected)="addRecordId($event)">
+                <input type="text" placeholder=" -- Item # -- " ngxTypeahead [value]="selectedItem" [taList]="recordIds" (taSelected)="selectItem($event)" style="text-align: right;" autocomplete="doNotAutoComplete">
               </td>
             </tr>
           </tbody>

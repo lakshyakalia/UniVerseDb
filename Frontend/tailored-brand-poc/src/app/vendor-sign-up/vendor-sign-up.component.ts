@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SaveDataService } from '../service/vendor.service';
+import { StatesService } from '../service/states.service';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 import { generate } from 'rxjs';
 import { Router } from '@angular/router';
@@ -12,7 +13,11 @@ import { MatDialog } from '@angular/material/dialog'
 })
 export class VendorSignUpComponent implements OnInit {
   items: FormGroup;
-  constructor(private saveData: SaveDataService, private fb: FormBuilder, private router: Router, private dialog : MatDialog) { }
+  stateList: string[];
+  selectedState: string = "";
+  constructor(private saveData: SaveDataService, private states: StatesService, private fb: FormBuilder, private router: Router, private dialog : MatDialog) {
+    this.stateList = states.all();
+  }
   private recordData: any;
   private recordIds: any;
   private itemArray: Array<any> = [];
@@ -36,6 +41,8 @@ export class VendorSignUpComponent implements OnInit {
     Zip: new FormControl('', [Validators.required])
 
   })
+  selectedItem: string = "";
+
   deleteRow(index) {
     console.log(index)
     const control = <FormArray>this.items.get('items');
@@ -69,7 +76,6 @@ export class VendorSignUpComponent implements OnInit {
         {
           keyPipeValues.push(`${keys[i]} | ${this.recordData[keys[i]]}`)
         }
-        debugger
         this.recordIds = keyPipeValues
       })
 
@@ -95,6 +101,7 @@ export class VendorSignUpComponent implements OnInit {
     for (let i in res.data) {
       this.vendorDetailForm.controls[i].setValue(res.data[i])
     }
+    this.selectedState = res.data["State"]
     for (let j in res.itemIds){
       let id =res.itemIds[j].itemId
       let desc=this.recordData[id][0]
@@ -106,9 +113,8 @@ export class VendorSignUpComponent implements OnInit {
     const control =<FormArray> this.items.controls['items']
     control.push(this.initiateForm(desc,id))  
   }
-  addRecordId(event) {
-    debugger
-    let id = this.items.get('itemId').value
+  selectItem(event) {
+    let id = event.split("|")[0].trim()
     let description = this.recordData[id][0]
 
     let controlArray = this.items.get('items').value
@@ -118,11 +124,21 @@ export class VendorSignUpComponent implements OnInit {
       let control = <FormArray>this.items.controls['items']
       control.push(this.initiateForm(description, id))
     }
+    // Workaround to clear the typeahead box after user makes a selection
+    if(this.selectedItem == "")
+      this.selectedItem = null
+    else
+      this.selectedItem = ""    
+  }
+  selectState(event) {
+    this.selectedState = event.split("|")[0].trim();
+    this.vendorDetailForm.controls['State'].setValue(this.selectedState);
   }
   vendorDetail(vendorDetail, items) {
+    debugger
     this.toggle = true;
 
-    if(this.items.untouched){
+    if(this.items.controls.items["length"] == 0){
       this.itemError = true
       return
     }
@@ -157,7 +173,7 @@ export class VendorSignUpComponent implements OnInit {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
   }
   checkForAlphabets(event) {
-    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || ( event.keyCode >= 49 && event.keyCode <=57 ) ? false : true
+    return event.keyCode == 190 || event.keyCode == 107 || ( event.keyCode >= 49 && event.keyCode <=57 ) ? false : true
   }
   checkForPhone(event) {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
