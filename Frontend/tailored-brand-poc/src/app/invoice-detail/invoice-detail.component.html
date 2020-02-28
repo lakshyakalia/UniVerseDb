@@ -17,7 +17,7 @@
           </p>
           <p>
             <label class="items-left">Invoice Date</label>
-            <input type="date"  id="invoiceDate" formControlName="invoiceDate" style="width: 205px;" 
+            <input type="date"  id="invoiceDate" min="{{ date }}" formControlName="invoiceDate" style="width: 205px;" 
             />
             <span
             *ngIf="invoiceForm.controls['invoiceDate'].touched && invoiceForm.controls['invoiceDate'].invalid">Required</span>

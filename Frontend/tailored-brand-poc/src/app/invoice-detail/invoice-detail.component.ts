@@ -19,7 +19,7 @@ export class InvoiceDetailComponent implements OnInit {
   heading: string = 'New Invoice';
   description:string;
   lastId:number;
-
+  date : string;
   constructor(private vendorService:SaveDataService,private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder,private dialog: MatDialog) { }
 
   ngOnInit() {
@@ -44,6 +44,8 @@ export class InvoiceDetailComponent implements OnInit {
     .subscribe((res:any)=>{
       this.description=res.table
     })
+    this.date = new Date().toISOString().substr(0, 10);
+
   }
 
   initiateForm(ids,quantity): FormGroup{
@@ -86,8 +88,10 @@ export class InvoiceDetailComponent implements OnInit {
           }
         }
         if(res.status==404){
-          alert(res.message)
-          window.location.reload()
+          // alert(res.message)
+          
+          this.openDialogBox(res.message)
+          // window.location.reload()
         }
         })
     }
@@ -117,7 +121,7 @@ export class InvoiceDetailComponent implements OnInit {
   }
   openDialogBox(msg){
     this.dialog.open(PurchaseDialogBoxComponent,{
-      width: '250px',
+      width: '420px',
       data:{ msg: msg}
     })
   }
