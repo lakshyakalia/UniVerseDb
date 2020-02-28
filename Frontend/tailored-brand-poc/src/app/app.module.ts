@@ -62,10 +62,11 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     MatButtonModule,
     HttpClientModule,
     MatDialogModule,
-    CurrencyMaskModule
+    CurrencyMaskModule,
+    IMaskModule
   ],
   providers: [
-    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }
+    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig },
     IMaskModule,
     MatDialogModule
   ],

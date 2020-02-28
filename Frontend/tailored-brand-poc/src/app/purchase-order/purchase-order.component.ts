@@ -154,6 +154,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.createNewFormControl(vendorItem, itemDescription, quantity, cost)
       this.calculateTotalPrice(j, submitBool)
     }
+    this.getVendorItems()
   }
 
   addNewRow() {
