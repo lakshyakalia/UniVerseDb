@@ -89,10 +89,10 @@
         <table class="table vendor-item-table">
           <thead class="thead-dark">
             <th>S.No</th>
-            <th class="align-right">Item No</th>
+            <th class="align-right">Item #</th>
             <th class="align-left">Description</th>
             <th class="align-right">Quantity</th>
-            <th class="align-right">Unit Cost($)</th>
+            <th class="align-right">Unit Cost</th>
             <th class="align-right">Total Cost</th>
             <th>Remove</th>
           </thead>
@@ -103,11 +103,11 @@
               <td class="itemID-width align-right">{{ control.value.itemID }}</td>
               <td class="align-left">{{ control.value.itemDescription }}</td>
               <td>
-                <input type="number" name="quantity" formControlName="quantity" (input)="calculateTotalPrice(i)" class="input-width align-right">
+                <input name="quantity" currencyMask [options]="{prefix: '', precision: 0}" formControlName="quantity" (keyup)="calculateTotalPrice(i)" class="input-width align-right">
                 <span class="error-field" *ngIf="control.controls.quantity.errors?.required && control.controls.quantity.touched">Required Field</span>
               </td>
               <td class="input-width">
-                <input type="number" name="unitCost" formControlName="unitCost" (input)="calculateTotalPrice(i)" class="input-width align-right">
+                <input name="unitCost" currencyMask formControlName="unitCost" (keyup)="calculateTotalPrice(i)" class="input-width align-right">
                 <span class="error-field" *ngIf="control.controls.unitCost.errors?.required && control.controls.unitCost.touched">Required Field</span>
               </td>
               <td class="align-right">$ {{ control.value.totalPrice| number:'1.2-5' }}</td>
@@ -117,7 +117,7 @@
               <td></td>
               <td class="itemID-width">
                 <select formControlName="vendorItem" (change)="addNewRow()" class="input form-control-sm">
-                  <option>-- Item # --</option>
+                  <option> -- Item # -- </option>
                   <option *ngFor="let items of vendorItemIDList">{{ items }}</option>
                 </select>
               </td>
