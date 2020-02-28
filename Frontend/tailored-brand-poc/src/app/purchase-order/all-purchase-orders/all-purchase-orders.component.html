@@ -6,7 +6,7 @@
 <div class="sign-up-div container">
   <div class="form">
     <div class="form-bottom">
-      <table class="table vendor-item-table">
+      <table class="table vendor-item-table" cellspacing="10">
         <thead class="thead-dark">
           <th>SNo.</th>
           <th>Purchase Order No.</th>
@@ -17,7 +17,7 @@
           <tr *ngFor="let item of itemOrderList; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ item['purchaseOrderNo'] }}</td>
-            <td>{{ item['orderDate'] }}</td>
+            <td>{{ item['orderDate']| date: 'MM-dd-y' }}</td>
             <td>{{ item['companyName'] }}</td>
           </tr>
         </tbody>
