@@ -232,8 +232,8 @@ export class PurchaseOrderComponent implements OnInit {
 
     if(this.itemOrderForm.untouched) this.itemOrderError = true
     else this.itemOrderError = false
-
-    if (this.itemOrderForm.invalid || this.itemOrderForm.untouched) {
+    
+    if (this.itemOrderForm.invalid || !this.itemOrderForm.touched) {
       (<FormArray>this.itemOrderForm.get('specialRequests')).controls.forEach((group: FormGroup) => {
         (<any>Object).values(group.controls).forEach((control: FormControl) => {
           control.markAsTouched()
