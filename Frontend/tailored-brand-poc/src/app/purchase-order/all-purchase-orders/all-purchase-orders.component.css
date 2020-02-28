@@ -186,3 +186,11 @@ td button{
         margin-right: 0;
     }
 }
+
+.align-right{
+    text-align: right;
+}
+
+.align-left{
+    text-align: left;
+}

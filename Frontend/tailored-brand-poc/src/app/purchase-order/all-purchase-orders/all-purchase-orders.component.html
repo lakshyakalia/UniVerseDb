@@ -17,7 +17,7 @@
           <tr *ngFor="let item of itemOrderList; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ item['purchaseOrderNo'] }}</td>
-            <td>{{ item['orderDate']| date: 'MM-dd-y' }}</td>
+            <td>{{ item['orderDate']| date: 'MM/dd/y' }}</td>
             <td>{{ item['companyName'] }}</td>
           </tr>
         </tbody>
