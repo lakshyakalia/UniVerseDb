@@ -21,6 +21,7 @@ import { AllVendorsComponent } from './all-vendors/all-vendors.component';
 import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box.component'
+import { NgxCurrencyModule } from "ngx-currency";
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box
     MatInputModule,
     MatButtonModule,
     HttpClientModule,
-    MatDialogModule
+    MatDialogModule,
+    NgxCurrencyModule
   ],
   providers: [],
   bootstrap: [AppComponent],
