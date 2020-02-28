@@ -20,6 +20,7 @@ import { FooterComponent } from './footer/footer.component';
 import { AllVendorsComponent } from './all-vendors/all-vendors.component';
 import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import {IMaskModule} from 'angular-imask';
 import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box.component'
 
 @NgModule({
@@ -48,6 +49,7 @@ import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box
     MatInputModule,
     MatButtonModule,
     HttpClientModule,
+    IMaskModule,
     MatDialogModule
   ],
   providers: [],
