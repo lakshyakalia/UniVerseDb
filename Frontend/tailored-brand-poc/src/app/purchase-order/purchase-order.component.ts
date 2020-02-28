@@ -115,7 +115,8 @@ export class PurchaseOrderComponent implements OnInit {
       this.purchaseOrderService.getParticularOrder(orderID)
         .subscribe((res: any) => {
           if (res.status === 404) {
-            alert(res.msg)
+            // alert(res.msg)
+            this.openDialogBox(res.msg)
           }
           else {
             this.purchaseOrderTitle = "Update Purchase Order "+orderID
