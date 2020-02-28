@@ -32,7 +32,10 @@ export class PurchaseOrderComponent implements OnInit {
   date: string
 
   itemOrderError : boolean
+
   lastId:number;
+
+  showButtons : boolean = true
 
   states = ['California','Florida','Texas','Hawaii']
 
@@ -135,6 +138,7 @@ export class PurchaseOrderComponent implements OnInit {
     }
 
     if (res.submitStatus === 'submit') {
+      this.showButtons = false
       submitBool = true
     }
 
