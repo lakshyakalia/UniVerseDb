@@ -17,14 +17,21 @@ export class AllInvoicesComponent implements OnInit {
   cost = []
   invoice = []
   orderNo 
+  invoiceData:any;
   ngOnInit() {
     this.invoiceForm = new FormGroup({
       invoiceNo : new FormControl('',[Validators.required]),
       invoiceDate: new FormControl('',[Validators.required]),
       orderNo : new FormControl('',[Validators.required]),
       invoiceAmount : new FormControl()
+      
 
    });
+   this.invoiceService.allInvoice()
+   .subscribe((res)=>{
+     console.log(res.data)
+     this.invoiceData=res.data
+   })
   }
   getItemOrderDetail(event){
     let orderID = this.invoiceForm.get('orderNo').value
