@@ -94,10 +94,8 @@
             <tr>
               <td></td>
               <td class="form-group" style="width:1px;">
-                <select (change)="addRecordId()" class="input form-control-sm" formControlName="itemId" required>
-                  <option disabled selected value> -- select an option -- </option>
-                  <option *ngFor="let ids of recordIds">{{ids}}</option>
-                </select></td>
+                <input type="text" placeholder=" -- Item # -- " ngxTypeahead [value]="itemToAdd" [taList]="recordIds" (taSelected)="addRecordId($event)">
+              </td>
             </tr>
           </tbody>
         </table>

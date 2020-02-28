@@ -46,13 +46,11 @@ export class VendorSignUpComponent implements OnInit {
     if(event.keyCode===13 && this.lastid!=this.vendorDetailForm.get('vendorNo').value){
       this.vendorId=this.vendorDetailForm.get('vendorNo').value
       this.lastid=this.vendorId
-      console.log(this.vendorId)
       this.saveData.particularVendor(this.vendorId)
         .subscribe((res: any) => {
           if(res.status === 404){
             this.openDialogBox(res.msg)
           }
-            
           else{
             this.heading=`Edit Vendor ${this.vendorId}`;
             this.setItemdOrderDetails(res)
@@ -65,7 +63,14 @@ export class VendorSignUpComponent implements OnInit {
     this.saveData.readItem()
       .subscribe((res: any) => {
         this.recordData = res.table;
-        this.recordIds = Object.keys(res.table)
+        let keyPipeValues = []
+        let keys = Object.keys(this.recordData)
+        for(let i = 0; i < keys.length; i++)
+        {
+          keyPipeValues.push(`${keys[i]} | ${this.recordData[keys[i]]}`)
+        }
+        debugger
+        this.recordIds = keyPipeValues
       })
 
     this.items = this.fb.group({
@@ -73,15 +78,12 @@ export class VendorSignUpComponent implements OnInit {
       items: this.fb.array([],[Validators.required])
     });
     this.editVendor = this.router.url.endsWith('/vendor/edit')
-    console.log(this.editVendor)
     if (this.editVendor) {
-      console.log("---")
       this.heading='Edit Vendor';
     }
     else{
       this.vendorDetailForm.controls['vendorNo'].disable()
     }
-    console.log(this.items.controls)
   }
   initiateForm(description, id): FormGroup {
     return this.fb.group({
@@ -97,8 +99,6 @@ export class VendorSignUpComponent implements OnInit {
       let id =res.itemIds[j].itemId
       let desc=this.recordData[id][0]
       this.createFormControl(id,desc)
-      console.log(id)
-      
     }
 
   }
@@ -106,7 +106,8 @@ export class VendorSignUpComponent implements OnInit {
     const control =<FormArray> this.items.controls['items']
     control.push(this.initiateForm(desc,id))  
   }
-  addRecordId() {
+  addRecordId(event) {
+    debugger
     let id = this.items.get('itemId').value
     let description = this.recordData[id][0]
 

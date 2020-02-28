@@ -10,6 +10,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { NavbarComponent } from './navbar/navbar.component';
+import { NgxTypeaheadModule } from 'ngx-typeahead';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { VendorSignUpComponent } from './vendor-sign-up/vendor-sign-up.component'
 import { HttpClientModule } from '@angular/common/http';
 import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
@@ -47,6 +49,7 @@ import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box
     MatSelectModule,
     MatInputModule,
     MatButtonModule,
+    NgxTypeaheadModule,
     HttpClientModule,
     MatDialogModule
   ],
@@ -55,3 +58,5 @@ import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box
   entryComponents:[PurchaseDialogBoxComponent]
 })
 export class AppModule { }
+
+platformBrowserDynamic().bootstrapModule(AppModule);
