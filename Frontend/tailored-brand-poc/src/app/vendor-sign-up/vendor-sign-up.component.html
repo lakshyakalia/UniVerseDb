@@ -42,7 +42,7 @@
           </p>
           <p>
             <label class="items-left" >Phone</label>
-            <input type="text" formControlName="Phone" required style="text-align: right;" (keydown)="checkForPhone($event)"  placeholder="(123) 456-7890" name="phone" class="phone" maxlength="10"/>
+            <input type="text" [imask]="{mask: '(000) 000-0000'}" formControlName="Phone" required style="text-align: right;" (keydown)="checkForPhone($event)" name="phone" class="phone"/>
             <span *ngIf= "vendorDetailForm.controls['Phone'].invalid && toggle==true">
             required
             </span>
@@ -95,7 +95,7 @@
               <td></td>
               <td class="form-group" style="width:1px;">
                 <select (change)="addRecordId()" class="input form-control-sm" formControlName="itemId" required>
-                  <option disabled selected value> -- select an option -- </option>
+                  <option disabled selected value> -- Item # -- </option>
                   <option *ngFor="let ids of recordIds">{{ids}}</option>
                 </select></td>
             </tr>
