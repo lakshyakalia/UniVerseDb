@@ -210,10 +210,10 @@ export class PurchaseOrderComponent implements OnInit {
       .subscribe((res) => {
         let msg
         if (this.editForm) {
-          msg = 'Existing order updated'
+          msg = `Order ${recordId} updated`
         }
         else {
-          msg = `New Order No - ${recordId} Created`
+          msg = `Order ${recordId} Created`
         }
         this.openDialogBox(msg)
       })
