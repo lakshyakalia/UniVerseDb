@@ -132,7 +132,7 @@ export class VendorSignUpComponent implements OnInit {
         .subscribe((res: any) => {
           
           if (res.status == 200) {
-            this.openDialogBox("Vendor Created !. Vendor No. -" + vendorId)
+            this.openDialogBox("Vendor " + vendorId + " Created!")
 
           }
           else {
@@ -164,7 +164,7 @@ export class VendorSignUpComponent implements OnInit {
     
   openDialogBox(msg){
     this.dialog.open(PurchaseDialogBoxComponent,{
-      width: '250px',
+      width: '420px',
       data:{msg: msg}
     })
   }

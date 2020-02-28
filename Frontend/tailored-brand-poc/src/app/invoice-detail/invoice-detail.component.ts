@@ -20,6 +20,8 @@ export class InvoiceDetailComponent implements OnInit {
   description:string;
   lastId:number;
   date : string;
+  itemOrderError : boolean
+
   constructor(private vendorService:SaveDataService,private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder,private dialog: MatDialog) { }
 
   ngOnInit() {
@@ -64,8 +66,10 @@ export class InvoiceDetailComponent implements OnInit {
   }
 
   submitInvoice(submitStatus) {
-
     
+    if (!this.checkValidation()) {
+      return;
+    }
     console.log(this.invoiceForm.value);
     this.invoiceService.submitNewInvoice(this.invoiceForm.value,submitStatus)
       .subscribe((res) => {
@@ -74,6 +78,7 @@ export class InvoiceDetailComponent implements OnInit {
         // window.location.reload();
       })
   }
+  
 
   getItemOrderDetail(event) {
     let orderID = this.invoiceForm.get('orderNo').value
@@ -124,5 +129,20 @@ export class InvoiceDetailComponent implements OnInit {
       width: '420px',
       data:{ msg: msg}
     })
+  }
+  checkValidation() {
+    let status = true
+    if (this.invoiceForm.invalid) {
+      this.invoiceForm.get('invoiceNo').markAsTouched()
+      this.invoiceForm.get('invoiceDate').markAsTouched()
+      this.invoiceForm.get('orderNo').markAsTouched()
+      this.invoiceForm.get('invoiceAmount').markAsTouched()
+
+      status = false
+    }
+    if(this.invoiceForm.untouched) this.itemOrderError = true
+    else this.itemOrderError = false
+
+    return status
   }
 }
