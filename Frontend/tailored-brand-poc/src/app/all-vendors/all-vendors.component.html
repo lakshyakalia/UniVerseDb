@@ -20,7 +20,7 @@
               <td width="30%" class="right">{{ vendor }}</td>
               <td width="30%" class="left">{{ vendorData[vendor][0][0]}}</td>
               <td width="15%" class="left">{{ vendorData[vendor][0][1]}}</td>
-              <td width="20%" class="left">{{ vendorData[vendor][0][2]}}</td>
+              <td width="20%" class="left">{{ vendorData[vendor][0][2] | imask: {mask:'(000) 000-0000'} }}</td>
             </tr>
           </tbody>
         </table>
