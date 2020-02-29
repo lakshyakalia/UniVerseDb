@@ -27,7 +27,7 @@
         <div class="form-top-right-items">
           <p>
             <label class="items-right">Order Number</label>
-            <input type="number" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" 
+            <input type="text" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" 
             />
             <span
             *ngIf="invoiceForm.controls['orderNo'].touched && invoiceForm.controls['orderNo'].invalid">Required</span>
