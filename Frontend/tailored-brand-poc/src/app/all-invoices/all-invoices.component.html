@@ -18,14 +18,15 @@
           </p>
           <p>
             <label class="items-left">Invoice Date</label>
-            <input type="text" formControlName="invoiceFromDate" class="date" placeholder="From Date" onfocus="(this.type='date')">
-            <span
-            *ngIf="invoiceForm.controls['invoiceFromDate'].touched && invoiceForm.controls['invoiceFromDate'].invalid">Required</span>
-
             <input type="text" formControlName="invoiceToDate"  class="date" placeholder="To Date" onfocus="(this.type='date')"/>
 
             <span
             *ngIf="invoiceForm.controls['invoiceToDate'].touched && invoiceForm.controls['invoiceToDate'].invalid">Required</span>
+            <input type="text" formControlName="invoiceFromDate" class="date" placeholder="From Date" onfocus="(this.type='date')">
+            <span
+            *ngIf="invoiceForm.controls['invoiceFromDate'].touched && invoiceForm.controls['invoiceFromDate'].invalid">Required</span>
+
+
 
           </p>
 
