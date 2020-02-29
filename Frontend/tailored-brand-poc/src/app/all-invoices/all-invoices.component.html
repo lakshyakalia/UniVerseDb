@@ -10,7 +10,7 @@
       <div class="form-top">
         <div class="form-top-left-items">
           <p>
-            <label class="items-left">Invoice No.</label>
+            <label class="items-left">Invoice Number</label>
             <input type="text" formControlName="invoiceNo" (keydown)="checkForExponential($event)" />
             <span
             *ngIf="invoiceForm.controls['invoiceNo'].touched && invoiceForm.controls['invoiceNo'].invalid">Required</span>
@@ -32,7 +32,7 @@
         </div>
         <div class="form-top-right-items">
           <p>
-            <label class="items-right">Order No.</label>
+            <label class="items-right">Order Number</label>
             <input type="text" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" />
             <span
             *ngIf="invoiceForm.controls['orderNo'].touched && invoiceForm.controls['orderNo'].invalid">Required</span>
