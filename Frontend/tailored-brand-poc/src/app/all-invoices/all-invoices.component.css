@@ -158,6 +158,17 @@ td button{
     float: right;
 
 }
+.date{
+    
+    width: 100px;
+}
+.date::placeholder{
+    font-size: 10px;
+}
+::placeholder{
+    font-size: 20px;
+    font-family: 'Courier New', Courier, monospace;
+}
 .button-div button, .btnn{
     margin: 10px;
     border: none;
