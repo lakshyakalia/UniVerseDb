@@ -135,8 +135,8 @@
         </table>
         <p *ngIf="itemOrderError" class="item-order-error">Select atleast 1 item</p>
         <div class="button-div">
-          <button (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'draft')">Save as Draft</button>
-          <button (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'submit')">Submit</button>
+          <button *ngIf="showButtons" (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'draft')">Save as Draft</button>
+          <button *ngIf="showButtons" (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'submit')">Submit</button>
           <button routerLink="/">Cancel</button>
         </div>
       </form>

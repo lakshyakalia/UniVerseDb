@@ -65,10 +65,11 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     NgxTypeaheadModule,
     HttpClientModule,
     MatDialogModule,
-    CurrencyMaskModule
+    CurrencyMaskModule,
+    IMaskModule
   ],
   providers: [
-    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }
+    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig },
     IMaskModule,
     MatDialogModule
   ],
