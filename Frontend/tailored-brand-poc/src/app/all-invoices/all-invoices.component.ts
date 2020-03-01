@@ -29,24 +29,18 @@ export class AllInvoicesComponent implements OnInit {
    });
    this.invoiceService.allInvoice()
    .subscribe((res)=>{
-     console.log(res.data)
      this.invoiceData=res.data
    })
   }
   getItemOrderDetail(event){
     let orderID = this.invoiceForm.get('orderNo').value
     if(event.keyCode === 13 && orderID != ''){
-      // orderID = '150344'
       this.invoiceService.getParticularOrder(orderID)
       .subscribe((res:any)=>{
-        console.log(res)
         this.cost  = res.cost
         this.quantity = res.quantity
         this.orderNo = res.orderID
         this.invoice = res.ids
-        // this.orderNo = res.
-        // this.orderId=res.obj['@_ID']
-        // this.setItemOrderDetails(res)
       })
     }
   }
