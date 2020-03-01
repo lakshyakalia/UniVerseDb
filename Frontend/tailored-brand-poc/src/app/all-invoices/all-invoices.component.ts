@@ -28,7 +28,7 @@ export class AllInvoicesComponent implements OnInit {
 
    });
    this.invoiceService.allInvoice()
-   .subscribe((res)=>{
+   .subscribe((res: any)=>{
      this.invoiceData=res.data
    })
   }

@@ -66,12 +66,10 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     HttpClientModule,
     MatDialogModule,
     CurrencyMaskModule,
-    IMaskModule
+    IMaskModule,
   ],
   providers: [
     { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig },
-    IMaskModule,
-    MatDialogModule
   ],
   bootstrap: [AppComponent],
   entryComponents:[PurchaseDialogBoxComponent]
