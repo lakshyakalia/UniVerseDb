@@ -217,30 +217,24 @@ export class PurchaseOrderComponent implements OnInit {
     if (!this.editForm) {
       recordId = this.purchaseOrderForm.get('newOrder').value
     }
-    else {
-      recordId = Math.floor(Math.random() * 900000) + 100000
-    }
     if (!this.checkValidation()) {
       return;
     }
-
     this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value, itemOrderForm.value, recordId, submitStatus, this.editForm)
-      .subscribe((res) => {
-        let msg
+      .subscribe((res:any) => {
+        let msg = res.msg
         if (this.editForm) {
-          msg = `Order ${recordId} updated`
           this.openSnackBar(`${msg}`, 'Dismiss')
           this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
             this.router.navigate(['/order/edit']);
         });
         }
         else {
-          msg = `Order ${recordId} Created`
           this.openSnackBar(`${msg}`, 'Dismiss')
           this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
             this.router.navigate(['/order/new']);
         });
-        } 
+        }
       })
   }
 
@@ -263,17 +257,18 @@ export class PurchaseOrderComponent implements OnInit {
       status = false
     }
 
-    if(this.itemOrderForm.untouched) this.itemOrderError = true
+    if(this.itemOrderForm.untouched && this.editForm) this.itemOrderError = true
+    else if(this.itemOrderForm.untouched && !this.editForm) this.itemOrderError = false
     else this.itemOrderError = false
 
-    if (this.itemOrderForm.invalid || !this.itemOrderForm.touched) {
+    if (this.itemOrderForm.invalid || !this.itemOrderForm.touched || this.itemOrderError) {
       (<FormArray>this.itemOrderForm.get('specialRequests')).controls.forEach((group: FormGroup) => {
         (<any>Object).values(group.controls).forEach((control: FormControl) => {
           control.markAsTouched()
         })
       })
-      status = false
-
+      if(!this.editForm && this.itemOrderForm.touched && !this.itemOrderForm.invalid) status = true
+      else status = false
     }
     return status
   }
