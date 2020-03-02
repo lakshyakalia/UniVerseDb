@@ -3,117 +3,131 @@
     <span class="heading">{{heading}}</span>
   </div>
 </div>
-<div class="sign-up-div container">
-  <div class="form">
-    <form [formGroup]="vendorDetailForm">
-      <div class="form-head">
-        <div class="form-head-left">
-          <label class="items-left">Vendor No.</label>
-          <input type="text"  class="vendor-name" placeholder="Vendor No." (keydown)="setVendorId($event)" formControlName='vendorNo' style="text-align: right;" />
-        </div>
-        <div class="form-head-right"></div>
+<div class="container container-background">
+  <form [formGroup]="vendorDetailForm" class="container">
+    <div class="row">
+      <div class="col-md-3 col-5">
+        Vendor No.
       </div>
-      <div class="form-top">
-        <div class="form-top-left-items">
-          <p>
-            <label class="items-left">Company</label>
-            <input type="text" formControlName="Company"/>
-            <span *ngIf= "vendorDetailForm.controls['Company'].invalid && toggle==true">
-            required
-            </span>
-          </p>
-          <p>
-            <label class="items-left">Street</label>
-            <input type="text" formControlName="Street" />
-            <span *ngIf= "vendorDetailForm.controls['Street'].invalid && toggle==true">
-            required
-            </span>
-          </p>
-          <p>
-            <label class="items-left">State</label>
-            <select class="input form-control-sm" formControlName="State" required>
-              <option>Texas</option>
-              <option>California</option>
-              <option>Florida</option>
-            </select>
-            <span *ngIf= "vendorDetailForm.controls['State'].invalid && toggle==true">
-             required
-            </span>
-          </p>
-          <p>
-            <label class="items-left" >Phone</label>
-            <input type="text" [imask]="{mask: '(000) 000-0000'}" formControlName="Phone" required style="text-align: right;" (keydown)="checkForPhone($event)" name="phone" class="phone"/>
-            <span *ngIf= "vendorDetailForm.controls['Phone'].invalid && toggle==true">
-            required
-            </span>
-          </p>
-        </div>
-        <div class="form-top-right-items">
-          <p>
-            <label class="items-right">Contact Name</label>
-            <input type="text" formControlName="Contact" required (keydown)="checkForAlphabets($event)"/>
-            <span *ngIf= "vendorDetailForm.controls['Contact'].invalid && toggle==true">
-            required
-            </span>
-          </p>
-          <p>
-            <label class="items-right">City</label>
-            <input type="text" formControlName="City" required />
-            <span *ngIf= "vendorDetailForm.controls['City'].invalid && toggle==true">
-            required
-            </span>
-          </p>
-          <p>
-            <label class="items-right">Zip</label>
-            <input type="text" formControlName="Zip" required style="text-align: right;" (keydown)="checkForExponential($event)" maxlength="6"/>
-            <span *ngIf= "vendorDetailForm.controls['Zip'].invalid && toggle==true" >
-            required
-            </span>
-          </p>
-        </div>
+      <div class="col-md-3 col-7">
+        <input type="text" placeholder="Vendor No." (keyup.enter)="setVendorId($event)" (blur)="setVendorId($event)" formControlName='vendorNo' style="text-align: right;" />
       </div>
-    </form>
-    <div class="form-bottom">
-      <form novalidate [formGroup]="items">
-        <hr>
-        <label>Items :</label>
-        <table class="table vendor-item-table">
-          <thead class="thead-dark">
-            <th width="10%" class="right">SNo.</th>
-            <th width="25%" class="right">Items</th>
-            <th width="40%" class="left">Description</th>
-            <th>Remove</th>
-          </thead>
-          <tbody>
-            <tr *ngFor="let control of items.controls.items.controls;let i = index" [formGroup]="control">
-              <td class="right">{{i + 1}}</td>
-              <td class="right">{{ control.value.items }}</td>
-              <td class="left">{{ control.value.description }}</td>
-              <td class="remove" (click)="deleteRow(i)"><i class="fas fa-window-close"></i></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td class="form-group" style="width:1px;">
-                <select (change)="addRecordId()" class="input form-control-sm" formControlName="itemId" required>
-                  <option disabled selected value> -- Item # -- </option>
-                  <option *ngFor="let ids of recordIds">{{ids}}</option>
-                </select></td>
-            </tr>
-          </tbody>
-        </table>
-        <p>
-        <span *ngIf= "itemError">Please select an option</span>
-        </p>
-      </form>
-      <div class="button-div">
-        <button type="submit" (click)="vendorDetail(vendorDetailForm,items)">Submit</button>
-        <button routerLink="/">Cancel</button>
+    </div>
+    <div class="row">
+      <div class="col-md-3 col-5">
+        Company
       </div>
+      <div class="col-md-3 col-7">
+        <input type="text" formControlName="Company"/>
+        <span *ngIf= "vendorDetailForm.controls['Company'].invalid && toggle==true">
+        required
+        </span>
+      </div>
+      <div class="col-md-3 col-5">
+        <label class="items-right">Contact Name</label>
+      </div>
+      <div class="col-md-3 col-7">
+        <input type="text" formControlName="Contact" required (keydown)="checkForAlphabets($event)"/>
+        <span *ngIf= "vendorDetailForm.controls['Contact'].invalid && toggle==true">
+        required
+        </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 col-5">
+        Street
+      </div>
+      <div class="col-md-3 col-7">
+        <input type="text" formControlName="Street" />
+        <span *ngIf= "vendorDetailForm.controls['Street'].invalid && toggle==true">
+        required
+        </span>
+      </div>
+      <div class="col-md-3 col-5">
+        <label class="items-right">City</label>
+      </div>
+      <div class="col-md-3 col-7">
+        <input type="text" formControlName="City" required />
+        <span *ngIf= "vendorDetailForm.controls['City'].invalid && toggle==true">
+        required
+        </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 col-5">
+        State
+      </div>
+      <div class="col-md-3 col-7">
+        <input type="text" placeholder=" -- State -- " [ngbTypeahead]="stateTypeahead" [(value)]="selectedState" (selectItem)="selectState($event)" autocomplete="doNotAutoComplete">
+        <input type="hidden" formControlName="State">
+        <span *ngIf= "vendorDetailForm.controls['State'].invalid && toggle==true">
+          required
+        </span>
+      </div>
+      <div class="col-md-3 col-5">
+        <label class="items-right">Zip</label>
+      </div>
+      <div class="col-md-3 col-7">
+        <input type="text" formControlName="Zip" required style="text-align: right;" (keydown)="checkForExponential($event)" maxlength="6"/>
+        <span *ngIf= "vendorDetailForm.controls['Zip'].invalid && toggle==true" >
+        required
+        </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 col-5">
+        Phone
+      </div>
+      <div class="col-md-3 col-7">
+        <input type="text" [imask]="{mask: '(000) 000-0000'}" formControlName="Phone" required style="text-align: right;" (keydown)="checkForPhone($event)" name="phone" class="phone"/>
+        <span *ngIf= "vendorDetailForm.controls['Phone'].invalid && toggle==true">
+        required
+        </span>
+      </div>
+    </div>
+  </form>
+  <form novalidate [formGroup]="items" class="">
+    <hr>
+    <label>Items :</label>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col" width="10%">S.No.</th>
+            <th scope="col" width="30%">Items</th>
+            <th scope="col" width="50%">Description</th>
+            <th scope="col" width="10%">Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let control of items.controls.items.controls;let i = index" [formGroup]="control">
+            <th scope="row">{{i + 1}}</th>
+            <td>{{ control.value.items }}</td>
+            <td>{{ control.value.description }}</td>
+            <td class="remove" (click)="deleteRow(i)"><i class="fas fa-window-close"></i></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td colspan="3" class="form-group" style="width:1px;">
+              <input type="text" placeholder=" -- Item # -- " [ngbTypeahead]="itemTypeahead" [value]="selectedItem" (selectItem)="selectItem($event)" style="text-align: right;" autocomplete="doNotAutoComplete">
+            </td>
+          </tr>
+        </tbody>
+      </table>  
+    </div>
+    <p>
+    <span *ngIf= "itemError">Please select an option</span>
+    </p>
+  </form>
+  <div class="row">
+    <div class="col"></div>
+    <div class="col-md-1 col-3">
+      <button class="btn btn-dark" type="submit" (click)="vendorDetail(vendorDetailForm,items)">Submit</button>
+    </div>
+    <div class="col-md-1 col-3">
+      <button class="btn btn-light" routerLink="/">Cancel</button>
+    </div>
+    <div class="col-1">
     </div>
   </div>
 </div>
-<!-- <script>
-  $("input[name='phone']").keyup(function() {
-    $(this).val($(this).val().replace(/^(\d{3})(\d{3})(\d)+$/, "($1)$2-$3"));
-});
-</script> -->
