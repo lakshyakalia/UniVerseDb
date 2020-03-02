@@ -21,7 +21,6 @@ import { AllVendorsComponent } from './all-vendors/all-vendors.component';
 import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box.component'
-import { NgxCurrencyModule } from "ngx-currency";
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG } from 'ng2-currency-mask/src/currency-mask.config';
 import {IMaskModule} from 'angular-imask';
@@ -63,7 +62,6 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     MatButtonModule,
     HttpClientModule,
     MatDialogModule,
-    NgxCurrencyModule,
     CurrencyMaskModule,
     IMaskModule
   ],

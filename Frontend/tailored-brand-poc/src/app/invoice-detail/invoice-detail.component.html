@@ -34,8 +34,7 @@
           </p>
           <p>
             <label class="items-right" >Invoice Amount</label>
-            <input currencyMask  id="invoiceAmount" formControlName="invoiceAmount" (keydown)="checkForExponential($event)"  [options]="{ prefix: '$ ', thousands: ',', decimal: '.' }"
-             />
+            <input currencyMask [options]="{ prefix: '$ ', thousands: ',', decimal: '.' }"  id="invoiceAmount" formControlName="invoiceAmount" (keydown)="checkForExponential($event)" />
              <span
              *ngIf="invoiceForm.controls['invoiceAmount'].touched && invoiceForm.controls['invoiceAmount'].invalid">Required</span>
           </p>
