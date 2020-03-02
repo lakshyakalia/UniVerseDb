@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { InvoiceService } from '../service/invoice.service';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
-
+import {PageEvent} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-all-invoices',
@@ -11,6 +11,19 @@ import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms'
 export class AllInvoicesComponent implements OnInit {
   invoiceForm: FormGroup;
   orderId: number;
+    // MatPaginator Inputs
+    length = 100;
+    pageSize = 10;
+    pageSizeOptions: number[] = [ 10];
+  
+    // MatPaginator Output
+    pageEvent: PageEvent;
+  
+    setPageSizeOptions(setPageSizeOptionsInput: string) {
+      if (setPageSizeOptionsInput) {
+        this.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
+      }
+    }
   constructor(private invoiceService: InvoiceService) { }
 
   quantity = []
