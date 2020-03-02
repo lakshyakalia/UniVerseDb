@@ -69,11 +69,6 @@ hr{
 option{
     font-weight: 200;
 }
-.full-width-table{
-    display: inline-table;
-    width: 100%;
-    text-align: center;   
-}
 img{
     color: rgba(255, 255, 255, 1);
 }

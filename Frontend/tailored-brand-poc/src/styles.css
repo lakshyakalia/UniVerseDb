@@ -9,21 +9,18 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
-    /* height:205px; */
-    /* height: 100%; */
-    /* filter: blur(3px); */
 }
+
 body button{
     outline: none;
 }
+
 @media (max-width : 800px)
 {
-    #img{
-            
+    #img{            
             width: 100%;
     }
 }
-/* TODO: DELETE THIS BEFORE YOU COMMIT */
 ::placeholder{
     text-align: center;
 }
