@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { SaveDataService } from '../service/vendor.service';
 import { StatesService } from '../service/states.service';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
-import { generate } from 'rxjs';
+import {  Observable } from 'rxjs';
+import {  debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
@@ -19,7 +20,7 @@ export class VendorSignUpComponent implements OnInit {
     this.stateList = states.all();
   }
   private recordData: any;
-  private recordIds: any;
+  private itemList: any;
   private itemArray: Array<any> = [];
   itemError : boolean
   lastid:number;
@@ -44,27 +45,23 @@ export class VendorSignUpComponent implements OnInit {
   selectedItem: string = "";
 
   deleteRow(index) {
-    console.log(index)
     const control = <FormArray>this.items.get('items');
     control.removeAt(index)
     this.itemArray.splice(index, 1);
   }
   setVendorId(event){
-    if(event.keyCode===13 && this.lastid!=this.vendorDetailForm.get('vendorNo').value){
-      this.vendorId=this.vendorDetailForm.get('vendorNo').value
-      this.lastid=this.vendorId
-      this.saveData.particularVendor(this.vendorId)
-        .subscribe((res: any) => {
-          if(res.status === 404){
-            this.openDialogBox(res.msg)
-          }
-          else{
-            this.heading=`Edit Vendor ${this.vendorId}`;
-            this.setItemdOrderDetails(res)
-          }
-          
-        })
-    }
+    this.vendorId=this.vendorDetailForm.get('vendorNo').value
+    this.saveData.particularVendor(this.vendorId)
+      .subscribe((res: any) => {
+        if(res.status === 404){
+          this.openDialogBox(res.msg)
+        }
+        else{
+          this.heading=`Edit Vendor ${this.vendorId}`;
+          this.setItemdOrderDetails(res)
+        }
+        
+      })
   }
   ngOnInit() {
     this.saveData.readItem()
@@ -76,7 +73,7 @@ export class VendorSignUpComponent implements OnInit {
         {
           keyPipeValues.push(`${keys[i]} | ${this.recordData[keys[i]]}`)
         }
-        this.recordIds = keyPipeValues
+        this.itemList = keyPipeValues
       })
 
     this.items = this.fb.group({
@@ -113,8 +110,15 @@ export class VendorSignUpComponent implements OnInit {
     const control =<FormArray> this.items.controls['items']
     control.push(this.initiateForm(desc,id))  
   }
+  itemTypeahead = (text$: Observable<string>) => 
+  text$.pipe(
+    debounceTime(200),
+    distinctUntilChanged(),
+    map(keyword => keyword.length < 2 ? []
+      : this.itemList.filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
+  )
   selectItem(event) {
-    let id = event.split("|")[0].trim()
+    let id = event.item.split("|")[0].trim()
     let description = this.recordData[id][0]
 
     let controlArray = this.items.get('items').value
@@ -130,12 +134,18 @@ export class VendorSignUpComponent implements OnInit {
     else
       this.selectedItem = ""    
   }
+  stateTypeahead = (text$: Observable<string>) => 
+  text$.pipe(
+    debounceTime(200),
+    distinctUntilChanged(),
+    map(keyword => keyword.length < 2 ? []
+      : this.stateList.filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
+  )
   selectState(event) {
-    this.selectedState = event.split("|")[0].trim();
+    this.selectedState = event.item.split("|")[0].trim();
     this.vendorDetailForm.controls['State'].setValue(this.selectedState);
   }
   vendorDetail(vendorDetail, items) {
-    debugger
     this.toggle = true;
 
     if(this.items.controls.items["length"] == 0){
