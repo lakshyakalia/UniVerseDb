@@ -9,17 +9,58 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
-    /* height:205px; */
-    /* height: 100%; */
-    /* filter: blur(3px); */
 }
+
 body button{
     outline: none;
 }
+
 @media (max-width : 800px)
 {
-    #img{
-            
+    #img{            
             width: 100%;
     }
+}
+::placeholder{
+    text-align: center;
+}
+
+.placeholder-right::placeholder{
+    text-align: right;
+}
+
+.container-background{
+    background-color: rgba(245, 245, 245, 0.95);
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.col-md-1, 
+.col-md-2, 
+.col-md-3, 
+.col-md-4, 
+.col-md-5, 
+.col-md-6, 
+.col-md-7, 
+.col-md-8, 
+.col-md-9, 
+.col-md-10, 
+.col-md-11, 
+.col-md-12, 
+.col-1,
+.col-2,
+.col-3,
+.col-4,
+.col-5,
+.col-6,
+.col-7,
+.col-8,
+.col-9,
+.col-10,
+.col-11,
+.col-12
+{
+    margin-bottom: 0.6rem;
 }

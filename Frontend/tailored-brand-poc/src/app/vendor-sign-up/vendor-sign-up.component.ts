@@ -1,10 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { VendorService } from '../service/vendor.service';
 import { SaveDataService } from '../service/vendor.service';
+import { StatesService } from '../service/states.service';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
-import { generate } from 'rxjs';
+import {  Observable } from 'rxjs';
+import {  debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from "@angular/material";
+
 @Component({
   selector: 'app-vendor-sign-up',
   templateUrl: './vendor-sign-up.component.html',
@@ -12,9 +17,20 @@ import { MatDialog } from '@angular/material/dialog'
 })
 export class VendorSignUpComponent implements OnInit {
   items: FormGroup;
-  constructor(private saveData: SaveDataService, private fb: FormBuilder, private router: Router, private dialog : MatDialog) { }
+  constructor(private saveData: VendorService, private fb: FormBuilder, private router: Router, private dialog : MatDialog , public snackBar: MatSnackBar ) { }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+       duration: 4000,
+       
+    });
+ }
+  stateList: string[];
+  selectedState: string = "";
+  constructor(private saveData: SaveDataService, private states: StatesService, private fb: FormBuilder, private router: Router, private dialog : MatDialog) {
+    this.stateList = states.all();
+  }
   private recordData: any;
-  private recordIds: any;
+  private itemList: any;
   private itemArray: Array<any> = [];
   itemError : boolean
   lastid:number;
@@ -36,8 +52,9 @@ export class VendorSignUpComponent implements OnInit {
     Zip: new FormControl('', [Validators.required])
 
   })
+  selectedItem: string = "";
+
   deleteRow(index) {
-    console.log(index)
     const control = <FormArray>this.items.get('items');
     control.removeAt(index)
     this.itemArray.splice(index, 1);
@@ -50,7 +67,10 @@ export class VendorSignUpComponent implements OnInit {
       this.saveData.particularVendor(this.vendorId)
         .subscribe((res: any) => {
           if(res.status === 404){
-            this.openDialogBox(res.msg)
+            this.openSnackBar(`${res.msg} `, 'Dismiss')
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/vendor/edit']);
+          }); 
           }
             
           else{
@@ -60,12 +80,30 @@ export class VendorSignUpComponent implements OnInit {
           
         })
     }
+    this.vendorId=this.vendorDetailForm.get('vendorNo').value
+    this.saveData.particularVendor(this.vendorId)
+      .subscribe((res: any) => {
+        if(res.status === 404){
+          this.openDialogBox(res.msg)
+        }
+        else{
+          this.heading=`Edit Vendor ${this.vendorId}`;
+          this.setItemdOrderDetails(res)
+        }
+        
+      })
   }
   ngOnInit() {
     this.saveData.readItem()
       .subscribe((res: any) => {
         this.recordData = res.table;
-        this.recordIds = Object.keys(res.table)
+        let keyPipeValues = []
+        let keys = Object.keys(this.recordData)
+        for(let i = 0; i < keys.length; i++)
+        {
+          keyPipeValues.push(`${keys[i]} | ${this.recordData[keys[i]]}`)
+        }
+        this.itemList = keyPipeValues
       })
 
     this.items = this.fb.group({
@@ -73,15 +111,12 @@ export class VendorSignUpComponent implements OnInit {
       items: this.fb.array([],[Validators.required])
     });
     this.editVendor = this.router.url.endsWith('/vendor/edit')
-    console.log(this.editVendor)
     if (this.editVendor) {
-      console.log("---")
       this.heading='Edit Vendor';
     }
     else{
       this.vendorDetailForm.controls['vendorNo'].disable()
     }
-    console.log(this.items.controls)
   }
   initiateForm(description, id): FormGroup {
     return this.fb.group({
@@ -93,12 +128,11 @@ export class VendorSignUpComponent implements OnInit {
     for (let i in res.data) {
       this.vendorDetailForm.controls[i].setValue(res.data[i])
     }
+    this.selectedState = res.data["State"]
     for (let j in res.itemIds){
       let id =res.itemIds[j].itemId
       let desc=this.recordData[id][0]
       this.createFormControl(id,desc)
-      console.log(id)
-      
     }
 
   }
@@ -106,8 +140,15 @@ export class VendorSignUpComponent implements OnInit {
     const control =<FormArray> this.items.controls['items']
     control.push(this.initiateForm(desc,id))  
   }
-  addRecordId() {
-    let id = this.items.get('itemId').value
+  itemTypeahead = (text$: Observable<string>) => 
+  text$.pipe(
+    debounceTime(200),
+    distinctUntilChanged(),
+    map(keyword => keyword.length < 2 ? []
+      : this.itemList.filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
+  )
+  selectItem(event) {
+    let id = event.item.split("|")[0].trim()
     let description = this.recordData[id][0]
 
     let controlArray = this.items.get('items').value
@@ -117,11 +158,27 @@ export class VendorSignUpComponent implements OnInit {
       let control = <FormArray>this.items.controls['items']
       control.push(this.initiateForm(description, id))
     }
+    // Workaround to clear the typeahead box after user makes a selection
+    if(this.selectedItem == "")
+      this.selectedItem = null
+    else
+      this.selectedItem = ""    
+  }
+  stateTypeahead = (text$: Observable<string>) => 
+  text$.pipe(
+    debounceTime(200),
+    distinctUntilChanged(),
+    map(keyword => keyword.length < 2 ? []
+      : this.stateList.filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
+  )
+  selectState(event) {
+    this.selectedState = event.item.split("|")[0].trim();
+    this.vendorDetailForm.controls['State'].setValue(this.selectedState);
   }
   vendorDetail(vendorDetail, items) {
     this.toggle = true;
 
-    if(this.items.untouched){
+    if(this.items.controls.items["length"] == 0){
       this.itemError = true
       return
     }
@@ -132,11 +189,17 @@ export class VendorSignUpComponent implements OnInit {
         .subscribe((res: any) => {
           
           if (res.status == 200) {
-            this.openDialogBox("Vendor Created !. Vendor No. -" + vendorId)
+            this.openSnackBar(`Vendor ${vendorId} Created! `, 'Dismiss')
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/vendor/new']);
+          }); 
 
           }
           else {
-            this.openDialogBox("error")
+            this.openSnackBar(`Error! `, 'Dismiss')
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/vendor/new']);
+          }); 
           }
         
         })
@@ -146,7 +209,10 @@ export class VendorSignUpComponent implements OnInit {
         .subscribe((res:any)=>{
           if(res.status==200)
           {
-            this.openDialogBox("User Updated !")
+            this.openSnackBar(`Vendor Updated ! `, 'Dismiss')
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/vendor/edit']);
+          }); 
           }
         })
       }
@@ -156,7 +222,8 @@ export class VendorSignUpComponent implements OnInit {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
   }
   checkForAlphabets(event) {
-    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || ( event.keyCode >= 49 && event.keyCode <=57 ) ? false : true
+    return  event.keyCode == 190 || event.keyCode == 107 || ( event.keyCode >= 49 && event.keyCode <=57 ) ? false : true
+
   }
   checkForPhone(event) {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
@@ -164,7 +231,7 @@ export class VendorSignUpComponent implements OnInit {
     
   openDialogBox(msg){
     this.dialog.open(PurchaseDialogBoxComponent,{
-      width: '250px',
+      width: '420px',
       data:{msg: msg}
     })
   }

@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray, ControlContainer } from '@angular/forms';
 import { InvoiceService } from '../service/invoice.service';
-import { SaveDataService } from '../service/vendor.service';
+import { VendorService } from '../service/vendor.service';
 import { Router } from '@angular/router';
 import { from } from 'rxjs';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from "@angular/material";
+
 
 
 @Component({
@@ -19,9 +21,17 @@ export class InvoiceDetailComponent implements OnInit {
   heading: string = 'New Invoice';
   description: string;
   lastId: number;
+  date: string;
+  itemOrderError: boolean
 
-  constructor(private vendorService: SaveDataService, private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder, private dialog: MatDialog) { }
+  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar) { }
 
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+       duration: 4000,
+       
+    });
+ }
   ngOnInit() {
 
     this.invoiceForm = this.fb.group({
@@ -47,6 +57,7 @@ export class InvoiceDetailComponent implements OnInit {
     }
   }
   initiateForm(ids, quantity,quantityReceived): FormGroup {
+    this.date = new Date().toISOString().substr(0, 10);
     return this.fb.group({
       itemNo: new FormControl(ids),
       description: new FormControl(),
@@ -62,30 +73,12 @@ export class InvoiceDetailComponent implements OnInit {
   }
 
   submitInvoice(submitStatus) {
-
-
     this.invoiceService.submitNewInvoice(this.invoiceForm.value, submitStatus)
       .subscribe((res) => {
         this.openDialogBox('Invoice Created')
       })
   }
 
-  getItemOrderDetail(invoiceId) {
-    this.invoiceForm.controls['invoiceNo'].setValue(invoiceId)
-    this.invoiceService.getParticularOrder(invoiceId)
-      .subscribe((res: any) => {
-        if (res.status == 200) {
-          let len = res.ids.length
-          for (let i = 0; i < len; i++) {
-            this.createNewFormControl(res.ids[i], res.quantity[i],0)
-          }
-        }
-        if (res.status == 404) {
-          alert(res.message)
-          window.location.reload()
-        }
-      })
-  }
 
   getInvoiceDetail(invoiceId) {
     this.invoiceService.getInvoice(invoiceId)
@@ -102,14 +95,44 @@ export class InvoiceDetailComponent implements OnInit {
           this.invoiceForm.controls['invoiceDate'].disable()
           this.invoiceForm.controls['invoiceNo'].disable()
           this.invoiceForm.controls['orderNo'].disable()
-          this.invoiceForm.controls['invoiceAmount'].disable()
-
-          
+          this.invoiceForm.controls['invoiceAmount'].disable()          
         }
         for (let i = 0; i < len; i++) {
           this.createNewFormControl(res.ids[i], res.quantity[i],res.quantityReceived[i])
         }
       })
+
+    if (!this.checkValidation()) {
+      return;
+    }
+  }
+
+
+  getItemOrderDetail(event) {
+    if (event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90))
+      return false
+    else {
+
+      let orderID = this.invoiceForm.get('orderNo').value
+      if (event.keyCode === 13 && orderID != '' && this.lastId != orderID) {
+        this.lastId = this.invoiceForm.get('orderNo').value
+        this.invoiceService.getParticularOrder(orderID)
+          .subscribe((res: any) => {
+            if (res.status == 200) {
+              let len = res.ids.length
+              for (let i = 0; i < len; i++) {
+                this.createNewFormControl(res.ids[i], res.quantity[i],0)
+              }
+            }
+            if (res.status == 404) {
+              this.openSnackBar(`${res.message}`, 'Dismiss')
+              this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+                this.router.navigate(['/invoice/new']);
+            }); 
+            }
+          })
+      }
+    }
   }
 
   calculatePendingQuantity(index) {
@@ -120,12 +143,27 @@ export class InvoiceDetailComponent implements OnInit {
     controlArray.controls[index].get('quantityPending').setValue(leftQuantity)
   }
   checkForExponential(event) {
-    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >= 65 && event.keyCode <= 90) ? false : true
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90) ? false : true
   }
   openDialogBox(msg) {
     this.dialog.open(PurchaseDialogBoxComponent, {
-      width: '250px',
+      width: '420px',
       data: { msg: msg }
     })
+  }
+  checkValidation() {
+    let status = true
+    if (this.invoiceForm.invalid) {
+      this.invoiceForm.get('invoiceNo').markAsTouched()
+      this.invoiceForm.get('invoiceDate').markAsTouched()
+      this.invoiceForm.get('orderNo').markAsTouched()
+      this.invoiceForm.get('invoiceAmount').markAsTouched()
+
+      status = false
+    }
+    if (this.invoiceForm.untouched) this.itemOrderError = true
+    else this.itemOrderError = false
+
+    return status
   }
 }

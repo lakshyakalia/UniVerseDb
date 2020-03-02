@@ -10,25 +10,31 @@
       <div class="form-top">
         <div class="form-top-left-items">
           <p>
-            <label class="items-left">Invoice No.</label>
-            <input type="number" formControlName="invoiceNo" />
+            <label class="items-left">Invoice Number</label>
+            <input type="text" formControlName="invoiceNo" (keydown)="checkForExponential($event)" />
             <span
             *ngIf="invoiceForm.controls['invoiceNo'].touched && invoiceForm.controls['invoiceNo'].invalid">Required</span>
 
           </p>
           <p>
             <label class="items-left">Invoice Date</label>
-            <input type="date" formControlName="invoiceDate" style="width: 206px;"/>
+            <input type="text" formControlName="invoiceToDate"  class="date" placeholder="To Date" onfocus="(this.type='date')"/>
+
             <span
-            *ngIf="invoiceForm.controls['invoiceDate'].touched && invoiceForm.controls['invoiceDate'].invalid">Required</span>
+            *ngIf="invoiceForm.controls['invoiceToDate'].touched && invoiceForm.controls['invoiceToDate'].invalid">Required</span>
+            <input type="text" formControlName="invoiceFromDate" class="date" placeholder="From Date" onfocus="(this.type='date')">
+            <span
+            *ngIf="invoiceForm.controls['invoiceFromDate'].touched && invoiceForm.controls['invoiceFromDate'].invalid">Required</span>
+
+
 
           </p>
 
         </div>
         <div class="form-top-right-items">
           <p>
-            <label class="items-right">Order No.</label>
-            <input type="number" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" />
+            <label class="items-right">Order Number</label>
+            <input type="text" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" />
             <span
             *ngIf="invoiceForm.controls['orderNo'].touched && invoiceForm.controls['orderNo'].invalid">Required</span>
 
@@ -41,7 +47,7 @@
         <label>Invoices:</label>
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th width='10%' class="right">S.No.</th>
+            <th width='10%' class="right">SNo.</th>
             <th width='20%' class="right">Invoice No.</th>
             <th width='20%' class="right">Order No.</th>
             <th width='20%' class="right">Amount</th>

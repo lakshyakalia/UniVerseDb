@@ -8,8 +8,10 @@ import { MatStepperModule } from '@angular/material/stepper'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { MatButtonModule ,  } from '@angular/material/button';
 import { NavbarComponent } from './navbar/navbar.component';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { VendorSignUpComponent } from './vendor-sign-up/vendor-sign-up.component'
 import { HttpClientModule } from '@angular/common/http';
 import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
@@ -20,10 +22,12 @@ import { FooterComponent } from './footer/footer.component';
 import { AllVendorsComponent } from './all-vendors/all-vendors.component';
 import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import {IMaskModule} from 'angular-imask';
 import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box.component'
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG } from 'ng2-currency-mask/src/currency-mask.config';
+import {IMaskModule} from 'angular-imask';
+import { MatSnackBarModule } from '@angular/material'
+
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
   align: "right",
@@ -60,17 +64,21 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     MatSelectModule,
     MatInputModule,
     MatButtonModule,
+    MatSnackBarModule,
     HttpClientModule,
     MatDialogModule,
     CurrencyMaskModule,
-    IMaskModule
+    IMaskModule,
+    // <-- ng-bootstrap modules
+    NgbTypeaheadModule,
+    // ng-bootstrap modules -->
   ],
   providers: [
     { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig },
-    IMaskModule,
-    MatDialogModule
   ],
   bootstrap: [AppComponent],
   entryComponents:[PurchaseDialogBoxComponent]
 })
 export class AppModule { }
+
+platformBrowserDynamic().bootstrapModule(AppModule);
