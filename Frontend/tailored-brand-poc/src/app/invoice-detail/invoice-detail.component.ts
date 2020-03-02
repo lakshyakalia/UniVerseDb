@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { InvoiceService } from '../service/invoice.service';
-import { SaveDataService } from '../service/vendor.service';
+import { VendorService } from '../service/vendor.service';
 import { Router } from '@angular/router';
 import { from } from 'rxjs';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from "@angular/material";
+
 
 
 @Component({
@@ -22,8 +24,14 @@ export class InvoiceDetailComponent implements OnInit {
   date: string;
   itemOrderError: boolean
 
-  constructor(private vendorService: SaveDataService, private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder, private dialog: MatDialog) { }
+  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar) { }
 
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+       duration: 4000,
+       
+    });
+ }
   ngOnInit() {
     this.invoiceForm = this.fb.group({
       invoiceNo: new FormControl('', [Validators.required]),
@@ -32,9 +40,6 @@ export class InvoiceDetailComponent implements OnInit {
       invoiceAmount: new FormControl('', [Validators.required]),
       invoiceDetails: this.fb.array([])
     })
-    // this.invoiceForm = new FormGroup({
-
-    // });
 
     this.editInvoice = this.router.url.endsWith('/invoice/edit')
 
@@ -72,8 +77,10 @@ export class InvoiceDetailComponent implements OnInit {
     console.log(this.invoiceForm.value);
     this.invoiceService.submitNewInvoice(this.invoiceForm.value, submitStatus)
       .subscribe((res) => {
-        this.openDialogBox('Invoice Created')
-        // window.location.reload();
+        this.openSnackBar(`Invoice Created`, 'Dismiss')
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/invoice/new']);
+      }); 
       })
   }
 
@@ -95,10 +102,10 @@ export class InvoiceDetailComponent implements OnInit {
               }
             }
             if (res.status == 404) {
-              // alert(res.message)
-
-              this.openDialogBox(res.message)
-              // window.location.reload()
+              this.openSnackBar(`${res.message}`, 'Dismiss')
+              this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+                this.router.navigate(['/invoice/new']);
+            }); 
             }
           })
       }

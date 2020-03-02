@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { SaveDataService } from '../service/vendor.service';
+import { VendorService } from '../service/vendor.service';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 import { generate } from 'rxjs';
 import { Router } from '@angular/router';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from "@angular/material";
+
 @Component({
   selector: 'app-vendor-sign-up',
   templateUrl: './vendor-sign-up.component.html',
@@ -12,7 +14,13 @@ import { MatDialog } from '@angular/material/dialog'
 })
 export class VendorSignUpComponent implements OnInit {
   items: FormGroup;
-  constructor(private saveData: SaveDataService, private fb: FormBuilder, private router: Router, private dialog : MatDialog) { }
+  constructor(private saveData: VendorService, private fb: FormBuilder, private router: Router, private dialog : MatDialog , public snackBar: MatSnackBar ) { }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+       duration: 4000,
+       
+    });
+ }
   private recordData: any;
   private recordIds: any;
   private itemArray: Array<any> = [];
@@ -50,7 +58,10 @@ export class VendorSignUpComponent implements OnInit {
       this.saveData.particularVendor(this.vendorId)
         .subscribe((res: any) => {
           if(res.status === 404){
-            this.openDialogBox(res.msg)
+            this.openSnackBar(`${res.msg} `, 'Dismiss')
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/vendor/edit']);
+          }); 
           }
             
           else{
@@ -132,11 +143,17 @@ export class VendorSignUpComponent implements OnInit {
         .subscribe((res: any) => {
           
           if (res.status == 200) {
-            this.openDialogBox("Vendor " + vendorId + " Created!")
+            this.openSnackBar(`Vendor ${vendorId} Created! `, 'Dismiss')
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/vendor/new']);
+          }); 
 
           }
           else {
-            this.openDialogBox("error")
+            this.openSnackBar(`Error! `, 'Dismiss')
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/vendor/new']);
+          }); 
           }
         
         })
@@ -146,7 +163,10 @@ export class VendorSignUpComponent implements OnInit {
         .subscribe((res:any)=>{
           if(res.status==200)
           {
-            this.openDialogBox("User Updated !")
+            this.openSnackBar(`Vendor Updated ! `, 'Dismiss')
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/vendor/edit']);
+          }); 
           }
         })
       }
@@ -156,7 +176,7 @@ export class VendorSignUpComponent implements OnInit {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true
   }
   checkForAlphabets(event) {
-    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || ( event.keyCode >= 49 && event.keyCode <=57 ) ? false : true
+    return  event.keyCode == 190 || event.keyCode == 107 || ( event.keyCode >= 49 && event.keyCode <=57 ) ? false : true
   }
   checkForPhone(event) {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90)  ? false : true

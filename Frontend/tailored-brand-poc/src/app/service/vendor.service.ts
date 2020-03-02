@@ -4,7 +4,7 @@ import{environment} from'../../environments/environment'
 @Injectable({
   providedIn: 'root'
 })
-export class SaveDataService {
+export class VendorService {
 
   constructor(private http: HttpClient) { }
   baseUri:string=environment.baseUrl;

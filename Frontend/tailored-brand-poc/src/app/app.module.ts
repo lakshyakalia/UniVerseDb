@@ -8,7 +8,7 @@ import { MatStepperModule } from '@angular/material/stepper'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { MatButtonModule ,  } from '@angular/material/button';
 import { NavbarComponent } from './navbar/navbar.component';
 import { VendorSignUpComponent } from './vendor-sign-up/vendor-sign-up.component'
 import { HttpClientModule } from '@angular/common/http';
@@ -24,6 +24,8 @@ import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG } from 'ng2-currency-mask/src/currency-mask.config';
 import {IMaskModule} from 'angular-imask';
+import { MatSnackBarModule } from '@angular/material'
+
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
   align: "right",
@@ -60,6 +62,7 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     MatSelectModule,
     MatInputModule,
     MatButtonModule,
+    MatSnackBarModule,
     HttpClientModule,
     MatDialogModule,
     CurrencyMaskModule,
