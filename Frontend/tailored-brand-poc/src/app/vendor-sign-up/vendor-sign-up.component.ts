@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { VendorService } from '../service/vendor.service';
-import { SaveDataService } from '../service/vendor.service';
 import { StatesService } from '../service/states.service';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 import {  Observable } from 'rxjs';
@@ -17,18 +16,16 @@ import { MatSnackBar } from "@angular/material";
 })
 export class VendorSignUpComponent implements OnInit {
   items: FormGroup;
-  constructor(private saveData: VendorService, private fb: FormBuilder, private router: Router, private dialog : MatDialog , public snackBar: MatSnackBar ) { }
+  constructor(private saveData: VendorService, private states: StatesService, private fb: FormBuilder, private router: Router, private dialog : MatDialog , public snackBar: MatSnackBar ) {
+    this.stateList = states.all();
+  }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-       duration: 4000,
-       
+       duration: 4000,       
     });
  }
   stateList: string[];
   selectedState: string = "";
-  constructor(private saveData: SaveDataService, private states: StatesService, private fb: FormBuilder, private router: Router, private dialog : MatDialog) {
-    this.stateList = states.all();
-  }
   private recordData: any;
   private itemList: any;
   private itemArray: Array<any> = [];
