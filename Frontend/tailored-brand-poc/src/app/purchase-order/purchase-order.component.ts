@@ -75,13 +75,18 @@ export class PurchaseOrderComponent implements OnInit {
       specialRequests: this.fb.array([])
     })
 
-    this.editForm = this.router.url.endsWith('/edit')
-    if (!this.editForm) {
+    this.editForm = this.router.url.endsWith('/new')
+    if (this.editForm) {
       this.purchaseOrderForm.controls['newOrder'].disable()
       this.purchaseOrderTitle = 'Create Purchase Order'
     }
     else {
       this.purchaseOrderTitle = 'Update Purchase Order'
+    }
+
+    let url = this.router.url
+    if(!url.endsWith('/new') && !url.endsWith('/edit')){
+      this.viewParticularOrder(url.split('/')[3])
     }
   }
 
@@ -133,6 +138,7 @@ export class PurchaseOrderComponent implements OnInit {
     for (let i in res.data) {
       this.purchaseOrderForm.controls[i].setValue(res.data[i])
       if (res.submitStatus === 'submit') {
+        this.purchaseOrderForm.controls['newOrder'].disable()
         this.purchaseOrderForm.controls[i].disable()
       }
     }
@@ -197,7 +203,7 @@ export class PurchaseOrderComponent implements OnInit {
 
   submitNewOrder(purchaseOrderForm, itemOrderForm, submitStatus) {
     let recordId
-    if (this.editForm) {
+    if (!this.editForm) {
       recordId = this.purchaseOrderForm.get('newOrder').value
     }
     else {
@@ -259,5 +265,19 @@ export class PurchaseOrderComponent implements OnInit {
       width: '450px',
       data:{ msg: msg}
     })
+  }
+
+  viewParticularOrder(orderID){
+    this.purchaseOrderForm.controls['newOrder'].setValue(orderID)
+    this.purchaseOrderService.getParticularOrder(orderID)
+      .subscribe((res: any) => {
+        if (res.status === 404) {
+          this.openDialogBox(`${orderID} does not exist`)
+        }
+        else {
+          this.purchaseOrderTitle = "Update Purchase Order "+orderID
+          this.setItemOrderDetails(res)
+        }
+      })
   }
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core'
 import { PurchaseOrderService } from '../../service/purchase-order.service'
 
+import { Router } from '@angular/router'
+
 @Component({
   selector: 'app-all-purchase-orders',
   templateUrl: './all-purchase-orders.component.html',
@@ -10,7 +12,7 @@ export class AllPurchaseOrdersComponent implements OnInit {
   
   itemOrderList : []
 
-  constructor(private purchaseOrderService: PurchaseOrderService) { }
+  constructor(private router: Router,private purchaseOrderService: PurchaseOrderService) { }
 
   ngOnInit() {
     this.purchaseOrderService.getAllOrders()
@@ -19,4 +21,7 @@ export class AllPurchaseOrdersComponent implements OnInit {
     })
   }
 
+  openParticularOrder(orderNo){
+    this.router.navigate([`/order/edit/${orderNo}`])
+  }
 }
