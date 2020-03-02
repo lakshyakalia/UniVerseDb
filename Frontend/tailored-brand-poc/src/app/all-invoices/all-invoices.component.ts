@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { InvoiceService } from '../service/invoice.service';
 import { FormGroup, FormControl, FormBuilder,  Validators } from '@angular/forms';
-
+import{Router} from '@angular/router'
 
 @Component({
   selector: 'app-all-invoices',
@@ -11,7 +11,7 @@ import { FormGroup, FormControl, FormBuilder,  Validators } from '@angular/forms
 export class AllInvoicesComponent implements OnInit {
   invoiceForm : FormGroup;
   orderId:number;
-  constructor(private invoiceService : InvoiceService) { }
+  constructor(private router: Router,private invoiceService : InvoiceService) { }
 
   quantity = []
   cost = []
@@ -24,24 +24,15 @@ export class AllInvoicesComponent implements OnInit {
       invoiceDate: new FormControl('',[Validators.required]),
       orderNo : new FormControl('',[Validators.required]),
       invoiceAmount : new FormControl()
-      
+        
 
    });
    this.invoiceService.allInvoice()
-   .subscribe((res)=>{
+   .subscribe((res:any)=>{
      this.invoiceData=res.data
    })
   }
-  getItemOrderDetail(event){
-    let orderID = this.invoiceForm.get('orderNo').value
-    if(event.keyCode === 13 && orderID != ''){
-      this.invoiceService.getParticularOrder(orderID)
-      .subscribe((res:any)=>{
-        this.cost  = res.cost
-        this.quantity = res.quantity
-        this.orderNo = res.orderID
-        this.invoice = res.ids
-      })
-    }
+  openParticularOrder(orderId){
+    this.router.navigate([`/invoice/edit/${orderId}`])
   }
 }

@@ -331,24 +331,66 @@ def invoiceCreate():
         'status':200
     	}
 
-
+@app.route('/api/invoice/<invoiceId>',methods=['GET'])
+def particularInvoice(invoiceId):
+	cmd=u2py.run("LIST DATA PO.INVOICE.MST " +invoiceId+ " INV.DATE INV.ITEM.IDS INV.ITEM.QTY INV.ITEM.PENDING INV.ITEM.RECEIVED ORDER.NO INV.STATUS INV.AMT TOXML",capture=True)
+	invoiceNo=[]
+	invoiceDate=[]
+	orderNo=[]
+	invoiceAmount=[]
+	ids=[]
+	quantity=[]
+	invoiceStatus=[]
+	quantityReceived = []
+	my_xml=cmd.strip()
+	data = xmltodict.parse(my_xml)['ROOT']['PO.INVOICE.MST']
+	invoiceNo.append(data['@_ID'])
+	invoiceDate.append(data['@INV.DATE'])
+	orderNo.append(data['@ORDER.NO'])
+	invoiceAmount.append(data['@INV.AMT'])
+	invoiceStatus.append(data['@INV.STATUS'])
+	if(type(data['INV.ITEM.IDS_MV'])is list):
+		for i in range(len(data['INV.ITEM.IDS_MV'])):
+			ids.append(data['INV.ITEM.IDS_MV'][i]['@INV.ITEM.IDS'])
+			quantity.append(data['INV.ITEM.QTY_MV'][i]['@INV.ITEM.QTY'])
+			quantityReceived.append(data['INV.ITEM.RECEIVED_MV'][i]['@INV.ITEM.RECEIVED'])
+	else:
+		ids.append(data['INV.ITEM.IDS_MV']['@INV.ITEM.IDS'])
+		quantity.append(data['INV.ITEM.QTY_MV']['@INV.QTY.IDS'])
+		quantityReceived.append(data['INV.ITEM.RECEIVED_MV']['@INV.ITEM.RECEIVED'])
+	return{"status":200,
+		"invoiceNo":invoiceNo,
+		"invoiceDate":invoiceDate,
+		"orderNo":orderNo,
+		"ids":ids,
+		"quantity":quantity,
+		"invoiceStatus":invoiceStatus,
+		"invoiceAmount":invoiceAmount,
+		"quantityReceived":quantityReceived
+		}
 def saveInvoice(orderNo,invoiceDetails,invoiceNo,invoiceDate,invoiceAmount,status):
 	invoiceData=u2py.DynArray()
 	invoiceFile= u2py.File("PO.INVOICE.MST")
-	itemNo=description=quantityOrdered=quantityPending=quantityReceived=bytes("","utf-8")
-	invoiceData.insert(1,0,0,invoiceDate)
-	invoiceData.insert(6,0,0,orderNo)
-	invoiceData.insert(7,0,0,status)
+	itemNo=bytes("","utf-8")
+	description=bytes("","utf-8")
+	quantityOrdered=bytes("","utf-8")
+	quantityPending=bytes("","utf-8")
+	quantityReceived=bytes("","utf-8")
+	print(invoiceData)
 	for i in range(len(invoiceDetails)):
 		itemNo=itemNo+bytes(invoiceDetails[i]['itemNo'],"utf-8")+u2py.VM
 		quantityOrdered=quantityOrdered+bytes(invoiceDetails[i]['quantityOrdered'],"utf-8")+u2py.VM
 		quantityPending=quantityPending+bytes(str(invoiceDetails[i]['quantityPending']),"utf-8")+u2py.VM
 		quantityReceived=quantityReceived+bytes(invoiceDetails[i]['quantityReceived'],"utf-8")+u2py.VM
+	invoiceData.insert(1,0,0,invoiceDate)
 	invoiceData.insert(2,0,0,itemNo[:-1])
 	invoiceData.insert(3,0,0,quantityOrdered[:-1])
 	invoiceData.insert(4,0,0,quantityPending[:-1])
 	invoiceData.insert(5,0,0,quantityReceived[:-1])
-	invoiceFile.write(invoiceNo,	invoiceData)
+	invoiceData.insert(6,0,0,orderNo)
+	invoiceData.insert(7,0,0,status)
+	invoiceData.insert(8,0,0,invoiceAmount)
+	invoiceFile.write(invoiceNo,invoiceData)
 
 if __name__ == '__main__':
 	app.run()
