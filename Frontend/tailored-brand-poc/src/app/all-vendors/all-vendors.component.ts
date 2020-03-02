@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {SaveDataService} from '../service/vendor.service'
+import {VendorService} from '../service/vendor.service'
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
 
@@ -14,7 +14,7 @@ export class AllVendorsComponent implements OnInit {
 
   vendorIDS : any
 
-  constructor(private saveData: SaveDataService , private dialog : MatDialog) { }
+  constructor(private saveData: VendorService , private dialog : MatDialog) { }
 
   ngOnInit() {
     this.saveData.allVendors()

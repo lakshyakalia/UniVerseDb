@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { FormGroup, FormControl, FormBuilder, FormArray, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
-
+import { MatSnackBar } from "@angular/material";
 import { PurchaseOrderService } from '../service/purchase-order.service'
 import { MatDialog } from '@angular/material/dialog'
 import { PurchaseDialogBoxComponent } from './purchase-dialog-box.component'
@@ -43,8 +43,15 @@ export class PurchaseOrderComponent implements OnInit {
     private purchaseOrderService: PurchaseOrderService,
     private fb: FormBuilder,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public snackBar: MatSnackBar
   ) { }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+       duration: 4000,
+       
+    });
+ }
 
   purchaseOrderForm = new FormGroup({
     newOrder: new FormControl(''),
@@ -123,7 +130,11 @@ export class PurchaseOrderComponent implements OnInit {
       this.purchaseOrderService.getParticularOrder(orderID)
         .subscribe((res: any) => {
           if (res.status === 404) {
-            this.openDialogBox(`${orderID} updated successfully`)
+            this.openSnackBar(`${orderID} does not exists`, 'Dismiss')
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/order/edit']);
+          }); 
+            
           }
           else {
             this.purchaseOrderTitle = "Update Purchase Order "+orderID
@@ -218,11 +229,18 @@ export class PurchaseOrderComponent implements OnInit {
         let msg
         if (this.editForm) {
           msg = `Order ${recordId} updated`
+          this.openSnackBar(`${msg}`, 'Dismiss')
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate(['/order/edit']);
+        });
         }
         else {
           msg = `Order ${recordId} Created`
-        }
-        this.openDialogBox(msg)
+          this.openSnackBar(`${msg}`, 'Dismiss')
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate(['/order/new']);
+        });
+        } 
       })
   }
 
