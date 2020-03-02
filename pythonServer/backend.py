@@ -297,8 +297,31 @@ def invoiceOrderDetails(orderId):
 		'status':404,
 		'message':'OrderNo not found'
 		}
-@app.route('/api/invoice',methods=['PUT'])
-def 
+@app.route('/api/invoice',methods=['GET'])
+def allInvoice():
+	cmd=u2py.run("LIST DATA PO.INVOICE.MST INV.DATE INV.ITEM.IDS INV.ITEM.QTY INV.ITEM.PENDING INV.ITEM.RECEIVED ORDER.NO INV.STATUS INV.AMT TOXML",capture=True)
+	my_xml=cmd.strip()
+	data = xmltodict.parse(my_xml)['ROOT']['PO.INVOICE.MST']
+	invoice=[]
+	invoiceData=[]
+	if(type(data) is list):
+		for i in data:
+			invoice.append(i['@_ID'])
+			invoice.append(i['@ORDER.NO'])
+			invoice.append(i['@INV.AMT'])
+			invoice.append(i['@INV.DATE'])
+			invoiceData.append(invoice)
+			invoice=[]
+	else:
+		invoice.append(data['@_ID'])
+		invoice.append(data['@ORDER.NO'])
+		invoice.append(data['@INV.AMT'])
+		invoice.append(i['@INV.DATE'])
+		print(invoice)
+		invoiceData.append(invoice)
+	return{'status':200,	
+		'data':invoiceData
+		}
 @app.route('/api/invoice',methods=['POST'])
 def invoiceCreate():
 	data=request.get_json()
@@ -329,3 +352,4 @@ def saveInvoice(orderNo,invoiceDetails,invoiceNo,invoiceDate,invoiceAmount,statu
 
 if __name__ == '__main__':
 	app.run()
+

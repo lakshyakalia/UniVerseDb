@@ -39,7 +39,6 @@ export class InvoiceDetailComponent implements OnInit {
     this.editInvoice = this.router.url.endsWith('/invoice/edit')
 
     if (this.editInvoice) {
-      console.log("---")
       this.heading = 'Edit Invoice';
     }
     this.vendorService.readItem()
@@ -73,7 +72,6 @@ export class InvoiceDetailComponent implements OnInit {
     console.log(this.invoiceForm.value);
     this.invoiceService.submitNewInvoice(this.invoiceForm.value, submitStatus)
       .subscribe((res) => {
-        console.log(res)
         this.openDialogBox('Invoice Created')
         // window.location.reload();
       })

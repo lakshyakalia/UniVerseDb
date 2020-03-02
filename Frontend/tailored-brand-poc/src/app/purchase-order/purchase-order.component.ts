@@ -32,7 +32,10 @@ export class PurchaseOrderComponent implements OnInit {
   date: string
 
   itemOrderError : boolean
+
   lastId:number;
+
+  showButtons : boolean = true
 
   states = ['California','Florida','Texas','Hawaii']
 
@@ -115,8 +118,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.purchaseOrderService.getParticularOrder(orderID)
         .subscribe((res: any) => {
           if (res.status === 404) {
-            // alert(res.msg)
-            this.openDialogBox(res.msg)
+            this.openDialogBox(`${orderID} updated successfully`)
           }
           else {
             this.purchaseOrderTitle = "Update Purchase Order "+orderID
@@ -136,19 +138,23 @@ export class PurchaseOrderComponent implements OnInit {
     }
 
     if (res.submitStatus === 'submit') {
+      this.showButtons = false
       submitBool = true
     }
 
     for (let j in res.itemList) {
+      let itemDescription :string
       let cost = res.itemList[j].cost
       let quantity = res.itemList[j].quantity
       let vendorItem = res.itemList[j].itemID
       this.purchaseOrderService.getParticularItemDetails(vendorItem)
         .subscribe((res: any) => {
-          this.createNewFormControl(vendorItem, res.data, quantity, cost)
-          this.calculateTotalPrice(j, submitBool)
+          itemDescription = res.data
         })
+      this.createNewFormControl(vendorItem, itemDescription, quantity, cost)
+      this.calculateTotalPrice(j, submitBool)
     }
+    this.getVendorItems()
   }
 
   addNewRow() {
@@ -163,8 +169,10 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   removeParticularItem(index: number) {
-    let control = <FormArray>this.itemOrderForm.get('specialRequests')
-    control.removeAt(index)
+    if(!this.editForm){
+      let control = <FormArray>this.itemOrderForm.get('specialRequests')
+      control.removeAt(index)
+    }
   }
 
   calculateTotalPrice(index, submitBool) {
@@ -203,10 +211,10 @@ export class PurchaseOrderComponent implements OnInit {
       .subscribe((res) => {
         let msg
         if (this.editForm) {
-          msg = 'Existing order updated'
+          msg = `Order ${recordId} updated`
         }
         else {
-          msg = `New Order No - ${recordId} Created`
+          msg = `Order ${recordId} Created`
         }
         this.openDialogBox(msg)
       })
@@ -234,7 +242,7 @@ export class PurchaseOrderComponent implements OnInit {
     if(this.itemOrderForm.untouched) this.itemOrderError = true
     else this.itemOrderError = false
 
-    if (this.itemOrderForm.invalid || this.itemOrderForm.untouched) {
+    if (this.itemOrderForm.invalid || !this.itemOrderForm.touched) {
       (<FormArray>this.itemOrderForm.get('specialRequests')).controls.forEach((group: FormGroup) => {
         (<any>Object).values(group.controls).forEach((control: FormControl) => {
           control.markAsTouched()

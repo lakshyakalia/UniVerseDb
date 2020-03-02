@@ -24,6 +24,7 @@ import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box
 import { NgxCurrencyModule } from "ngx-currency";
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG } from 'ng2-currency-mask/src/currency-mask.config';
+import {IMaskModule} from 'angular-imask';
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
   align: "right",
@@ -62,7 +63,14 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     MatButtonModule,
     HttpClientModule,
     MatDialogModule,
-    NgxCurrencyModule
+    NgxCurrencyModule,
+    CurrencyMaskModule,
+    IMaskModule
+  ],
+  providers: [
+    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig },
+    IMaskModule,
+    MatDialogModule
   ],
   bootstrap: [AppComponent],
   entryComponents:[PurchaseDialogBoxComponent]
