@@ -27,11 +27,11 @@ export class AllInvoicesComponent implements OnInit {
       orderNo: new FormControl('', [Validators.required]),
       invoiceAmount: new FormControl()
 
-    });
-    this.invoiceService.allInvoice()
-    .subscribe((res:any)=>{
-      this.invoiceData=res.data
-    })
+   });
+   this.invoiceService.allInvoice()
+   .subscribe((res: any)=>{
+     this.invoiceData=res.data
+   })
   }
   getItemOrderDetail(event) {
     if (event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90))
