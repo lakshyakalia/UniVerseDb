@@ -138,12 +138,19 @@
                 </div>
                 <span class="error-field" *ngIf="control.controls.UnitCost.errors?.required && control.controls.UnitCost.touched">Required Field</span>
               </td>
-              <td>$ {{ control.value.TotalPrice| number:'1.2-5' }}</td>
+              <td>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">$</span>
+                  </div>
+                  <div class="form-control text-right" style="background-color: lightgray;">{{ control.value.TotalPrice| number:'1.2-5' }}</div>
+                </div>
+              </td>
               <td (click)="removeParticularItem(i)"><i class="fas fa-window-close"></i></td>
             </tr>
             <tr>
               <td></td>
-              <td colspan="6">
+              <td colspan="5">
                 <input type="text" class="form-control" formControlName="VendorItem" placeholder=" -- Item # -- " [ngbTypeahead]="vendorService.itemTypeahead" [value]="selectedItem" (selectItem)="selectItem($event)" style="text-align: right;" autocomplete="doNotAutoComplete">
               </td>
             </tr>
@@ -151,7 +158,6 @@
               <td></td>
               <td></td>
               <td>Grand Total</td>
-              <td></td>
               <td></td>
               <td class="align-right">$ {{grandTotal| number:'1.2-5'}}</td>
               <td></td>

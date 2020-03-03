@@ -19,6 +19,7 @@ const routes: Routes = [
   { path: 'invoices' , component : AllInvoicesComponent},
   { path: 'order/edit', component: PurchaseOrderComponent},
   { path: 'vendor/edit', component: VendorSignUpComponent},
+  { path: 'vendor/edit/:id', component: VendorSignUpComponent},
   { path: 'invoice/edit', component: InvoiceDetailComponent }
 ];
 

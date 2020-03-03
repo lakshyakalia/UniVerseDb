@@ -44,7 +44,6 @@ export class PurchaseOrderComponent implements OnInit {
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
        duration: 4000,
-       
     });
  }
 
@@ -97,7 +96,7 @@ export class PurchaseOrderComponent implements OnInit {
     let orderID = this.purchaseOrderForm.get('newOrder').value
     if (event.keyCode === 13 && this.editForm && orderID != '' && orderID !=this.lastId) {
       this.lastId=orderID
-      this.purchaseOrderService.getParticularOrder(orderID)
+      this.purchaseOrderService.get(orderID)
         .subscribe((res: any) => {
           if (res.status === 404) {
             this.openSnackBar(`${orderID} does not exists`, 'Dismiss')
@@ -153,7 +152,6 @@ export class PurchaseOrderComponent implements OnInit {
     if (itemId != 'None') {
       this.itemOrderError = false
       let selectedItem = this.vendorService.selectedVendor.items.find(item => item.id == itemId)
-      debugger
       this.createNewFormControl(selectedItem.id, selectedItem.description, "", "")
     }
     // Workaround to clear the typeahead box after user makes a selection
@@ -202,7 +200,7 @@ export class PurchaseOrderComponent implements OnInit {
       return;
     }
 
-    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value, itemOrderForm.value, recordId, submitStatus, this.editForm)
+    this.purchaseOrderService.post(purchaseOrderForm.value, itemOrderForm.value, recordId, submitStatus, this.editForm)
       .subscribe((res) => {
         let msg
         if (this.editForm) {
@@ -251,7 +249,6 @@ export class PurchaseOrderComponent implements OnInit {
         })
       })
       status = false
-
     }
     return status
   }

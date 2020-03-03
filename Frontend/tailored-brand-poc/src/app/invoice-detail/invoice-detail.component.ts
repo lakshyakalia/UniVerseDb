@@ -71,11 +71,9 @@ export class InvoiceDetailComponent implements OnInit {
   }
 
   submitInvoice(submitStatus) {
-
     if (!this.checkValidation()) {
       return;
     }
-    console.log(this.invoiceForm.value);
     this.invoiceService.submitNewInvoice(this.invoiceForm.value, submitStatus)
       .subscribe((res) => {
         this.openSnackBar(`Invoice Created`, 'Dismiss')
