@@ -22,7 +22,8 @@ export class AllInvoicesComponent implements OnInit {
   ngOnInit() {
     this.invoiceForm = new FormGroup({
       invoiceNo : new FormControl('',[Validators.required]),
-      invoiceDate: new FormControl('',[Validators.required]),
+      invoiceFromDate: new FormControl('',[Validators.required]),
+      invoiceToDate: new FormControl('',[Validators.required]),
       orderNo : new FormControl('',[Validators.required]),
       invoiceAmount : new FormControl()
         
@@ -31,6 +32,7 @@ export class AllInvoicesComponent implements OnInit {
    this.invoiceService.allInvoice()
    .subscribe((res:any)=>{
      this.invoiceData=res.data
+     console.log(res)
    })
   }
   openParticularOrder(orderId){
