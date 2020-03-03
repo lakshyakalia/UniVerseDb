@@ -85,7 +85,7 @@ export class VendorSignUpComponent implements OnInit {
       itemId: new FormControl('', [Validators.required]),
       items: this.fb.array([],[Validators.required])
     });
-    this.editVendor = this.router.url.endsWith('/vendor/edit')
+    this.editVendor = this.router.url.includes('/vendor/edit')
     if (this.editVendor) {
       this.heading='Edit Vendor';
     }

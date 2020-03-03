@@ -6,9 +6,9 @@
 <div class="container container-background">
     <div class="container">
       <div class="table-responsive">
-        <table class="table vendor-item-table">
+        <table class="table table-striped">
           <thead class="thead-dark">
-            <th class="text-right">S.No.</th>
+            <th scope="col" width="10%">S.No.</th>
             <th class="text-right">Vendor No.</th>
             <th>Vendor Company</th>
             <th>Vendor</th>
@@ -17,13 +17,13 @@
           </thead>
           <tbody>
             <tr *ngFor="let vendor of vendors;let i = index">
-              <th scope="col" class="text-right">{{i+1}}</th>
+              <th scope="col">{{i+1}}</th>
               <td class="text-right">{{ vendor.id }}</td>
               <td>{{ vendor.company }}</td>
               <td>{{ vendor.name }}</td>
               <td>{{ vendor.phone | imask: {mask:'(000) 000-0000'} }}</td>
               <td>
-                <button routerLink="/vendor/edit/{{vendor.id}}" class="btn btn-dark">
+                <button routerLink="/vendor/edit/{{vendor.id}}" class="btn btn-light">
                   <i class="fas fa-edit"></i>
                 </button>
               </td>
