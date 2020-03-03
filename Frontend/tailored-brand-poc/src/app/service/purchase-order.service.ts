@@ -20,11 +20,10 @@ export class PurchaseOrderService {
   }
 
   submitNewOrder(purchaseOrderValues, itemOrderValues,recordId,submitStatus,editFormStatus){
-    if(editFormStatus){
-      return this.http.put(`${this.baseUri}api/order`,{
+    if(!editFormStatus){
+      return this.http.put(`${this.baseUri}api/order/${recordId}`,{
         purchaseOrderDetails: purchaseOrderValues,
         itemOrderDetails: itemOrderValues,
-        recordID: recordId,
         submitStatus: submitStatus
       })
     }
@@ -32,7 +31,6 @@ export class PurchaseOrderService {
       return this.http.post(`${this.baseUri}api/order`,{
         purchaseOrderDetails: purchaseOrderValues,
         itemOrderDetails: itemOrderValues,
-        recordID: recordId,
         submitStatus: submitStatus
       })
     }

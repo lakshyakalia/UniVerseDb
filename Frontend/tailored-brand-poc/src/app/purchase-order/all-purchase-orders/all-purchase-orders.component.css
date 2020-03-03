@@ -194,3 +194,11 @@ td button{
 .align-left{
     text-align: left;
 }
+
+.orderno-width{
+    width: 7vw!important;
+}
+
+.fa-eye{
+    cursor: pointer;
+}
