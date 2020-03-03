@@ -11,14 +11,6 @@ export class PurchaseOrderService {
 
   baseUri : string = environment.baseUrl
 
-  getAllVendorName(){
-    return this.http.get(`${this.baseUri}api/vendor`)
-  }
-
-  getParticularItemDetails(itemID){
-    return this.http.get(`${this.baseUri}api/order/item/${itemID}`)
-  }
-
   submitNewOrder(purchaseOrderValues, itemOrderValues,recordId,submitStatus,editFormStatus){
     if(editFormStatus){
       return this.http.put(`${this.baseUri}api/order`,{

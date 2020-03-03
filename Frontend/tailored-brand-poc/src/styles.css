@@ -15,6 +15,17 @@ body button{
     outline: none;
 }
 
+.page-header-container {
+    background-color: #202020;
+    height: 90px;
+}
+.page-header {
+    color: rgba(255, 255, 255, 1);
+    font-weight: 100;
+    font-size: 2rem;
+    padding-top: 25px;
+}
+
 @media (max-width : 800px)
 {
     #img{            

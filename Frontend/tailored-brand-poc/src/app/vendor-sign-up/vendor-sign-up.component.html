@@ -1,85 +1,85 @@
-<div class="vendor-heading">
-  <div class="vendor-head container">
+<div class="page-header-container">
+  <div class="page-header container">
     <span class="heading">{{heading}}</span>
   </div>
 </div>
 <div class="container container-background">
   <form [formGroup]="vendorDetailForm" class="container">
     <div class="row">
-      <div class="col-md-3 col-5">
+      <div class="col-md-3 col-5 col-form-label">
         Vendor No.
       </div>
       <div class="col-md-3 col-7">
-        <input type="text" placeholder="Vendor No." (keyup.enter)="setVendorId($event)" (blur)="setVendorId($event)" formControlName='vendorNo' style="text-align: right;" />
+        <input class="form-control" type="text" placeholder="Vendor No." (keyup.enter)="setVendorId($event)" (blur)="setVendorId($event)" formControlName='vendorNo' style="text-align: right;" />
       </div>
     </div>
     <div class="row">
-      <div class="col-md-3 col-5">
+      <div class="col-md-3 col-5 col-form-label">
         Company
       </div>
       <div class="col-md-3 col-7">
-        <input type="text" formControlName="Company"/>
+        <input class="form-control" type="text" formControlName="Company"/>
         <span *ngIf= "vendorDetailForm.controls['Company'].invalid && toggle==true">
         required
         </span>
       </div>
-      <div class="col-md-3 col-5">
+      <div class="col-md-3 col-5 col-form-label">
         <label class="items-right">Contact Name</label>
       </div>
       <div class="col-md-3 col-7">
-        <input type="text" formControlName="Contact" required (keydown)="checkForAlphabets($event)"/>
+        <input class="form-control" type="text" formControlName="Contact" required (keydown)="checkForAlphabets($event)"/>
         <span *ngIf= "vendorDetailForm.controls['Contact'].invalid && toggle==true">
         required
         </span>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-3 col-5">
+      <div class="col-md-3 col-5 col-form-label">
         Street
       </div>
       <div class="col-md-3 col-7">
-        <input type="text" formControlName="Street" />
+        <input class="form-control" type="text" formControlName="Street" />
         <span *ngIf= "vendorDetailForm.controls['Street'].invalid && toggle==true">
         required
         </span>
       </div>
-      <div class="col-md-3 col-5">
+      <div class="col-md-3 col-5 col-form-label">
         <label class="items-right">City</label>
       </div>
       <div class="col-md-3 col-7">
-        <input type="text" formControlName="City" required />
+        <input class="form-control" type="text" formControlName="City" required />
         <span *ngIf= "vendorDetailForm.controls['City'].invalid && toggle==true">
         required
         </span>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-3 col-5">
+      <div class="col-md-3 col-5 col-form-label">
         State
       </div>
       <div class="col-md-3 col-7">
-        <input type="text" placeholder=" -- State -- " [ngbTypeahead]="stateTypeahead" [(value)]="selectedState" (selectItem)="selectState($event)" autocomplete="doNotAutoComplete">
+        <input class="form-control" type="text" placeholder=" -- State -- " [ngbTypeahead]="stateService.typeahead" [(value)]="selectedState" (selectItem)="selectState($event)" autocomplete="doNotAutoComplete">
         <input type="hidden" formControlName="State">
         <span *ngIf= "vendorDetailForm.controls['State'].invalid && toggle==true">
           required
         </span>
       </div>
-      <div class="col-md-3 col-5">
+      <div class="col-md-3 col-5 col-form-label">
         <label class="items-right">Zip</label>
       </div>
       <div class="col-md-3 col-7">
-        <input type="text" formControlName="Zip" required style="text-align: right;" (keydown)="checkForExponential($event)" maxlength="6"/>
+        <input class="form-control" type="text" formControlName="Zip" required style="text-align: right;" (keydown)="checkForExponential($event)" maxlength="6"/>
         <span *ngIf= "vendorDetailForm.controls['Zip'].invalid && toggle==true" >
         required
         </span>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-3 col-5">
+      <div class="col-md-3 col-5 col-form-label">
         Phone
       </div>
       <div class="col-md-3 col-7">
-        <input type="text" [imask]="{mask: '(000) 000-0000'}" formControlName="Phone" required style="text-align: right;" (keydown)="checkForPhone($event)" name="phone" class="phone"/>
+        <input class="form-control phone" type="text" [imask]="{mask: '(000) 000-0000'}" formControlName="Phone" required style="text-align: right;" (keydown)="checkForPhone($event)" name="phone"/>
         <span *ngIf= "vendorDetailForm.controls['Phone'].invalid && toggle==true">
         required
         </span>
@@ -109,7 +109,7 @@
           <tr>
             <td></td>
             <td colspan="3" class="form-group" style="width:1px;">
-              <input type="text" placeholder=" -- Item # -- " [ngbTypeahead]="itemTypeahead" [value]="selectedItem" (selectItem)="selectItem($event)" style="text-align: right;" autocomplete="doNotAutoComplete">
+              <input type="text" class="form-control" placeholder=" -- Item # -- " [ngbTypeahead]="itemService.typeahead" [value]="selectedItem" (selectItem)="selectItem($event)" style="text-align: right;" autocomplete="doNotAutoComplete">
             </td>
           </tr>
         </tbody>

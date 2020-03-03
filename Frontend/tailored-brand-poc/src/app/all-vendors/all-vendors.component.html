@@ -15,12 +15,12 @@
             <th width="20%" class="left">Phone No.</th>
           </thead>
           <tbody>
-            <tr *ngFor="let vendor of vendorIDS;let i = index">
+            <tr *ngFor="let vendor of vendors;let i = index">
               <td width="10%" class="right">{{i+1}}</td>
-              <td width="30%" class="right">{{ vendor }}</td>
-              <td width="30%" class="left">{{ vendorData[vendor][0][0]}}</td>
-              <td width="15%" class="left">{{ vendorData[vendor][0][1]}}</td>
-              <td width="20%" class="left">{{ vendorData[vendor][0][2] | imask: {mask:'(000) 000-0000'} }}</td>
+              <td width="30%" class="right">{{ vendor.id }}</td>
+              <td width="30%" class="left">{{ vendor.company }}</td>
+              <td width="15%" class="left">{{ vendor.name }}</td>
+              <td width="20%" class="left">{{ vendor.phone | imask: {mask:'(000) 000-0000'} }}</td>
             </tr>
           </tbody>
         </table>

@@ -7,6 +7,7 @@ import { from } from 'rxjs';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from "@angular/material";
+import { ItemService } from '../service/item.service';
 
 
 
@@ -24,7 +25,7 @@ export class InvoiceDetailComponent implements OnInit {
   date: string;
   itemOrderError: boolean
 
-  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar) { }
+  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar) { }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
@@ -46,10 +47,10 @@ export class InvoiceDetailComponent implements OnInit {
     if (this.editInvoice) {
       this.heading = 'Edit Invoice';
     }
-    this.vendorService.readItem()
-      .subscribe((res: any) => {
-        this.description = res.table
-      })
+    // this.vendorService.readItem()
+    //   .subscribe((res: any) => {
+    //     this.description = res.table
+    //   })
     this.date = new Date().toISOString().substr(0, 10);
 
   }

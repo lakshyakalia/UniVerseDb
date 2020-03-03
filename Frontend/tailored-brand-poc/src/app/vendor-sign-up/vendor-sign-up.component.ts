@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { VendorService } from '../service/vendor.service';
-import { StatesService } from '../service/states.service';
+import { StateService } from '../service/state.service';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
-import {  Observable } from 'rxjs';
-import {  debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from "@angular/material";
+import { ItemService } from '../service/item.service';
 
 @Component({
   selector: 'app-vendor-sign-up',
@@ -16,18 +15,14 @@ import { MatSnackBar } from "@angular/material";
 })
 export class VendorSignUpComponent implements OnInit {
   items: FormGroup;
-  constructor(private saveData: VendorService, private states: StatesService, private fb: FormBuilder, private router: Router, private dialog : MatDialog , public snackBar: MatSnackBar ) {
-    this.stateList = states.all();
+  constructor(private saveData: VendorService, private stateService: StateService, private itemService: ItemService, private fb: FormBuilder, private router: Router, private dialog : MatDialog , public snackBar: MatSnackBar ) {
   }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
        duration: 4000,       
     });
  }
-  stateList: string[];
   selectedState: string = "";
-  private recordData: any;
-  private itemList: any;
   private itemArray: Array<any> = [];
   itemError : boolean
   lastid:number;
@@ -61,7 +56,7 @@ export class VendorSignUpComponent implements OnInit {
       this.vendorId=this.vendorDetailForm.get('vendorNo').value
       this.lastid=this.vendorId
       console.log(this.vendorId)
-      this.saveData.particularVendor(this.vendorId)
+      this.saveData.get(this.vendorId)
         .subscribe((res: any) => {
           if(res.status === 404){
             this.openSnackBar(`${res.msg} `, 'Dismiss')
@@ -78,7 +73,7 @@ export class VendorSignUpComponent implements OnInit {
         })
     }
     this.vendorId=this.vendorDetailForm.get('vendorNo').value
-    this.saveData.particularVendor(this.vendorId)
+    this.saveData.get(this.vendorId)
       .subscribe((res: any) => {
         if(res.status === 404){
           this.openDialogBox(res.msg)
@@ -91,18 +86,6 @@ export class VendorSignUpComponent implements OnInit {
       })
   }
   ngOnInit() {
-    this.saveData.readItem()
-      .subscribe((res: any) => {
-        this.recordData = res.table;
-        let keyPipeValues = []
-        let keys = Object.keys(this.recordData)
-        for(let i = 0; i < keys.length; i++)
-        {
-          keyPipeValues.push(`${keys[i]} | ${this.recordData[keys[i]]}`)
-        }
-        this.itemList = keyPipeValues
-      })
-
     this.items = this.fb.group({
       itemId: new FormControl('', [Validators.required]),
       items: this.fb.array([],[Validators.required])
@@ -128,7 +111,7 @@ export class VendorSignUpComponent implements OnInit {
     this.selectedState = res.data["State"]
     for (let j in res.itemIds){
       let id =res.itemIds[j].itemId
-      let desc=this.recordData[id][0]
+      let desc=this.itemService.listRaw()[id][0]
       this.createFormControl(id,desc)
     }
 
@@ -137,16 +120,9 @@ export class VendorSignUpComponent implements OnInit {
     const control =<FormArray> this.items.controls['items']
     control.push(this.initiateForm(desc,id))  
   }
-  itemTypeahead = (text$: Observable<string>) => 
-  text$.pipe(
-    debounceTime(200),
-    distinctUntilChanged(),
-    map(keyword => keyword.length < 2 ? []
-      : this.itemList.filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
-  )
   selectItem(event) {
     let id = event.item.split("|")[0].trim()
-    let description = this.recordData[id][0]
+    let description = this.itemService.listRaw()[id][0]
 
     let controlArray = this.items.get('items').value
     let status = controlArray.find(element => element.items === id)
@@ -161,13 +137,6 @@ export class VendorSignUpComponent implements OnInit {
     else
       this.selectedItem = ""    
   }
-  stateTypeahead = (text$: Observable<string>) => 
-  text$.pipe(
-    debounceTime(200),
-    distinctUntilChanged(),
-    map(keyword => keyword.length < 2 ? []
-      : this.stateList.filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
-  )
   selectState(event) {
     this.selectedState = event.item.split("|")[0].trim();
     this.vendorDetailForm.controls['State'].setValue(this.selectedState);
@@ -182,7 +151,7 @@ export class VendorSignUpComponent implements OnInit {
     if (this.vendorDetailForm.valid) {
       if(!this.editVendor){
         let vendorId = Math.floor(Math.random() * 900000) + 100000
-      this.saveData.vendorDetail(vendorDetail.value, items.value, vendorId)
+      this.saveData.post(vendorDetail.value, items.value, vendorId)
         .subscribe((res: any) => {
           
           if (res.status == 200) {
@@ -202,7 +171,7 @@ export class VendorSignUpComponent implements OnInit {
         })
       }
       else{
-        this.saveData.vendorUpdate(vendorDetail.value,items.value,this.vendorId)
+        this.saveData.put(vendorDetail.value,items.value,this.vendorId)
         .subscribe((res:any)=>{
           if(res.status==200)
           {
