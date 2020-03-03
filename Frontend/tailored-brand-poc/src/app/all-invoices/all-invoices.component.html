@@ -16,13 +16,6 @@
           (keydown)="checkForExponential($event)"
           class="form-control"
         />
-        <span
-          *ngIf="
-            invoiceForm.controls['invoiceNo'].touched &&
-            invoiceForm.controls['invoiceNo'].invalid
-          "
-          >Required</span
-        >
       </div>
 
       <div class="col-md-3 col-5 col-form-label">
@@ -36,13 +29,6 @@
           (keydown)="getItemOrderDetail($event)"
           class="form-control"
         />
-        <span
-          *ngIf="
-            invoiceForm.controls['orderNo'].touched &&
-            invoiceForm.controls['orderNo'].invalid
-          "
-          >Required</span
-        >
       </div>
     </div>
     <div class="row">
@@ -65,13 +51,6 @@
             class="form-control"
           />
         </div>
-        <span
-          *ngIf="
-            invoiceForm.controls['invoiceToDate'].touched &&
-            invoiceForm.controls['invoiceToDate'].invalid
-          "
-          >Required</span
-        >
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text">
@@ -87,14 +66,6 @@
             class="form-control"
           />
         </div>
-        <span
-          class="error-field"
-          *ngIf="
-            invoiceForm.controls['invoiceFromDate'].touched &&
-            invoiceForm.controls['invoiceFromDate'].invalid
-          "
-          >Required</span
-        >
       </div>
     </div>
     <hr />
@@ -128,7 +99,6 @@
         <i class="fas fa-arrow-circle-left"></i> Back
       </button>
     </div>
-  <div class="col-1">
-  </div>
+    <div class="col-1"></div>
   </div>
 </div>
