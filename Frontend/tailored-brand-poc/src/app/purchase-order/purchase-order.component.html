@@ -1,125 +1,157 @@
-<div class="purchase-order-heading">
-  <div class="purchase-order-head container">
+<div class="page-header-container">
+  <div class="page-header container">
     <span>{{ purchaseOrderTitle }}</span>
   </div>
 </div>
-<div class="sign-up-div container">
-  <div class="form">
-    <form [formGroup]="purchaseOrderForm">
-      <div class="form-head">
-        <div class="form-head-left">
+<div class="container container-background">
+    <form [formGroup]="purchaseOrderForm" class="container">
+      <div class="row">
+        <div class="col-md-3 col-5 col-form-label">
           <label class="items-left">Order No.</label>
-          <input type="text" class="order-no" placeholder="Order No." name="newOrder" formControlName="newOrder"
-            (keydown)="getItemOrderDetail($event)" />
         </div>
-        <div class="form-head-right">
+        <div class="col-md-3 col-7">
+          <input type="text" class="form-control order-no" placeholder="Order No." name="newOrder" formControlName="NewOrder"
+          (keydown)="getItemOrderDetail($event)" />
+        </div>
+        <div class="col-md-3 col-5 col-form-label">
           <label class="items-left">Order Date</label>
-          <input type="date" class="order-date" name="orderDate" min="{{ date }}" formControlName="orderDate" />
-          <i class="fa fa-calendar-alt"></i>
-          <span class="error-field" *ngIf="purchaseOrderForm.controls['orderDate'].touched && purchaseOrderForm.controls['orderDate'].invalid">Required</span>
+        </div>
+        <div class="col-md-3 col-7">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fa fa-calendar-alt"></i>
+              </span>
+            </div>
+            <input type="date" class="form-control" name="orderDate" min="{{ date }}" formControlName="OrderDate" />
+          </div>
+          <span class="error-field" *ngIf="purchaseOrderForm.controls['OrderDate'].touched && purchaseOrderForm.controls['OrderDate'].invalid">Required</span>
         </div>
       </div>
-      <div class="vendor-select">
-        <label class="vendor">Vendor</label>
-        <select class="form-control-sm vendor-select-control" (change)="getVendorItems()" name="vendorName"
-          formControlName="vendorName">
-          <option>-- Select Vendor --</option>
-          <option *ngFor="let vendor of vendorNameList">{{  vendor }}</option>
-        </select>
-        <span *ngIf="purchaseOrderForm.controls['vendorName'].touched && purchaseOrderForm.controls['vendorName'].invalid"class="error-field">Required</span>
+      <div class="row">
+        <div class="col-md-3 col-5 col-form-label">
+          <label class="vendor">Vendor</label>  
+        </div>
+        <div class="col-md-3 col-7">
+          <input type="text" class="form-control" placeholder=" -- Vendor -- " [ngbTypeahead]="vendorService.typeahead" [(value)]="vendorService.selectedVendor.id" (selectItem)="selectVendor($event)" autocomplete="doNotAutoComplete">
+          <input type="hidden" formControlName="VendorName">
+          <span *ngIf="purchaseOrderForm.controls['VendorName'].touched && purchaseOrderForm.controls['VendorName'].invalid"class="error-field">Required</span>
+        </div>
       </div>
       <hr class="hr-top">
-
       <label class="ship">Ship To: </label>
-      <div class="form-top">
-        <div class="form-top-left-items">
-          <p>
-            <label class="items-left">Company</label>
-            <input type="text" name="companyName" formControlName="companyName">
-            <span
-              *ngIf="purchaseOrderForm.controls['companyName'].touched && purchaseOrderForm.controls['companyName'].invalid">Required</span>
-          </p>
-          <p>
-            <label class="items-left">Street</label>
-            <input type="text" name="street" formControlName="street">
-            <span
-              *ngIf="purchaseOrderForm.controls['street'].touched && purchaseOrderForm.controls['street'].invalid">Required</span>
-          </p>
-          <p>
-            <label class="items-left">State</label>
-            <select class="input form-control-sm" name="state" formControlName="state" required>
-              <option>Select State</option>
-              <option *ngFor="let state of states">{{ state }}</option>
-            </select>
-            <span *ngIf="purchaseOrderForm.controls['state'].touched && purchaseOrderForm.controls['state'].invalid">Required</span>
-          </p>
-          <p>
-            <label class="items-left">Phone</label>
-            <input type="text" [imask]="{mask: '(000) 000-0000'}" required style="text-align: right;" name="phoneNumber" formControlName="phoneNumber" (keydown)="checkForExponential($event)">
-            <span
-              *ngIf="purchaseOrderForm.controls['phoneNumber'].touched && purchaseOrderForm.controls['phoneNumber'].invalid">Required</span>
-          </p>
+      <div class="row">
+        <div class="col-md-3 col-5 col-form-label">
+          <label class="items-left">Company</label>
         </div>
-        <div class="form-top-right-items">
-          <p>
-            <label class="items-right">Contact Name</label>
-            <input type="text" name="contactName" formControlName="contactName">
-            <span
-              *ngIf="purchaseOrderForm.controls['contactName'].touched && purchaseOrderForm.controls['contactName'].invalid">Required</span>
-          </p>
-          <p>
-            <label class="items-right">City</label>
-            <input type="text" name="city" formControlName="city">
-            <span *ngIf="purchaseOrderForm.controls['city'].touched && purchaseOrderForm.controls['city'].invalid">Required</span>
-          </p>
-          <p>
-            <label class="items-right">Zip</label>
-            <input class="align-right" type="text" name="zipCode" formControlName="zipCode" (keydown)="checkForExponential($event)" maxlength="6">
-            <span
-              *ngIf="purchaseOrderForm.controls['zipCode'].touched && purchaseOrderForm.controls['zipCode'].invalid">Required</span>
-          </p>
+        <div class="col-md-3 col-7">
+          <input type="text" class="form-control" name="companyName" formControlName="CompanyName">
+          <span
+            *ngIf="purchaseOrderForm.controls['CompanyName'].touched && purchaseOrderForm.controls['CompanyName'].invalid">Required</span>
         </div>
-
+        <div class="col-md-3 col-5 col-form-label">
+          <label class="items-right">Contact Name</label>
+        </div>
+        <div class="col-md-3 col-7">
+          <input type="text" class="form-control" name="contactName" formControlName="ContactName">
+          <span
+            *ngIf="purchaseOrderForm.controls['ContactName'].touched && purchaseOrderForm.controls['ContactName'].invalid">Required</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 col-5 col-form-label">
+          <label class="items-left">Street</label>
+        </div>
+        <div class="col-md-3 col-7">
+          <input type="text" class="form-control" name="street" formControlName="Street">
+          <span
+            *ngIf="purchaseOrderForm.controls['Street'].touched && purchaseOrderForm.controls['Street'].invalid">Required</span>
+        </div>
+        <div class="col-md-3 col-5 col-form-label">
+          <label class="items-right">City</label>
+        </div>
+        <div class="col-md-3 col-7">
+          <input type="text" class="form-control" name="city" formControlName="City">
+          <span *ngIf="purchaseOrderForm.controls['City'].touched && purchaseOrderForm.controls['City'].invalid">Required</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 col-5 col-form-label">
+          <label class="items-left">State</label>
+        </div>
+        <div class="col-md-3 col-7">
+          <input type="text" class="form-control" placeholder=" -- State -- " [ngbTypeahead]="stateService.typeahead" [(value)]="selectedState" (selectItem)="selectState($event)" autocomplete="doNotAutoComplete">
+          <input type="hidden" formControlName="State">
+          <span *ngIf="purchaseOrderForm.controls['State'].touched && purchaseOrderForm.controls['State'].invalid">Required</span>
+        </div>
+        <div class="col-md-3 col-5 col-form-label">
+          <label class="items-right">Zip</label>
+        </div>
+        <div class="col-md-3 col-7">
+          <input class="form-control" type="text" name="zipCode" formControlName="ZipCode" (keydown)="checkForExponential($event)" maxlength="6">
+          <span
+            *ngIf="purchaseOrderForm.controls['ZipCode'].touched && purchaseOrderForm.controls['ZipCode'].invalid">Required</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 col-5 col-form-label">
+          <label class="items-left">Phone</label>
+        </div>
+        <div class="col-md-3 col-7">
+          <input type="text" class="form-control" [imask]="{mask: '(000) 000-0000'}" required style="text-align: right;" name="phoneNumber" formControlName="PhoneNumber" (keydown)="checkForExponential($event)">
+          <span
+            *ngIf="purchaseOrderForm.controls['PhoneNumber'].touched && purchaseOrderForm.controls['PhoneNumber'].invalid">Required</span>
+        </div>
       </div>
     </form>
-    <div class="form-bottom">
-      <form [formGroup]="itemOrderForm">
-        <hr>
-        <label>Items :</label>
-        <table class="table vendor-item-table">
+    <form [formGroup]="itemOrderForm" class="container">
+      <hr>
+      <label>Items :</label>
+      <div class="table-responsive">
+        <table class="table table-striped">
           <thead class="thead-dark">
-            <th>S.No</th>
-            <th class="align-right">Item #</th>
-            <th class="align-left">Description</th>
-            <th class="align-right">Quantity</th>
-            <th class="align-right">Unit Cost</th>
-            <th class="align-right">Total Cost</th>
-            <th>Remove</th>
+            <th scope="col" width="10%">S.No.</th>
+            <th scope="col" width="32%">Item</th>
+            <th scope="col" width="16%">Quantity</th>
+            <th scope="col" width="16%">Unit Cost</th>
+            <th scope="col" width="16%">Total Cost</th>
+            <th scope="col" width="10%">Remove</th>
           </thead>
           <tbody>
-            <tr *ngFor="let control of itemOrderForm.controls.specialRequests.controls; let i=index"
+            <tr *ngFor="let control of itemOrderForm.controls.SpecialRequests.controls; let i=index"
               [formGroup]="control">
-              <td>{{ i+1 }}</td>
-              <td class="itemID-width align-right">{{ control.value.itemID }}</td>
-              <td class="align-left">{{ control.value.itemDescription }}</td>
+              <th scope="row">{{ i+1 }}</th>
               <td>
-                <input name="quantity" currencyMask [options]="{prefix: '', precision: 0}" formControlName="quantity" (keyup)="calculateTotalPrice(i)" class="input-width align-right">
-                <span class="error-field" *ngIf="control.controls.quantity.errors?.required && control.controls.quantity.touched">Required Field</span>
+                {{ control.value.ItemID }} <br/>
+                {{ control.value.ItemDescription }}
               </td>
-              <td class="input-width">
-                <input name="unitCost" currencyMask formControlName="unitCost" (keyup)="calculateTotalPrice(i)" class="input-width align-right">
-                <span class="error-field" *ngIf="control.controls.unitCost.errors?.required && control.controls.unitCost.touched">Required Field</span>
+              <td>
+                <input name="quantity" class="form-control" currencyMask [options]="{prefix: '', precision: 0}" formControlName="Quantity" (keyup)="calculateTotalPrice(i)" (focus)="$event.target.select()">
+                <span class="error-field" *ngIf="control.controls.Quantity.errors?.required && control.controls.Quantity.touched">Required Field</span>
               </td>
-              <td class="align-right">$ {{ control.value.totalPrice| number:'1.2-5' }}</td>
+              <td>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">$</span>
+                  </div>
+                  <input name="unitCost" class="form-control" currencyMask formControlName="UnitCost" (keyup)="calculateTotalPrice(i)" (focus)="$event.target.select(); $event.preventDefault()">
+                </div>
+                <span class="error-field" *ngIf="control.controls.UnitCost.errors?.required && control.controls.UnitCost.touched">Required Field</span>
+              </td>
+              <td>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">$</span>
+                  </div>
+                  <div class="form-control text-right" style="background-color: lightgray;">{{ control.value.TotalPrice| number:'1.2-5' }}</div>
+                </div>
+              </td>
               <td (click)="removeParticularItem(i)"><i class="fas fa-window-close"></i></td>
             </tr>
             <tr>
               <td></td>
-              <td class="itemID-width">
-                <select formControlName="vendorItem" (change)="addNewRow()" class="input form-control-sm">
-                  <option> -- Item # -- </option>
-                  <option *ngFor="let items of vendorItemIDList">{{ items }}</option>
-                </select>
+              <td colspan="5">
+                <input type="text" class="form-control" formControlName="VendorItem" placeholder=" -- Item # -- " [ngbTypeahead]="vendorService.itemTypeahead" [value]="selectedItem" (selectItem)="selectItem($event)" style="text-align: right;" autocomplete="doNotAutoComplete">
               </td>
             </tr>
             <tr>
@@ -127,19 +159,26 @@
               <td></td>
               <td>Grand Total</td>
               <td></td>
-              <td></td>
               <td class="align-right">$ {{grandTotal| number:'1.2-5'}}</td>
               <td></td>
             </tr>
           </tbody>
-        </table>
-        <p *ngIf="itemOrderError" class="item-order-error">Select atleast 1 item</p>
-        <div class="button-div">
-          <button *ngIf="showButtons" (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'draft')">Save as Draft</button>
-          <button *ngIf="showButtons" (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'submit')">Submit</button>
-          <button routerLink="/">Cancel</button>
-        </div>
-      </form>
+        </table>  
+      </div>
+      <p *ngIf="itemOrderError" class="item-order-error">Select atleast 1 item</p>
+    </form>
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-md-1 col-3">
+        <button class="btn btn-dark" type="submit" (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'submit')">Submit</button>
+      </div>
+      <div class="col-md-1 col-3">
+        <button class="btn btn-light" (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'draft')">Draft</button>
+      </div>
+      <div class="mol-md-1 col-3">
+        <button class="btn btn-light" routerLink="/">Cancel</button>
+      </div>
+      <div class="col-1">
+      </div>
     </div>
   </div>
-</div>

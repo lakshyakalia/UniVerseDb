@@ -7,6 +7,7 @@ import { from } from 'rxjs';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from "@angular/material";
+import { ItemService } from '../service/item.service';
 
 
 
@@ -24,7 +25,7 @@ export class InvoiceDetailComponent implements OnInit {
   date: string;
   itemOrderError: boolean
 
-  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar) { }
+  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar) { }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
@@ -47,14 +48,20 @@ export class InvoiceDetailComponent implements OnInit {
     if (this.editInvoice) {
       this.heading = 'Edit Invoice';
     }
-    this.vendorService.readItem()
-      .subscribe((res: any) => {
-        this.description = res.table
-      })
+    // this.vendorService.readItem()
+    //   .subscribe((res: any) => {
+    //     this.description = res.table
+    //   })
     let url = this.router.url
     if (!url.endsWith('/new') && !url.endsWith('/edit')) {
       this.getInvoiceDetail(url.split('/')[3])
     }
+    // this.vendorService.readItem()
+    //   .subscribe((res: any) => {
+    //     this.description = res.table
+    //   })
+    this.date = new Date().toISOString().substr(0, 10);
+
   }
   initiateForm(ids, quantity,quantityReceived): FormGroup {
     this.date = new Date().toISOString().substr(0, 10);
@@ -105,6 +112,16 @@ export class InvoiceDetailComponent implements OnInit {
     if (!this.checkValidation()) {
       return;
     }
+    if (!this.checkValidation()) {
+      return;
+    }
+    this.invoiceService.submitNewInvoice(this.invoiceForm.value, submitStatus)
+      .subscribe((res) => {
+        this.openSnackBar(`Invoice Created`, 'Dismiss')
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/invoice/new']);
+      }); 
+      })
   }
 
 
