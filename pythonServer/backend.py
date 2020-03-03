@@ -103,13 +103,18 @@ def allVendors():
 	cmd=u2py.run("LIST DATA PO.VENDOR.MST VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML",capture=True)
 	my_xml=cmd.strip()
 	data = xmltodict.parse(my_xml)['ROOT']['PO.VENDOR.MST']
+	data1=data
 	if(type(data) is list):
 		for i in range(len(data)):
-			data = xmltodict.parse(my_xml)['ROOT']['PO.VENDOR.MST'][i]
-		
+			data = data1[i]		
 			for j in data['ITEM.IDS_MV']:
-				itemId.append(j['@ITEM.IDS'])		
-				ids=data['@_ID']
+				if(type(data['ITEM.IDS_MV']) is list):
+					print(j['@ITEM.IDS'])
+					itemId.append(j['@ITEM.IDS'])		
+					ids=data['@_ID']
+				else:
+					itemId.append(data['ITEM.IDS_MV']['@ITEM.IDS'])
+					ids=data['@_ID']   
 			vendorDetail.append(data['@VEND.COMPANY'])
 			vendorDetail.append(data['@VEND.NAME'])
 			vendorDetail.append(data['@VEND.PHONE'])
@@ -119,14 +124,9 @@ def allVendors():
 			itemData=[]
 			itemId=[]
 			vendorDetail=[]
-	else:
-		if(type(data['ITEM.IDS_MV']) is list):
-			for j in data['ITEM.IDS_MV']:
-				itemId.append(j['@ITEM.IDS'])		
-				ids=data['@_ID']
-		else:
-			itemId.append(data['ITEM.IDS_MV']['@ITEM.IDS'])
-			ids=data['ITEM.IDS_MV']['@_ID']   
+	else:		
+		itemId.append(data['ITEM.IDS_MV']['@ITEM.IDS'])
+		ids=data['@_ID']   
 		vendorDetail.append(data['@VEND.COMPANY'])
 		vendorDetail.append(data['@VEND.NAME'])
 		vendorDetail.append(data['@VEND.PHONE'])
@@ -146,13 +146,18 @@ def particularVendor(vendorId):
 		vendorDetail=[]
 		dictItems={}
 		itemId=[]
-		itemDict=vendorDict={}
+		itemDict={}
+		vendorDict={}
 		cmd=u2py.run("LIST DATA PO.VENDOR.MST "+vendorId+" VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML",capture=True)
 		my_xml=cmd.strip()
 		data = xmltodict.parse(my_xml)['ROOT']['PO.VENDOR.MST']
-		for j in range (len(data['ITEM.IDS_MV'])):
-			itemDict={}
-			itemDict['itemId']= data['ITEM.IDS_MV'][j]['@ITEM.IDS']
+		if(type(data['ITEM.IDS_MV']) is list):
+			for j in range (len(data['ITEM.IDS_MV'])):
+				itemDict={}
+				itemDict['itemId']= data['ITEM.IDS_MV'][j]['@ITEM.IDS']
+				itemId.append(itemDict)
+		else:
+			itemDict['itemId']= data['ITEM.IDS_MV']['@ITEM.IDS']
 			itemId.append(itemDict)
 		vendorDict['Company']=data['@VEND.COMPANY']
 		vendorDict['Contact']=data['@VEND.NAME']
@@ -394,4 +399,3 @@ def saveInvoice(orderNo,invoiceDetails,invoiceNo,invoiceDate,invoiceAmount,statu
 
 if __name__ == '__main__':
 	app.run()
-
