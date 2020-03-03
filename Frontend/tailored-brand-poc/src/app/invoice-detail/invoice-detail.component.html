@@ -10,7 +10,8 @@
         Invoice Number
       </div>
       <div class="col-md-3 col-7">
-        <input class="form-control"
+        <input
+          class="form-control"
           type="text"
           id="invoiceNo"
           formControlName="invoiceNo"
@@ -24,13 +25,13 @@
           >Required</span
         >
       </div>
-         
+
       <div class="col-md-3 col-5 col-form-label">
         Order Number
-        </div>
-        <div class="col-md-3 col-7">
-
-        <input class="form-control"
+      </div>
+      <div class="col-md-3 col-7">
+        <input
+          class="form-control"
           type="text"
           id="orderNo"
           formControlName="orderNo"
@@ -41,8 +42,9 @@
             invoiceForm.controls['orderNo'].touched &&
             invoiceForm.controls['orderNo'].invalid
           "
-          >Required</span>
-          </div>
+          >Required</span
+        >
+      </div>
     </div>
     <div class="row">
       <div class="col-md-3 col-5 col-form-label">
@@ -50,18 +52,18 @@
       </div>
       <div class="col-md-3 col-7">
         <div class="input-group">
-
-        <div class="input-group-prepend">
-          <span class="input-group-text">
-            <i class="fa fa-calendar-alt"></i>
-          </span>
-        </div>
-        <input class="form-control"
-          type="date"
-          id="invoiceDate"
-          min="{{ date }}"
-          formControlName="invoiceDate"
-        />
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fa fa-calendar-alt"></i>
+            </span>
+          </div>
+          <input
+            class="form-control"
+            type="date"
+            id="invoiceDate"
+            min="{{ date }}"
+            formControlName="invoiceDate"
+          />
         </div>
         <span
           *ngIf="
@@ -71,15 +73,13 @@
           >Required</span
         >
       </div>
-   
 
       <div class="col-md-3 col-5 col-form-label">
-
         <label class="items-right">Invoice Amount</label>
       </div>
       <div class="col-md-3 col-7">
-
-        <input class="form-control"
+        <input
+          class="form-control"
           currencyMask
           [options]="{ prefix: '$ ', thousands: ',', decimal: '.' }"
           id="invoiceAmount"
@@ -91,15 +91,12 @@
             invoiceForm.controls['invoiceAmount'].touched &&
             invoiceForm.controls['invoiceAmount'].invalid
           "
-          >Required</span>
-</div>
-
+          >Required</span
+        >
+      </div>
     </div>
-
-    <!-- <div class="form-bottom">   -->
-      <hr />
-      <div class="table-responsive">
-
+    <hr />
+    <div class="table-responsive">
       <table class="table table-striped">
         <thead class="thead-dark">
           <th scope="col">SNo.</th>
@@ -111,8 +108,12 @@
         </thead>
         <tbody>
           <tr
-            *ngFor="let control of invoiceForm.controls.invoiceDetails.controls;
-              let i = index" [formGroup]="control">
+            *ngFor="
+              let control of invoiceForm.controls.invoiceDetails.controls;
+              let i = index
+            "
+            [formGroup]="control"
+          >
             <td>{{ i + 1 }}</td>
             <td>{{ control.value.itemNo }}</td>
             <td>{{ description[control.value.itemNo] }}</td>
@@ -128,18 +129,20 @@
           </tr>
         </tbody>
       </table>
+    </div>
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-md-1 col-3">
+        <button class="btn btn-dark" (click)="submitInvoice('receive')">
+          Receive
+        </button>
       </div>
-      <div class="row">
-        <div class="col"></div>
-        <div class="col-md-1 col-3">
-          <button class="btn btn-dark" (click)="submitInvoice('receive')">Receive</button>
-          </div>
-        <div class="col-md-1 col-3">
+      <div class="col-md-1 col-3">
         <button class="btn btn-light">Draft</button>
-        </div>
-        <div class="mol-md-1 col-3">
-        <button routerLink="/" class="btn btn-light">Cancel</button>
-        </div>
       </div>
+      <div class="mol-md-1 col-3">
+        <button routerLink="/" class="btn btn-light">Cancel</button>
+      </div>
+    </div>
   </form>
 </div>
