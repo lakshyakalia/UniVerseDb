@@ -9,10 +9,10 @@
         <table class="table table-striped">
           <thead class="thead-dark">
             <th scope="col" width="10%">S.No.</th>
-            <th class="text-right">Vendor No.</th>
-            <th>Vendor Company</th>
-            <th>Vendor</th>
-            <th>Phone No.</th>
+            <th scope="col" width="10%">Vendor No.</th>
+            <th scope="col" width="30%">Vendor Company</th>
+            <th scope="col" width="20%">Vendor</th>
+            <th scope="col" width="30%">Phone No.</th>
             <th></th>
           </thead>
           <tbody>
@@ -31,8 +31,13 @@
           </tbody>
         </table>
       </div>
-      <div class="button-div">
-          <button routerLink="/"><i class="fas fa-arrow-circle-left"></i> Back</button>
+      <div class="row">
+        <div class="col"></div>
+        <div class="col-md-1 col-3">
+          <button class="btn btn-dark" routerLink="/">
+            Back
+          </button>
+        </div>
       </div>
     </div>
   </div>
