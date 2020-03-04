@@ -4,6 +4,7 @@ import u2py
 import xmltodict
 import pprint
 import json
+import random
 from collections import OrderedDict
 from flask_cors import CORS,cross_origin
 app = Flask(__name__)
@@ -176,14 +177,23 @@ def particularVendor(vendorId):
 			'msg':'Order ID not found'
 		}
 #-----------Purchase Order Routes-----------------
-@app.route('/api/order',methods=['POST','PUT'])
+@app.route('/api/order',methods=['POST'])
 def saveNewOrder(): 
     data = request.get_json()
-    writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['specialRequests'],data['recordID'],data['submitStatus'])
+    recordID = random.randrange(12,10**6)
+    writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['specialRequests'],recordID,data['submitStatus'])
     return { 
         'status': 200,
-        'msg':'data saved successfully',
-        'data':data
+        'msg':'OrderId '+str(recordID)+' created',
+    }
+
+@app.route('/api/order/<orderID>',methods=['PUT'])
+def editParticularOrder(orderID):
+    data = request.get_json()
+    writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['specialRequests'],orderID,data['submitStatus'])
+    return { 
+        'status': 200,
+        'msg':'OrderId '+str(orderID)+' updated'
     }
 
 @app.route('/api/order',methods=['GET'])

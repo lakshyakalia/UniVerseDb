@@ -73,16 +73,20 @@ export class InvoiceDetailComponent implements OnInit {
   submitInvoice(submitStatus) {
     this.invoiceService.submitNewInvoice(this.invoiceForm.value, submitStatus)
       .subscribe((res) => {
-        this.openDialogBox('Invoice Created')
+        this.openSnackBar(`Invoice Created`, 'Dismiss')
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/invoice/new']);
+      }); 
       })
   }
 
 
   getInvoiceDetail(invoiceId) {
+    this.description=this.itemService.listRaw()
+    console.log(this.description)
     this.invoiceService.getInvoice(invoiceId)
       .subscribe((res: any) => {
         let len = res.ids.length
-        console.log(res)
         this.invoiceForm.controls['invoiceDate'].setValue(res.invoiceDate[0])
         this.invoiceForm.controls['invoiceNo'].setValue(res.invoiceNo[0])
         this.invoiceForm.controls['orderNo'].setValue(res.orderNo[0])
@@ -95,6 +99,7 @@ export class InvoiceDetailComponent implements OnInit {
           this.invoiceForm.controls['orderNo'].disable()
           this.invoiceForm.controls['invoiceAmount'].disable()          
         }
+
         for (let i = 0; i < len; i++) {
           this.createNewFormControl(res.ids[i], res.quantity[i],res.quantityReceived[i])
         }
@@ -106,19 +111,14 @@ export class InvoiceDetailComponent implements OnInit {
     if (!this.checkValidation()) {
       return;
     }
-    this.invoiceService.submitNewInvoice(this.invoiceForm.value, submitStatus)
-      .subscribe((res) => {
-        this.openSnackBar(`Invoice Created`, 'Dismiss')
-        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-          this.router.navigate(['/invoice/new']);
-      }); 
-      })
   }
 
 
   getItemOrderDetail(event) {
     if (event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90))
+    { console.log(this.description)
       return false
+    }
     else {
       this.description=this.itemService.listRaw()
       let orderID = this.invoiceForm.get('orderNo').value

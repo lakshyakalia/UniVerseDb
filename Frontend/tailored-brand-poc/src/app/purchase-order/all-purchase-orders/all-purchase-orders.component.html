@@ -19,6 +19,7 @@
             <td class="align-right">{{ item['purchaseOrderNo'] }}</td>
             <td class="align-right">{{ item['orderDate']| date: 'MM/dd/y' }}</td>
             <td class="align-left">{{ item['companyName'] }}</td>
+            <td><i (click)="openParticularOrder(item['purchaseOrderNo'])" class="fa fa-eye"></i></td>
           </tr>
         </tbody>
       </table>
