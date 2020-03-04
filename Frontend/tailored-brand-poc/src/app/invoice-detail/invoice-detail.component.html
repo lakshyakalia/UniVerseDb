@@ -36,7 +36,7 @@
           id="orderNo"
           formControlName="orderNo"
           (keydown)="getItemOrderDetail($event)"
-          [ngbTypeahead]="vendorService.itemTypeahead"
+         
         />
         <span
           *ngIf="
@@ -142,7 +142,7 @@
         <button class="btn btn-light">Draft</button>
       </div>
       <div class="mol-md-1 col-3">
-        <button routerLink="/" class="btn btn-light">Cancel</button>
+        <!-- <button routerLink="/" class="btn btn-light">Cancel</button> -->
       </div>
     </div>
   </form>

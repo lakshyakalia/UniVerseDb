@@ -17,6 +17,10 @@ export class InvoiceService {
     })
     
   }
+  getAllOrders()
+  {
+    return this.http.get(this.baseUri+'api/invoice/orders')
+  }
   allInvoice()
   {
     return this.http.get(this.baseUri+'api/invoice')

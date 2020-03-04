@@ -8,6 +8,7 @@ import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-bo
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from "@angular/material";
 import { ItemService } from '../service/item.service';
+import { PurchaseOrderService } from '../service/purchase-order.service'
 
 
 
@@ -20,12 +21,12 @@ export class InvoiceDetailComponent implements OnInit {
   invoiceForm: FormGroup;
   editInvoice: boolean;
   heading: string = 'New Invoice';
-  description: string;
+  description: Array<any>;
   lastId: number;
   date: string;
   itemOrderError: boolean
-
-  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar) { }
+  allOrderNo = []
+  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar , private purchaseOrderService : PurchaseOrderService) { }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
@@ -40,6 +41,7 @@ export class InvoiceDetailComponent implements OnInit {
       orderNo: new FormControl('', [Validators.required]),
       invoiceAmount: new FormControl('', [Validators.required]),
       invoiceDetails: this.fb.array([])
+
     })
 
     this.editInvoice = this.router.url.endsWith('/invoice/edit')
@@ -47,11 +49,9 @@ export class InvoiceDetailComponent implements OnInit {
     if (this.editInvoice) {
       this.heading = 'Edit Invoice';
     }
-    // this.vendorService.readItem()
-    //   .subscribe((res: any) => {
-    //     this.description = res.table
-    //   })
+        
     this.date = new Date().toISOString().substr(0, 10);
+    this.getAllOrderNo()
 
   }
 
@@ -82,18 +82,26 @@ export class InvoiceDetailComponent implements OnInit {
       }); 
       })
   }
-
+  getAllOrderNo()
+  {
+    this.purchaseOrderService.list()
+    .subscribe((res:any) => {
+      console.log(res)
+    })
+  }
 
   getItemOrderDetail(event) {
     if (event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90))
       return false
     else {
-
+      this.description =this.itemService.listRaw()
+      console.log(this.description)
       let orderID = this.invoiceForm.get('orderNo').value
       if (event.keyCode === 13 && orderID != '' && this.lastId != orderID) {
         this.lastId = this.invoiceForm.get('orderNo').value
         this.invoiceService.getParticularOrder(orderID)
           .subscribe((res: any) => {
+            console.log(res)
             if (res.status == 200) {
               let len = res.ids.length
               for (let i = 0; i < len; i++) {
