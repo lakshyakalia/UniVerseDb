@@ -1,76 +1,149 @@
-<div class="invoice-heading">
-  <div class="invoice-head container">
-    <span>{{heading}}</span>
+<div class="page-header-container">
+  <div class="page-header container">
+    <span class="heading">{{ heading }}</span>
   </div>
 </div>
-<div class="sign-up-div container">
-    <div class="form">
-      <form [formGroup]="invoiceForm">
-      <div class="form-top">
-        <div class="form-top-left-items">
-          <p>
-            <label class="items-left">Invoice Number</label>
-            <input type="text" id="invoiceNo" formControlName="invoiceNo" (keydown)="checkForExponential($event)" 
-             />
-             <span
-             *ngIf="invoiceForm.controls['invoiceNo'].touched && invoiceForm.controls['invoiceNo'].invalid">Required</span>
-          </p>
-          <p>
-            <label class="items-left">Invoice Date</label>
-            <input type="date"  id="invoiceDate" min="{{ date }}" formControlName="invoiceDate" style="width: 205px;" 
-            />
-            <span
-            *ngIf="invoiceForm.controls['invoiceDate'].touched && invoiceForm.controls['invoiceDate'].invalid">Required</span>
-          </p>
-
-        </div>
-        <div class="form-top-right-items">
-          <p>
-            <label class="items-right">Order Number</label>
-            <input type="text" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" 
-            />
-            <span
-            *ngIf="invoiceForm.controls['orderNo'].touched && invoiceForm.controls['orderNo'].invalid">Required</span>
-          </p>
-          <p>
-            <label class="items-right" >Invoice Amount</label>
-            <input currencyMask [options]="{ prefix: '$ ', thousands: ',', decimal: '.' }"  id="invoiceAmount" formControlName="invoiceAmount" (keydown)="checkForExponential($event)" />
-             <span
-             *ngIf="invoiceForm.controls['invoiceAmount'].touched && invoiceForm.controls['invoiceAmount'].invalid">Required</span>
-          </p>
-
-        </div>
-       
+<div class="container container-background">
+  <form [formGroup]="invoiceForm" class="container">
+    <div class="row">
+      <div class="col-md-3 col-5 col-form-label">
+        Invoice Number
       </div>
-      <div class="form-bottom">
-          <hr>
-        <table class="table vendor-item-table">
-          <thead class="thead-dark">
-            <th>SNo.</th>
-            <th>Item No.</th>
-            <th>Description</th>
-            <th>Quantity Ordered</th>
-            <th>Quantity Pending</th>
-            <th>Quantity Received</th>
-          </thead>
-          <tbody>
-            <tr *ngFor="let control of invoiceForm.controls.invoiceDetails.controls;let i=index" [formGroup]="control">
-              <td>{{ i+1 }}</td>
-              <td>{{ control.value.itemNo }}</td>
-              <td>{{description[control.value.itemNo]}}</td>
-              <td>{{ control.value.quantityOrdered }}</td>
-              <td>{{ control.value.quantityPending }}</td>
-              <td><input type="text" formControlName="quantityReceived" (input)="calculatePendingQuantity(i)"></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="button-div">
-            <button (click)="submitInvoice('draft')">Save as Draft</button>
-            <button (click)="submitInvoice('receive')">Receive</button>
-            <button routerLink="/">Cancel</button>
-        </div>
+      <div class="col-md-3 col-7">
+        <input
+          class="form-control"
+          type="text"
+          id="invoiceNo"
+          formControlName="invoiceNo"
+          (keydown)="checkForExponential($event)"
+        />
+        <span
+          *ngIf="
+            invoiceForm.controls['invoiceNo'].touched &&
+            invoiceForm.controls['invoiceNo'].invalid
+          "
+          >Required</span
+        >
       </div>
-    </form>
+
+      <div class="col-md-3 col-5 col-form-label">
+        Order Number
+      </div>
+      <div class="col-md-3 col-7">
+        <input
+          class="form-control"
+          type="text"
+          id="orderNo"
+          formControlName="orderNo"
+          (keydown)="getItemOrderDetail($event)"
+          [ngbTypeahead]="vendorService.itemTypeahead"
+        />
+        <span
+          *ngIf="
+            invoiceForm.controls['orderNo'].touched &&
+            invoiceForm.controls['orderNo'].invalid
+          "
+          >Required</span
+        >
+      </div>
     </div>
-  </div>
-  
+    <div class="row">
+      <div class="col-md-3 col-5 col-form-label">
+        Invoice Date
+      </div>
+      <div class="col-md-3 col-7">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fa fa-calendar-alt"></i>
+            </span>
+          </div>
+          <input
+            class="form-control"
+            type="date"
+            id="invoiceDate"
+            min="{{ date }}"
+            formControlName="invoiceDate"
+          />
+        </div>
+        <span
+          *ngIf="
+            invoiceForm.controls['invoiceDate'].touched &&
+            invoiceForm.controls['invoiceDate'].invalid
+          "
+          >Required</span
+        >
+      </div>
+
+      <div class="col-md-3 col-5 col-form-label">
+        <label class="items-right">Invoice Amount</label>
+      </div>
+      <div class="col-md-3 col-7">
+        <input
+          class="form-control"
+          currencyMask
+          [options]="{ prefix: '$ ', thousands: ',', decimal: '.' }"
+          id="invoiceAmount"
+          formControlName="invoiceAmount"
+          (keydown)="checkForExponential($event)"
+        />
+        <span
+          *ngIf="
+            invoiceForm.controls['invoiceAmount'].touched &&
+            invoiceForm.controls['invoiceAmount'].invalid
+          "
+          >Required</span
+        >
+      </div>
+    </div>
+    <hr />
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="thead-dark">
+          <th scope="col">SNo.</th>
+          <th scope="col">Item No.</th>
+          <th scope="col">Description</th>
+          <th scope="col">Quantity Ordered</th>
+          <th scope="col">Quantity Pending</th>
+          <th scope="col">Quantity Received</th>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let control of invoiceForm.controls.invoiceDetails.controls;
+              let i = index
+            "
+            [formGroup]="control"
+          >
+            <td>{{ i + 1 }}</td>
+            <td>{{ control.value.itemNo }}</td>
+            <td>{{ description[control.value.itemNo] }}</td>
+            <td>{{ control.value.quantityOrdered }}</td>
+            <td>{{ control.value.quantityPending }}</td>
+            <td>
+              <input
+                type="text"
+                formControlName="quantityReceived"
+                (input)="calculatePendingQuantity(i)"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-md-1 col-3">
+        <button class="btn btn-dark" (click)="submitInvoice('receive')">
+          Receive
+        </button>
+      </div>
+      <div class="col-md-1 col-3">
+        <button class="btn btn-light" (click)="submitInvoice('draft')">Draft</button>
+      </div>
+      <div class="mol-md-1 col-3">
+        <button routerLink="/" class="btn btn-light">Cancel</button>
+      </div>
+    </div>
+  </form>
+</div>
