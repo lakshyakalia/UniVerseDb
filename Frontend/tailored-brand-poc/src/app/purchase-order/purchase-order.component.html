@@ -33,8 +33,8 @@
           <label class="vendor">Vendor</label>  
         </div>
         <div class="col-md-3 col-7">
-          <input type="text" class="form-control" placeholder=" -- Vendor -- " [ngbTypeahead]="vendorService.typeahead" [(value)]="vendorService.selectedVendor.id" (selectItem)="selectVendor($event)" autocomplete="doNotAutoComplete">
-          <input type="hidden" formControlName="VendorName">
+          <input type="text" formControlName="VendorName" class="form-control" placeholder=" -- Vendor -- " [ngbTypeahead]="vendorService.typeahead" [(value)]="vendorService.selectedVendor.name" (selectItem)="selectVendor($event)" autocomplete="doNotAutoComplete">
+          <input type="hidden">
           <span *ngIf="purchaseOrderForm.controls['VendorName'].touched && purchaseOrderForm.controls['VendorName'].invalid"class="error-field">Required</span>
         </div>
       </div>
@@ -80,8 +80,8 @@
           <label class="items-left">State</label>
         </div>
         <div class="col-md-3 col-7">
-          <input type="text" class="form-control" placeholder=" -- State -- " [ngbTypeahead]="stateService.typeahead" [(value)]="selectedState" (selectItem)="selectState($event)" autocomplete="doNotAutoComplete">
-          <input type="hidden" formControlName="State">
+          <input type="text" formControlName="State" class="form-control" placeholder=" -- State -- " [ngbTypeahead]="stateService.typeahead" [(value)]="selectedState" (selectItem)="selectState($event)" autocomplete="doNotAutoComplete">
+          <input type="hidden">
           <span *ngIf="purchaseOrderForm.controls['State'].touched && purchaseOrderForm.controls['State'].invalid">Required</span>
         </div>
         <div class="col-md-3 col-5 col-form-label">
@@ -170,10 +170,10 @@
     <div class="row">
       <div class="col"></div>
       <div class="col-md-1 col-3">
-        <button class="btn btn-dark" type="submit" (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'submit')">Submit</button>
+        <button *ngIf="showButtons" class="btn btn-dark" type="submit" (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'submit')">Submit</button>
       </div>
       <div class="col-md-1 col-3">
-        <button class="btn btn-light" (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'draft')">Draft</button>
+        <button *ngIf="showButtons" class="btn btn-light" (click)="submitNewOrder(purchaseOrderForm,itemOrderForm,'draft')">Draft</button>
       </div>
       <div class="mol-md-1 col-3">
         <button class="btn btn-light" routerLink="/">Cancel</button>

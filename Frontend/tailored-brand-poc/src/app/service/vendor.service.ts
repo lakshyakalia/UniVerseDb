@@ -27,18 +27,18 @@ export class VendorService {
   constructor(private http: HttpClient, private itemService: ItemService) {
     this.http.get(this._baseUri+'api/vendor')
     .subscribe((res: any) => {
-      for(let vendorId in res.data)
-      {
-        let data = res.data[vendorId]
+      for(let vendorId in res.vendorData){
+        let data = res.vendorData[vendorId]
         this._vendors.push(
           {
-            id: vendorId,
-            company: data[0][0],
-            name: data[0][1],
-            phone: data[0][2],
-            items: data[1].map(rawItem => {return {id: rawItem}})
+            id: data['@_ID'],
+            company: data['@VEND.COMPANY'],
+            name: data['@VEND.NAME'],
+            phone: data['@VEND.PHONE'],
+            items: data['ITEM.IDS_MV'].map(rawItem => {return {id: rawItem['@ITEM.IDS']}})
           }
         )
+
       }
       for(let index in this._vendors)
       {
@@ -47,18 +47,16 @@ export class VendorService {
     })
   }
   put(vendorDetail,itemId,vendorId){
-    return this.http.put(this._baseUri+'api/vendor',{
+    return this.http.put(`${this._baseUri}api/vendor/${vendorId}`,{
       vendorDetail:vendorDetail,
-      itemId:itemId,
-      recordID: vendorId
+      itemId:itemId
     })
   }
 
-  post(vendorDetail,itemId,vendorId){
+  post(vendorDetail,itemId){
     return this.http.post(this._baseUri+'api/vendor',{
       vendorDetail:vendorDetail,
-      itemId:itemId,
-      recordID: vendorId
+      itemId:itemId
     })
   }
 
