@@ -93,7 +93,7 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   getItemOrderDetail(event) {
-    let orderID = this.purchaseOrderForm.get('newOrder').value
+    let orderID = this.purchaseOrderForm.get('NewOrder').value
     if (event.keyCode === 13 && this.editForm && orderID != '' && orderID !=this.lastId) {
       this.lastId=orderID
       this.purchaseOrderService.get(orderID)
@@ -200,6 +200,11 @@ export class PurchaseOrderComponent implements OnInit {
       return;
     }
 
+    if(purchaseOrderForm.value.VendorName.indexOf('|') > -1){
+      let name = purchaseOrderForm.value.VendorName.split('|')[1].trim()
+      purchaseOrderForm.value.VendorName =  name
+    }
+    
     this.purchaseOrderService.post(purchaseOrderForm.value, itemOrderForm.value, recordId, submitStatus, this.editForm)
       .subscribe((res) => {
         let msg
