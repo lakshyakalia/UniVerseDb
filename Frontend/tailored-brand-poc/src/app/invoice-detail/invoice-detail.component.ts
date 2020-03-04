@@ -3,14 +3,13 @@ import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@ang
 import { InvoiceService } from '../service/invoice.service';
 import { VendorService } from '../service/vendor.service';
 import { Router } from '@angular/router';
-import { from } from 'rxjs';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from "@angular/material";
 import { ItemService } from '../service/item.service';
 import { PurchaseOrderService } from '../service/purchase-order.service';
-import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-invoice-detail',
@@ -29,14 +28,14 @@ export class InvoiceDetailComponent implements OnInit {
   public model: any;
 
 
-  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar, private purchaseOrderService : PurchaseOrderService) { }
+  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog, public snackBar: MatSnackBar, private purchaseOrderService: PurchaseOrderService) { }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-       duration: 4000,
-       
+      duration: 4000,
+
     });
- }
+  }
   ngOnInit() {
     this.invoiceForm = this.fb.group({
       invoiceNo: new FormControl('', [Validators.required]),
@@ -84,26 +83,23 @@ export class InvoiceDetailComponent implements OnInit {
         this.openSnackBar(`Invoice Created`, 'Dismiss')
         this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
           this.router.navigate(['/invoice/new']);
-      }); 
+        });
       })
   }
-  getAllOrderNo()
-  {
+  getAllOrderNo() {
     this.purchaseOrderService.list()
-    .subscribe((res:any) => {
-      console.log(res)
-      // console.log(res.itemOrderList[0].purchaseOrderNo)
-     this.allOrderNo =  res.itemOrderList.map(value => value['purchaseOrderNo'])
-    //  console.log(this.allOrderNo.map(value => value['purchaseOrderNo']))
-    //  console.log()
-    })
+      .subscribe((res: any) => {
+        console.log(res)
+        this.allOrderNo = res.itemOrderList.map(value => value['purchaseOrderNo'])
+
+      })
   }
 
-  search = (text$: Observable<string>) => 
+  search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 2 ? [] : this.allOrderNo.filter(v  => v.indexOf(term.toString()) > -1))
+      map(term => term.length < 2 ? [] : this.allOrderNo.filter(v => v.indexOf(term.toString()) > -1))
     )
 
   getItemOrderDetail(event) {
@@ -126,7 +122,7 @@ export class InvoiceDetailComponent implements OnInit {
               this.openSnackBar(`${res.message}`, 'Dismiss')
               this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
                 this.router.navigate(['/invoice/new']);
-            }); 
+              });
             }
           })
       }

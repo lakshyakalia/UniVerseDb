@@ -26,9 +26,9 @@ export class PurchaseOrderComponent implements OnInit {
   purchaseOrderTitle: string
   grandTotal: number = 0.00
   date: string = new Date().toISOString().substr(0, 10)
-  itemOrderError : boolean
-  lastId:number;
-  showButtons : boolean = true
+  itemOrderError: boolean
+  lastId: number = 0;
+  showButtons: boolean = true
 
   constructor(
     private purchaseOrderService: PurchaseOrderService,
@@ -42,7 +42,7 @@ export class PurchaseOrderComponent implements OnInit {
   }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-       duration: 4000,
+      duration: 4000,
     });
   }
 
@@ -98,8 +98,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   getItemOrderDetail(event) {
     let orderID = this.purchaseOrderForm.get('NewOrder').value
-    if (event.keyCode === 13 && !this.editForm && orderID != '' && orderID !=this.lastId) {
-      this.lastId=orderID
+    if (event.keyCode === 13 && !this.editForm && orderID != '' && orderID != this.lastId) {
+      this.lastId = orderID
       this.purchaseOrderService.get(orderID)
         .subscribe((res: any) => {
           if (res.status === 404) {
@@ -132,7 +132,7 @@ export class PurchaseOrderComponent implements OnInit {
     }
 
     for (let j in res.orderDetails.itemList) {
-      let itemDescription :string
+      let itemDescription: string
       let cost = res.orderDetails.itemList[j].Cost
       let quantity = res.orderDetails.itemList[j].Quantity
       let vendorItem = res.orderDetails.itemList[j].ItemID
@@ -159,14 +159,14 @@ export class PurchaseOrderComponent implements OnInit {
       this.createNewFormControl(selectedItem.id, selectedItem.description, "", "")
     }
     // Workaround to clear the typeahead box after user makes a selection
-    if(this.selectedItem == "")
+    if (this.selectedItem == "")
       this.selectedItem = null
     else
-      this.selectedItem = ""  
+      this.selectedItem = ""
   }
 
   removeParticularItem(index: number) {
-    if(!this.editForm){
+    if (!this.editForm) {
       let control = <FormArray>this.itemOrderForm.get('SpecialRequests')
       control.removeAt(index)
     }
@@ -201,33 +201,38 @@ export class PurchaseOrderComponent implements OnInit {
       return;
     }
 
-    if(purchaseOrderForm.value.VendorName.indexOf('|') > -1){
+    if (purchaseOrderForm.value.VendorName.indexOf('|') > -1) {
       let name = purchaseOrderForm.value.VendorName.split('|')[1].trim()
-      purchaseOrderForm.value.VendorName =  name
+      purchaseOrderForm.value.VendorName = name
     }
-    
-    if(this.editForm){
-      console.log('post')
-      this.purchaseOrderService.post(purchaseOrderForm.value, itemOrderForm.value, submitStatus)
-      .subscribe((res:any) => {
+
+    if (this.editForm) {
+      this.put(recordId,purchaseOrderForm.values, itemOrderForm.values, submitStatus)
+    }
+    else {
+      this.post(purchaseOrderForm.values, itemOrderForm.values, submitStatus)
+    }
+  }
+
+  private post(purchaseOrderValues, itemOrderValues, submitStatus) {
+    this.purchaseOrderService.post(purchaseOrderValues, itemOrderValues, submitStatus)
+      .subscribe((res: any) => {
         let msg = res.msg
         this.openSnackBar(`${msg}`, 'Dismiss')
-          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/order/new']);
-          });
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/order/new']);
+        });
       })
-    }
-    else{
-      this.purchaseOrderService.put(recordId, purchaseOrderForm.value, itemOrderForm.value, submitStatus)
-      .subscribe((res:any) =>{
-        let msg = res.msg
-        this.openSnackBar(`${msg}`, 'Dismiss')
-          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/order/edit']);
-          });
+  }
+
+  private put(recordId, purchaseOrderValues, itemOrderValues, submitStatus) {
+    this.purchaseOrderService.put(recordId, purchaseOrderValues, itemOrderValues, submitStatus)
+      .subscribe((res) => {
+        this.openSnackBar(`${res["msg"]}`, 'Dismiss')
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/order/edit']);
+        });
       })
-    }
-    
   }
 
   checkForExponential(event) {
@@ -269,8 +274,8 @@ export class PurchaseOrderComponent implements OnInit {
     this.purchaseOrderForm.controls['NewOrder'].setValue(orderID)
     this.purchaseOrderService.get(orderID)
       .subscribe((res: any) => {
-          this.purchaseOrderTitle = "Update Purchase Order " + orderID
-          this.setItemOrderDetails(res)
+        this.purchaseOrderTitle = "Update Purchase Order " + orderID
+        this.setItemOrderDetails(res)
       })
   }
 }

@@ -18,6 +18,7 @@ export class VendorSignUpComponent implements OnInit {
   constructor(private vendorService: VendorService, private stateService: StateService, private itemService: ItemService, private fb: FormBuilder,
     private router: Router, private route: ActivatedRoute, private dialog : MatDialog , public snackBar: MatSnackBar ) {
     let id = this.route.snapshot.paramMap.get('id');
+    this.editVendor = this.router.url.endsWith('/vendor/edit') || id != undefined
     if(id)
     {
       this.vendorDetailForm.get('VendorNo').setValue(id)
@@ -29,7 +30,9 @@ export class VendorSignUpComponent implements OnInit {
        duration: 4000,       
     });
  }
-  selectedState: string = "";
+  selectedState: string = "";  
+  private recordData: any;
+  private itemList: any;
   private itemArray: Array<any> = [];
   itemError : boolean
   lastid:number;
@@ -85,7 +88,6 @@ export class VendorSignUpComponent implements OnInit {
       itemId: new FormControl('', [Validators.required]),
       items: this.fb.array([],[Validators.required])
     });
-    this.editVendor = this.router.url.endsWith('/vendor/edit')
     if (this.editVendor) {
       this.heading='Edit Vendor';
     }
