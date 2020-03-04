@@ -28,7 +28,7 @@ export class PurchaseOrderComponent implements OnInit {
   grandTotal: number = 0.00
   date: string = new Date().toISOString().substr(0, 10)
   itemOrderError : boolean
-  lastId:number;
+  lastId:number = 0;
   showButtons : boolean = true
 
   constructor(
@@ -45,7 +45,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.snackBar.open(message, action, {
        duration: 4000,
     });
- }
+  }
 
   purchaseOrderForm = new FormGroup({
     NewOrder: new FormControl(''),
@@ -66,13 +66,18 @@ export class PurchaseOrderComponent implements OnInit {
       SpecialRequests: this.fb.array([])
     })
 
-    this.editForm = this.router.url.endsWith('/edit')
-    if (!this.editForm) {
+    this.editForm = this.router.url.endsWith('/new')
+    if (this.editForm) {
       this.purchaseOrderForm.controls['NewOrder'].disable()
       this.purchaseOrderTitle = 'Create Purchase Order'
     }
     else {
       this.purchaseOrderTitle = 'Update Purchase Order'
+    }
+
+    let url = this.router.url
+    if (!url.endsWith('/new') && !url.endsWith('/edit')) {
+      this.viewParticularOrder(url.split('/')[3])
     }
   }
 
@@ -99,14 +104,13 @@ export class PurchaseOrderComponent implements OnInit {
       this.purchaseOrderService.get(orderID)
         .subscribe((res: any) => {
           if (res.status === 404) {
-            this.openSnackBar(`${orderID} does not exists`, 'Dismiss')
+            this.openSnackBar(`${orderID} does not exist`, 'Dismiss')
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
               this.router.navigate(['/order/edit']);
-          }); 
-            
+            });
           }
           else {
-            this.purchaseOrderTitle = "Update Purchase Order "+orderID
+            this.purchaseOrderTitle = "Update Purchase Order " + orderID
             this.setItemOrderDetails(res)
           }
         })
@@ -118,6 +122,7 @@ export class PurchaseOrderComponent implements OnInit {
     for (let i in res.data) {
       this.purchaseOrderForm.controls[i].setValue(res.data[i])
       if (res.submitStatus === 'submit') {
+        this.purchaseOrderForm.controls['newOrder'].disable()
         this.purchaseOrderForm.controls[i].disable()
       }
     }
@@ -193,35 +198,39 @@ export class PurchaseOrderComponent implements OnInit {
     if (this.editForm) {
       recordId = this.purchaseOrderForm.get('NewOrder').value
     }
-    else {
-      recordId = Math.floor(Math.random() * 900000) + 100000
-    }
     if (!this.checkValidation()) {
       return;
     }
+    if (this.editForm) {
+      this.put(recordId, purchaseOrderForm.value, itemOrderForm.value, submitStatus)
+    }
+    else {
+      this.post(purchaseOrderForm.value, itemOrderForm.value, submitStatus)
+    }
+  }
 
-    this.purchaseOrderService.post(purchaseOrderForm.value, itemOrderForm.value, recordId, submitStatus, this.editForm)
+  private post(purchaseOrderValues, itemOrderValues, submitStatus) {
+    this.purchaseOrderService.post(purchaseOrderValues, itemOrderValues, submitStatus)
       .subscribe((res) => {
-        let msg
-        if (this.editForm) {
-          msg = `Order ${recordId} updated`
-          this.openSnackBar(`${msg}`, 'Dismiss')
-          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/order/edit']);
+        this.openSnackBar(`${res["msg"]}`, 'Dismiss')
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/order/new']);
         });
-        }
-        else {
-          msg = `Order ${recordId} Created`
-          this.openSnackBar(`${msg}`, 'Dismiss')
-          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/order/new']);
+      })
+  }
+  
+  private put(recordId, purchaseOrderValues, itemOrderValues, submitStatus) {
+    this.purchaseOrderService.put(recordId, purchaseOrderValues, itemOrderValues, submitStatus)
+      .subscribe((res) => {
+        this.openSnackBar(`${res["msg"]}`, 'Dismiss')
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/order/edit']);
         });
-        } 
       })
   }
 
   checkForExponential(event) {
-    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >=65 && event.keyCode <=90) ? false : true
+    return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || (event.keyCode >= 65 && event.keyCode <= 90) ? false : true
   }
 
   checkValidation() {
@@ -239,7 +248,8 @@ export class PurchaseOrderComponent implements OnInit {
       status = false
     }
 
-    if(this.itemOrderForm.untouched) this.itemOrderError = true
+    if (this.itemOrderForm.untouched && this.editForm) this.itemOrderError = true
+    else if (this.itemOrderForm.untouched && !this.editForm) this.itemOrderError = false
     else this.itemOrderError = false
 
     if (this.itemOrderForm.invalid || !this.itemOrderForm.touched) {
@@ -248,15 +258,30 @@ export class PurchaseOrderComponent implements OnInit {
           control.markAsTouched()
         })
       })
-      status = false
+      if (!this.editForm && this.itemOrderForm.touched && !this.itemOrderForm.invalid) status = true
+      else status = false
     }
     return status
   }
 
-  openDialogBox(msg){
-    this.dialog.open(PurchaseDialogBoxComponent,{
+  openDialogBox(msg) {
+    this.dialog.open(PurchaseDialogBoxComponent, {
       width: '450px',
-      data:{ msg: msg}
+      data: { msg: msg }
     })
+  }
+
+  viewParticularOrder(orderID) {
+    this.purchaseOrderForm.controls['newOrder'].setValue(orderID)
+    this.purchaseOrderService.get(orderID)
+      .subscribe((res: any) => {
+        if (res.status === 404) {
+          this.openDialogBox(`${orderID} does not exist`)
+        }
+        else {
+          this.purchaseOrderTitle = "Update Purchase Order " + orderID
+          this.setItemOrderDetails(res)
+        }
+      })
   }
 }
