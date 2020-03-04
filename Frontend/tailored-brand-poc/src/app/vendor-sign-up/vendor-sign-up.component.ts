@@ -71,7 +71,7 @@ export class VendorSignUpComponent implements OnInit {
           if(res.status === 404){
             this.openSnackBar(`${res.msg} `, 'Dismiss')
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-              this.router.navigate(['/vendor/edit']);
+              this.router.navigate(['/vendors']);
           }); 
           }
             
@@ -173,9 +173,7 @@ export class VendorSignUpComponent implements OnInit {
           if(res.status==200)
           {
             this.openSnackBar(`Vendor Updated ! `, 'Dismiss')
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-              this.router.navigate(['/vendor/edit']);
-          }); 
+            this.router.navigateByUrl('/vendors'); 
           }
         })
       }
