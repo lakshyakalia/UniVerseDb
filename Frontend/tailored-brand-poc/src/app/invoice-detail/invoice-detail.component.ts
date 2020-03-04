@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder, Validators, FormArray, ControlContainer } from '@angular/forms';
 import { InvoiceService } from '../service/invoice.service';
 import { VendorService } from '../service/vendor.service';
 import { Router } from '@angular/router';
@@ -37,6 +37,7 @@ export class InvoiceDetailComponent implements OnInit {
     });
   }
   ngOnInit() {
+
     this.invoiceForm = this.fb.group({
       invoiceNo: new FormControl('', [Validators.required]),
       invoiceDate: new FormControl('', [Validators.required]),
@@ -50,34 +51,31 @@ export class InvoiceDetailComponent implements OnInit {
     if (this.editInvoice) {
       this.heading = 'Edit Invoice';
     }
-    // this.vendorService.readItem()
-    //   .subscribe((res: any) => {
-    //     this.description = res.table
-    //   })
+    let url = this.router.url
+    if (!url.endsWith('/new') && !url.endsWith('/edit')) {
+      this.getInvoiceDetail(url.split('/')[3])
+    }
     this.date = new Date().toISOString().substr(0, 10);
     this.getAllOrderNo()
 
   }
-
-  initiateForm(ids, quantity): FormGroup {
+  initiateForm(ids, quantity,quantityReceived): FormGroup {
+    this.date = new Date().toISOString().substr(0, 10);
     return this.fb.group({
       itemNo: new FormControl(ids),
       description: new FormControl(),
       quantityOrdered: new FormControl(quantity),
       quantityPending: [0],
-      quantityReceived: new FormControl()
+      quantityReceived: new FormControl(quantityReceived)
     })
   }
 
-  createNewFormControl(ids, quantity) {
+  createNewFormControl(ids, quantity,quantityReceived) {
     const control = <FormArray>this.invoiceForm.controls['invoiceDetails']
-    control.push(this.initiateForm(ids, quantity))
+    control.push(this.initiateForm(ids, quantity,quantityReceived))
   }
 
   submitInvoice(submitStatus) {
-    if (!this.checkValidation()) {
-      return;
-    }
     this.invoiceService.submitNewInvoice(this.invoiceForm.value, submitStatus)
       .subscribe((res) => {
         this.openSnackBar(`Invoice Created`, 'Dismiss')
@@ -89,7 +87,6 @@ export class InvoiceDetailComponent implements OnInit {
   getAllOrderNo() {
     this.purchaseOrderService.list()
       .subscribe((res: any) => {
-        console.log(res)
         this.allOrderNo = res.itemOrderList.map(value => value['purchaseOrderNo'])
 
       })
@@ -102,11 +99,46 @@ export class InvoiceDetailComponent implements OnInit {
       map(term => term.length < 2 ? [] : this.allOrderNo.filter(v => v.indexOf(term.toString()) > -1))
     )
 
+  getInvoiceDetail(invoiceId) {
+    this.description=this.itemService.listRaw()
+    console.log(this.description)
+    this.invoiceService.getInvoice(invoiceId)
+      .subscribe((res: any) => {
+        let len = res.ids.length
+        this.invoiceForm.controls['invoiceDate'].setValue(res.invoiceDate[0])
+        this.invoiceForm.controls['invoiceNo'].setValue(res.invoiceNo[0])
+        this.invoiceForm.controls['orderNo'].setValue(res.orderNo[0])
+        this.invoiceForm.controls['invoiceAmount'].setValue(res.invoiceAmount[0])
+        let status : boolean = false
+        if(res.invoiceStatus[0] === 'receive'){
+          status = true
+          this.invoiceForm.controls['invoiceDate'].disable()
+          this.invoiceForm.controls['invoiceNo'].disable()
+          this.invoiceForm.controls['orderNo'].disable()
+          this.invoiceForm.controls['invoiceAmount'].disable()          
+        }
+
+        for (let i = 0; i < len; i++) {
+          this.createNewFormControl(res.ids[i], res.quantity[i],res.quantityReceived[i])
+        }
+      })
+
+    if (!this.checkValidation()) {
+      return;
+    }
+    if (!this.checkValidation()) {
+      return;
+    }
+  }
+
+
   getItemOrderDetail(event) {
     if (event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90))
+    { console.log(this.description)
       return false
+    }
     else {
-
+      this.description=this.itemService.listRaw()
       let orderID = this.invoiceForm.get('orderNo').value
       if (event.keyCode === 13 && orderID != '' && this.lastId != orderID) {
         this.lastId = this.invoiceForm.get('orderNo').value
@@ -115,7 +147,7 @@ export class InvoiceDetailComponent implements OnInit {
             if (res.status == 200) {
               let len = res.ids.length
               for (let i = 0; i < len; i++) {
-                this.createNewFormControl(res.ids[i], res.quantity[i])
+                this.createNewFormControl(res.ids[i], res.quantity[i],0)
               }
             }
             if (res.status == 404) {
@@ -126,18 +158,6 @@ export class InvoiceDetailComponent implements OnInit {
             }
           })
       }
-    }
-  }
-  getInvoiceDetail(event) {
-    let invoiceId = this.invoiceForm.get('invoiceNo').value
-    if (event.keyCode === 13 && invoiceId != '') {
-      this.invoiceService.getInvoice(invoiceId)
-        .subscribe((res: any) => {
-          let len = res.ids.length
-          for (let i = 0; i < len; i++) {
-            this.createNewFormControl(res.ids[i], res.quantity[i])
-          }
-        })
     }
   }
 

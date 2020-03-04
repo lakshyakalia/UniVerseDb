@@ -1,18 +1,17 @@
-<div class="purchase-order-heading">
-  <div class="purchase-order-head container">
+<div class="page-header-container">
+  <div class="page-header-container">
     <span>Purchase Orders</span>
   </div>
 </div>
-<div class="sign-up-div container">
-  <div class="form">
-    <div class="form-bottom">
-      <table class="table vendor-item-table" cellspacing="10">
+<div class="container container-background">
+  <div class="container">
+    <div class="table-responsive">
+      <table class="table table-striped">
         <thead class="thead-dark">
-          <th class="align-right">SNo.</th>
-          <th class="align-right">Purchase Order No.</th>
-          <th class="align-right">Order Date</th>
-          <th class="align-left">Vendor Name</th>
-          <th></th>
+          <th scope="col" width="10%">SNo.</th>
+          <th scope="col" width="30%">Purchase Order No.</th>
+          <th scope="col" width="30%">Order Date</th>
+          <th scope="col" width="30%">Vendor Name</th>
         </thead>
         <tbody>
           <tr *ngFor="let item of itemOrderList; let i = index">
@@ -24,9 +23,14 @@
           </tr>
         </tbody>
       </table>
-      <div class="button-div">
-        <button routerLink="/"><i class="fas fa-arrow-circle-left"></i> Back</button>
       </div>
     </div>
-  </div>
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-md-1 col-3">
+        <button class="btn btn-dark" routerLink="/">
+          Back
+        </button>
+      </div>
+    </div>
 </div>

@@ -134,15 +134,15 @@
     <div class="row">
       <div class="col"></div>
       <div class="col-md-1 col-3">
-        <button class="btn btn-dark" (click)="submitInvoice('receive')">
+        <button type="button" class="btn btn-dark" (click)="submitInvoice('receive')">
           Receive
         </button>
       </div>
       <div class="col-md-1 col-3">
-        <button class="btn btn-light">Draft</button>
+        <button type="button" class="btn btn-light" (click)="submitInvoice('draft')">Draft</button>
       </div>
       <div class="mol-md-1 col-3">
-        <button routerLink="/" class="btn btn-light">Cancel</button>
+        <button type="button" routerLink="/" class="btn btn-light">Cancel</button>
       </div>
     </div>
   </form>

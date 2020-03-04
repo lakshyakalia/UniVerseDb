@@ -29,7 +29,6 @@ export class VendorService {
     .subscribe((res: any) => {
       for(let vendorId in res.vendorData){
         let data = res.vendorData[vendorId]
-        
         this._vendors.push(
           {
             id: data['@_ID'],
@@ -48,18 +47,16 @@ export class VendorService {
     })
   }
   put(vendorDetail,itemId,vendorId){
-    return this.http.put(this._baseUri+'api/vendor',{
+    return this.http.put(`${this._baseUri}api/vendor/${vendorId}`,{
       vendorDetail:vendorDetail,
-      itemId:itemId,
-      recordID: vendorId
+      itemId:itemId
     })
   }
 
-  post(vendorDetail,itemId,vendorId){
+  post(vendorDetail,itemId){
     return this.http.post(this._baseUri+'api/vendor',{
       vendorDetail:vendorDetail,
-      itemId:itemId,
-      recordID: vendorId
+      itemId:itemId
     })
   }
 

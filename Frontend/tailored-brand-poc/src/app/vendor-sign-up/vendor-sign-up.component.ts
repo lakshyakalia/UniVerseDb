@@ -88,6 +88,7 @@ export class VendorSignUpComponent implements OnInit {
       itemId: new FormControl('', [Validators.required]),
       items: this.fb.array([],[Validators.required])
     });
+    this.editVendor = this.router.url.includes('/vendor/edit')
     if (this.editVendor) {
       this.heading='Edit Vendor';
     }
@@ -102,12 +103,12 @@ export class VendorSignUpComponent implements OnInit {
     });
   }
   setItemdOrderDetails(res: any) {
-    for (let i in res.data) {
-      this.vendorDetailForm.controls[i].setValue(res.data[i])
+    for (let i in res.vendorData.particularVendorData) {
+      this.vendorDetailForm.controls[i].setValue(res.vendorData.particularVendorData[i])
     }
-    this.selectedState = res.data["State"]
-    for (let j in res.itemIds){
-      let id =res.itemIds[j].itemId
+    this.selectedState = res.vendorData.particularVendorData["State"]
+    for (let j in res.vendorData.itemIds){
+      let id =res.vendorData.itemIds[j].itemId
       let desc=this.itemService.listRaw()[id][0]
       this.createFormControl(id,desc)
     }
@@ -147,12 +148,10 @@ export class VendorSignUpComponent implements OnInit {
     }
     if (this.vendorDetailForm.valid) {
       if(!this.editVendor){
-        let vendorId = Math.floor(Math.random() * 900000) + 100000
-      this.vendorService.post(vendorDetail.value, items.value, vendorId)
+      this.vendorService.post(vendorDetail.value, items.value)
         .subscribe((res: any) => {
-          
           if (res.status == 200) {
-            this.openSnackBar(`Vendor ${vendorId} Created! `, 'Dismiss')
+            this.openSnackBar(res.msg, 'Dismiss')
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
               this.router.navigate(['/vendor/new']);
           }); 

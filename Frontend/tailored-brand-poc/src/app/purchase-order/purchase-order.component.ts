@@ -211,7 +211,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.put(recordId,purchaseOrderForm.value, itemOrderForm.value, submitStatus)
     }
     else {
-      this.post(purchaseOrderForm.value, itemOrderForm.values, submitStatus)
+      this.post(purchaseOrderForm.value, itemOrderForm.value, submitStatus)
     }
   }
 
