@@ -10,19 +10,14 @@ import { MatDialog } from '@angular/material/dialog'
 })
 export class AllVendorsComponent implements OnInit {
 
-  vendorData : []
+  vendors : any[]
 
   vendorIDS : any
 
-  constructor(private saveData: VendorService , private dialog : MatDialog) { }
+  constructor(private vendorService: VendorService , private dialog : MatDialog) { }
 
   ngOnInit() {
-    this.saveData.allVendors()
-    .subscribe((res: any)=>{
-      this.vendorData = res.data
-      this.vendorIDS = Object.keys(res.data)
-      console.log(this.vendorData)
-    })
+    this.vendors = this.vendorService.listRaw()
   }
   openDialogBox(msg){
     this.dialog.open(PurchaseDialogBoxComponent,{

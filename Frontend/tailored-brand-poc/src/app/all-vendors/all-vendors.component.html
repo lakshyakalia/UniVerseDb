@@ -1,32 +1,38 @@
-<div class="vendor-heading">
-  <div class="vendor-head container">
+<div class="page-header-container">
+  <div class="page-header container">
     <span>Vendors</span>
   </div>
 </div>
-<div class="sign-up-div container">
-    <div class="form">
-      <div class="form-bottom">
+<div class="container container-background">
+    <div class="container">
+      <div class="table-responsive">
         <table class="table vendor-item-table">
           <thead class="thead-dark">
-            <th width="10%" class="right">S.No.</th>
-            <th width="30%" class="right">Vendor No.</th>
-            <th width="30%" class="left">Vendor Company</th>
-            <th width="15%" class="left">Vendor</th>
-            <th width="20%" class="left">Phone No.</th>
+            <th class="text-right">S.No.</th>
+            <th class="text-right">Vendor No.</th>
+            <th>Vendor Company</th>
+            <th>Vendor</th>
+            <th>Phone No.</th>
+            <th></th>
           </thead>
           <tbody>
-            <tr *ngFor="let vendor of vendorIDS;let i = index">
-              <td width="10%" class="right">{{i+1}}</td>
-              <td width="30%" class="right">{{ vendor }}</td>
-              <td width="30%" class="left">{{ vendorData[vendor][0][0]}}</td>
-              <td width="15%" class="left">{{ vendorData[vendor][0][1]}}</td>
-              <td width="20%" class="left">{{ vendorData[vendor][0][2] | imask: {mask:'(000) 000-0000'} }}</td>
+            <tr *ngFor="let vendor of vendors;let i = index">
+              <th scope="col" class="text-right">{{i+1}}</th>
+              <td class="text-right">{{ vendor.id }}</td>
+              <td>{{ vendor.company }}</td>
+              <td>{{ vendor.name }}</td>
+              <td>{{ vendor.phone | imask: {mask:'(000) 000-0000'} }}</td>
+              <td>
+                <button routerLink="/vendor/edit/{{vendor.id}}" class="btn btn-dark">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
-        <div class="button-div">
-            <button routerLink="/"><i class="fas fa-arrow-circle-left"></i> Back</button>
-        </div>
+      </div>
+      <div class="button-div">
+          <button routerLink="/"><i class="fas fa-arrow-circle-left"></i> Back</button>
       </div>
     </div>
   </div>
