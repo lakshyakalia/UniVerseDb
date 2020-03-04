@@ -120,13 +120,14 @@ export class PurchaseOrderComponent implements OnInit {
     let submitBool = false
     for (let i in res.orderDetails.orderData) {
       this.purchaseOrderForm.controls[i].setValue(res.orderDetails.orderData[i])
-      if (res.submitStatus === 'submit') {
+      if (res.orderDetails.submitStatus === 'submit') {
         this.purchaseOrderForm.controls['NewOrder'].disable()
         this.purchaseOrderForm.controls[i].disable()
       }
     }
 
-    if (res.submitStatus === 'submit') {
+    if (res.orderDetails.submitStatus === 'submit') {
+      this.itemOrderForm.controls['VendorItem'].disable()
       this.showButtons = false
       submitBool = true
     }
@@ -206,11 +207,11 @@ export class PurchaseOrderComponent implements OnInit {
       purchaseOrderForm.value.VendorName = name
     }
 
-    if (this.editForm) {
-      this.put(recordId,purchaseOrderForm.values, itemOrderForm.values, submitStatus)
+    if (!this.editForm) {
+      this.put(recordId,purchaseOrderForm.value, itemOrderForm.value, submitStatus)
     }
     else {
-      this.post(purchaseOrderForm.values, itemOrderForm.values, submitStatus)
+      this.post(purchaseOrderForm.value, itemOrderForm.values, submitStatus)
     }
   }
 
