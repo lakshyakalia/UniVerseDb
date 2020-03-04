@@ -32,7 +32,6 @@ export class AllInvoicesComponent implements OnInit {
    this.invoiceService.allInvoice()
    .subscribe((res:any)=>{
      this.invoiceData=res.data
-     console.log(res)
    })
   }
   openParticularOrder(orderId){

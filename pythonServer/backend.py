@@ -111,7 +111,6 @@ def allVendors():
 			data = data1[i]		
 			for j in data['ITEM.IDS_MV']:
 				if(type(data['ITEM.IDS_MV']) is list):
-					print(j['@ITEM.IDS'])
 					itemId.append(j['@ITEM.IDS'])		
 					ids=data['@_ID']
 				else:
@@ -292,7 +291,6 @@ def invoiceOrderDetails(orderId):
     	itemIds = []
     	orderDict={}
     	orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
-    	print(orderDetail)
     	for i in range(len(orderDetail['ORDER.ITEM.COST_MV'])):
         	itemCost.append(orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST'])
     	for i in range(len(orderDetail['ORDER.ITEM.QTY_MV'])):
@@ -331,7 +329,6 @@ def allInvoice():
 		invoice.append(data['@ORDER.NO'])
 		invoice.append(data['@INV.AMT'])
 		invoice.append(i['@INV.DATE'])
-		print(invoice)
 		invoiceData.append(invoice)
 	return{'status':200,	
 		'data':invoiceData
@@ -339,7 +336,6 @@ def allInvoice():
 @app.route('/api/invoice',methods=['POST'])
 def invoiceCreate():
 	data=request.get_json()
-	print(data['invoiceDetails']['orderNo'])
 	saveInvoice(data['invoiceDetails']['orderNo'],data['invoiceDetails']['invoiceDetails'],data['invoiceDetails']['invoiceNo'],data['invoiceDetails']['invoiceDate'],data['invoiceDetails']['invoiceAmount'],data['submitStatus'])
 	return{
         'status':200
@@ -390,7 +386,6 @@ def saveInvoice(orderNo,invoiceDetails,invoiceNo,invoiceDate,invoiceAmount,statu
 	quantityOrdered=bytes("","utf-8")
 	quantityPending=bytes("","utf-8")
 	quantityReceived=bytes("","utf-8")
-	print(invoiceData)
 	for i in range(len(invoiceDetails)):
 		itemNo=itemNo+bytes(invoiceDetails[i]['itemNo'],"utf-8")+u2py.VM
 		quantityOrdered=quantityOrdered+bytes(invoiceDetails[i]['quantityOrdered'],"utf-8")+u2py.VM
