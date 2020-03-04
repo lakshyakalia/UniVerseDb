@@ -11,23 +11,20 @@ export class PurchaseOrderService {
 
   baseUri : string = environment.baseUrl
 
-  post(purchaseOrderValues, itemOrderValues,recordId,submitStatus,editFormStatus){
-    if(editFormStatus){
-      return this.http.put(`${this.baseUri}api/order`,{
-        purchaseOrderDetails: purchaseOrderValues,
-        itemOrderDetails: itemOrderValues,
-        recordID: recordId,
-        submitStatus: submitStatus
-      })
-    }
-    else{
-      return this.http.post(`${this.baseUri}api/order`,{
-        purchaseOrderDetails: purchaseOrderValues,
-        itemOrderDetails: itemOrderValues,
-        recordID: recordId,
-        submitStatus: submitStatus
-      })
-    }
+  post(purchaseOrderValues, itemOrderValues,submitStatus){
+    return this.http.post(`${this.baseUri}api/order`,{
+      purchaseOrderDetails: purchaseOrderValues,
+      itemOrderDetails: itemOrderValues,
+      submitStatus: submitStatus
+    })
+  }
+
+  put(recordId, purchaseOrderValues, itemOrderValues, submitStatus){
+    return this.http.put(`${this.baseUri}api/order/${recordId}`,{
+      purchaseOrderDetails: purchaseOrderValues,
+      itemOrderDetails: itemOrderValues,
+      submitStatus: submitStatus
+    })
   }
 
   list(){
