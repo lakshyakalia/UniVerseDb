@@ -8,8 +8,9 @@ import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-bo
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from "@angular/material";
 import { ItemService } from '../service/item.service';
-
-
+import { PurchaseOrderService } from '../service/purchase-order.service';
+import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-invoice-detail',
@@ -24,8 +25,11 @@ export class InvoiceDetailComponent implements OnInit {
   lastId: number;
   date: string;
   itemOrderError: boolean
+  allOrderNo: any = []
+  public model: any;
 
-  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar) { }
+
+  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar, private purchaseOrderService : PurchaseOrderService) { }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
@@ -52,6 +56,7 @@ export class InvoiceDetailComponent implements OnInit {
     //     this.description = res.table
     //   })
     this.date = new Date().toISOString().substr(0, 10);
+    this.getAllOrderNo()
 
   }
 
@@ -82,7 +87,24 @@ export class InvoiceDetailComponent implements OnInit {
       }); 
       })
   }
+  getAllOrderNo()
+  {
+    this.purchaseOrderService.list()
+    .subscribe((res:any) => {
+      console.log(res)
+      // console.log(res.itemOrderList[0].purchaseOrderNo)
+     this.allOrderNo =  res.itemOrderList.map(value => value['purchaseOrderNo'])
+    //  console.log(this.allOrderNo.map(value => value['purchaseOrderNo']))
+    //  console.log()
+    })
+  }
 
+  search = (text$: Observable<string>) => 
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 2 ? [] : this.allOrderNo.filter(v  => v.indexOf(term.toString()) > -1))
+    )
 
   getItemOrderDetail(event) {
     if (event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90))
