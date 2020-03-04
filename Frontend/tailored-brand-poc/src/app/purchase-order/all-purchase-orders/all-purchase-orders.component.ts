@@ -15,9 +15,9 @@ export class AllPurchaseOrdersComponent implements OnInit {
   constructor(private router: Router,private purchaseOrderService: PurchaseOrderService) { }
 
   ngOnInit() {
-    this.purchaseOrderService.getAllOrders()
+    this.purchaseOrderService.list()
     .subscribe((res:any)=>{
-      this.itemOrderList = res.list
+      this.itemOrderList = res.itemOrderList
     })
   }
 

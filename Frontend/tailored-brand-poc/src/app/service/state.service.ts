@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core'
+import { Observable } from 'rxjs/internal/Observable';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class StatesService {
+export class StateService {
 
-  states = {
+  private _states = {
     "AL": "Alabama",
     "AK": "Alaska",
     "AS": "American Samoa",
@@ -65,20 +67,27 @@ export class StatesService {
     "WI": "Wisconsin",
     "WY": "Wyoming"
     }
-  constructor() { }
-
-  all_abbreviations(){
-    return Object.keys(this.states)
+  private _stateList: string[]
+  constructor() {
+    this._stateList = this.list()
   }
 
-  all(){
-    let abbreviations = Object.keys(this.states);
+  list(){
+    let abbreviations = Object.keys(this._states);
     let keyPipeValues = [];
     for (let index = 0; index < abbreviations.length; index++) {
       let abbreviation = abbreviations[index];
-      keyPipeValues.push(`${abbreviation} | ${this.states[abbreviation]}`)      
+      keyPipeValues.push(`${abbreviation} | ${this._states[abbreviation]}`)      
     }
     return keyPipeValues;
   }
+
+  typeahead = (text$: Observable<string>) => 
+  text$.pipe(
+    debounceTime(200),
+    distinctUntilChanged(),
+    map(keyword => keyword.length < 2 ? []
+      : this._stateList.filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
+  )
 
 }

@@ -12,7 +12,7 @@
           <th class="align-right">Purchase Order No.</th>
           <th class="align-right">Order Date</th>
           <th class="align-left">Vendor Name</th>
-          <th>View</th>
+          <th></th>
         </thead>
         <tbody>
           <tr *ngFor="let item of itemOrderList; let i = index">
@@ -20,7 +20,7 @@
             <td class="align-right">{{ item['purchaseOrderNo'] }}</td>
             <td class="align-right">{{ item['orderDate']| date: 'MM/dd/y' }}</td>
             <td class="align-left">{{ item['companyName'] }}</td>
-            <td><i (click)="openParticularOrder(item['purchaseOrderNo'])" class="fa fa-eye"></i></td>
+            <td><i (click)="openParticularOrder(item['purchaseOrderNo'])" class="fas fa-edit"></i></td>
           </tr>
         </tbody>
       </table>

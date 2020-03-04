@@ -3,8 +3,9 @@ import { FormGroup, FormControl, FormBuilder, FormArray, Validators } from '@ang
 import { Router } from '@angular/router'
 import { MatSnackBar } from "@angular/material";
 import { PurchaseOrderService } from '../service/purchase-order.service'
+import { StateService } from '../service/state.service'
 import { MatDialog } from '@angular/material/dialog'
-import { PurchaseDialogBoxComponent } from './purchase-dialog-box.component'
+import { VendorService } from '../service/vendor.service';
 
 @Component({
   selector: 'purchase-order',
@@ -13,78 +14,60 @@ import { PurchaseDialogBoxComponent } from './purchase-dialog-box.component'
 })
 export class PurchaseOrderComponent implements OnInit {
 
+  selectedState: string = ""
+  selectedVendor: string = ""
+  selectedItem: string = ""
   itemList: Array<any> = []
-
   itemOrderForm: FormGroup
-
   vendorNameList = []
-
   vendorItemIDList = []
-
   vendorObject = []
-
   editForm: boolean
-
   purchaseOrderTitle: string
-
   grandTotal: number = 0.00
-
-  date: string
-
-  itemOrderError: boolean
-
-  lastId: number = 0;
-
-  showButtons: boolean = true
-
-  states = ['California', 'Florida', 'Texas', 'Hawaii']
+  date: string = new Date().toISOString().substr(0, 10)
+  itemOrderError : boolean
+  lastId:number;
+  showButtons : boolean = true
 
   constructor(
     private purchaseOrderService: PurchaseOrderService,
     private fb: FormBuilder,
     private router: Router,
     private dialog: MatDialog,
-    public snackBar: MatSnackBar
-  ) { }
+    public snackBar: MatSnackBar,
+    private stateService: StateService,
+    private vendorService: VendorService
+  ) {
+  }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 4000,
-
+       duration: 4000,
     });
   }
 
   purchaseOrderForm = new FormGroup({
-    newOrder: new FormControl(''),
-    orderDate: new FormControl('', Validators.required),
-    vendorName: new FormControl('', Validators.required),
-    companyName: new FormControl('', Validators.required),
-    street: new FormControl('', Validators.required),
-    state: new FormControl('', Validators.required),
-    phoneNumber: new FormControl('', Validators.required),
-    contactName: new FormControl('', Validators.required),
-    city: new FormControl('', Validators.required),
-    zipCode: new FormControl('', [Validators.required])
+    NewOrder: new FormControl(''),
+    OrderDate: new FormControl('', Validators.required),
+    VendorName: new FormControl('', Validators.required),
+    CompanyName: new FormControl('', Validators.required),
+    Street: new FormControl('', Validators.required),
+    State: new FormControl('', Validators.required),
+    PhoneNumber: new FormControl('', Validators.required),
+    ContactName: new FormControl('', Validators.required),
+    City: new FormControl('', Validators.required),
+    ZipCode: new FormControl('', [Validators.required])
   })
 
   ngOnInit() {
-    this.purchaseOrderService.getAllVendorName()
-      .subscribe((res: any) => {
-        let key = Object.keys(res.data)
-        for (let i = 0; i < key.length; i++) {
-          this.vendorNameList.push(res.data[key[i]][0][1])
-        }
-        this.vendorObject = res.data
-        this.date = new Date().toISOString().substr(0, 10);
-      })
-
     this.itemOrderForm = this.fb.group({
-      vendorItem: new FormControl(''),
-      specialRequests: this.fb.array([])
+      VendorItem: new FormControl(''),
+      SpecialRequests: this.fb.array([])
     })
 
     this.editForm = this.router.url.endsWith('/new')
     if (this.editForm) {
-      this.purchaseOrderForm.controls['newOrder'].disable()
+      this.purchaseOrderForm.controls['NewOrder'].disable()
       this.purchaseOrderTitle = 'Create Purchase Order'
     }
     else {
@@ -97,37 +80,27 @@ export class PurchaseOrderComponent implements OnInit {
     }
   }
 
-  getVendorItems() {
-    let vendorName = this.purchaseOrderForm.get('vendorName').value
-    let key = Object.keys(this.vendorObject)
-    for (let i = 0; i < key.length; i++) {
-      if (this.vendorObject[key[i]][0][1] === vendorName) {
-        this.vendorItemIDList = this.vendorObject[key[i]][1]
-      }
-    }
-  }
-
   createNewFormControl(itemID, itemDescription, quantity, unitCost) {
-    const control = <FormArray>this.itemOrderForm.controls['specialRequests']
+    const control = <FormArray>this.itemOrderForm.controls['SpecialRequests']
     control.push(this.initiateForm(itemID, itemDescription, quantity, unitCost))
   }
 
 
   initiateForm(itemID, itemDescription, quantity, unitCost): FormGroup {
     return this.fb.group({
-      itemID: [itemID],
-      itemDescription: [itemDescription],
-      quantity: new FormControl(quantity, Validators.required),
-      unitCost: new FormControl(unitCost, Validators.required),
-      totalPrice: [0]
+      ItemID: [itemID],
+      ItemDescription: [itemDescription],
+      Quantity: new FormControl(quantity, Validators.required),
+      UnitCost: new FormControl(unitCost, Validators.required),
+      TotalPrice: [0]
     })
   }
 
   getItemOrderDetail(event) {
-    let orderID = this.purchaseOrderForm.get('newOrder').value
-    if (event.keyCode === 13 && !this.editForm && orderID != '' && orderID != this.lastId) {
-      this.lastId = orderID
-      this.purchaseOrderService.getParticularOrder(orderID)
+    let orderID = this.purchaseOrderForm.get('NewOrder').value
+    if (event.keyCode === 13 && !this.editForm && orderID != '' && orderID !=this.lastId) {
+      this.lastId=orderID
+      this.purchaseOrderService.get(orderID)
         .subscribe((res: any) => {
           if (res.status === 404) {
             this.openSnackBar(`${orderID} does not exist`, 'Dismiss')
@@ -145,10 +118,10 @@ export class PurchaseOrderComponent implements OnInit {
 
   setItemOrderDetails(res: any) {
     let submitBool = false
-    for (let i in res.data) {
-      this.purchaseOrderForm.controls[i].setValue(res.data[i])
+    for (let i in res.orderDetails.orderData) {
+      this.purchaseOrderForm.controls[i].setValue(res.orderDetails.orderData[i])
       if (res.submitStatus === 'submit') {
-        this.purchaseOrderForm.controls['newOrder'].disable()
+        this.purchaseOrderForm.controls['NewOrder'].disable()
         this.purchaseOrderForm.controls[i].disable()
       }
     }
@@ -158,53 +131,61 @@ export class PurchaseOrderComponent implements OnInit {
       submitBool = true
     }
 
-    for (let j in res.itemList) {
-      let itemDescription: string
-      let cost = res.itemList[j].cost
-      let quantity = res.itemList[j].quantity
-      let vendorItem = res.itemList[j].itemID
-      this.purchaseOrderService.getParticularItemDetails(vendorItem)
-        .subscribe((res: any) => {
-          itemDescription = res.data
-        })
+    for (let j in res.orderDetails.itemList) {
+      let itemDescription :string
+      let cost = res.orderDetails.itemList[j].Cost
+      let quantity = res.orderDetails.itemList[j].Quantity
+      let vendorItem = res.orderDetails.itemList[j].ItemID
       this.createNewFormControl(vendorItem, itemDescription, quantity, cost)
       this.calculateTotalPrice(j, submitBool)
     }
-    this.getVendorItems()
   }
 
-  addNewRow() {
-    let vendorItem = this.itemOrderForm.get('vendorItem').value
-    if (vendorItem != 'None') {
+  selectState(event) {
+    this.selectedState = event.item.split("|")[0].trim();
+    this.purchaseOrderForm.controls['State'].setValue(this.selectedState);
+  }
+
+  selectVendor(event) {
+    this.vendorService.select(event.item.split("|")[0].trim())
+    this.purchaseOrderForm.controls['VendorName'].setValue(event.item.split("|")[0].trim());
+  }
+
+  selectItem(event) {
+    let itemId = event.item.split("|")[0].trim()
+    if (itemId != 'None') {
       this.itemOrderError = false
-      this.purchaseOrderService.getParticularItemDetails(vendorItem)
-        .subscribe((res: any) => {
-          this.createNewFormControl(vendorItem, res.data, "", "")
-        })
+      let selectedItem = this.vendorService.selectedVendor.items.find(item => item.id == itemId)
+      this.createNewFormControl(selectedItem.id, selectedItem.description, "", "")
     }
+    // Workaround to clear the typeahead box after user makes a selection
+    if(this.selectedItem == "")
+      this.selectedItem = null
+    else
+      this.selectedItem = ""  
   }
 
   removeParticularItem(index: number) {
-    if (this.editForm) {
-      let control = <FormArray>this.itemOrderForm.get('specialRequests')
+    if(!this.editForm){
+      let control = <FormArray>this.itemOrderForm.get('SpecialRequests')
       control.removeAt(index)
     }
   }
 
   calculateTotalPrice(index, submitBool) {
-    let controlArray = <FormArray>this.itemOrderForm.get('specialRequests')
-    let quantity = controlArray.value[index].quantity
-    let unitCost = controlArray.value[index].unitCost
-    this.grandTotal = 0
+    let controlArray = <FormArray>this.itemOrderForm.get('SpecialRequests')
+    let quantity = controlArray.value[index].Quantity
+    let unitCost = controlArray.value[index].UnitCost
+    this.grandTotal = 0.00
     if (quantity != "" || unitCost != "") {
       let totalPrice = quantity * unitCost
-      controlArray.controls[index].get('totalPrice').setValue(totalPrice)
+      controlArray.controls[index].get('TotalPrice').setValue(totalPrice)
       if (submitBool) {
-        controlArray.controls[index].get('quantity').disable()
-        controlArray.controls[index].get('unitCost').disable()
+        controlArray.controls[index].get('Quantity').disable()
+        controlArray.controls[index].get('UnitCost').disable()
       }
       controlArray.controls.forEach(control => {
-        let price = parseInt(control.get('totalPrice').value)
+        let price = Number.parseFloat(control.get('TotalPrice').value)
         this.grandTotal += price
       })
     }
@@ -214,27 +195,39 @@ export class PurchaseOrderComponent implements OnInit {
   submitNewOrder(purchaseOrderForm, itemOrderForm, submitStatus) {
     let recordId
     if (!this.editForm) {
-      recordId = this.purchaseOrderForm.get('newOrder').value
+      recordId = this.purchaseOrderForm.get('NewOrder').value
     }
     if (!this.checkValidation()) {
       return;
     }
-    this.purchaseOrderService.submitNewOrder(purchaseOrderForm.value, itemOrderForm.value, recordId, submitStatus, this.editForm)
-      .subscribe((res: any) => {
+
+    if(purchaseOrderForm.value.VendorName.indexOf('|') > -1){
+      let name = purchaseOrderForm.value.VendorName.split('|')[1].trim()
+      purchaseOrderForm.value.VendorName =  name
+    }
+    
+    if(this.editForm){
+      console.log('post')
+      this.purchaseOrderService.post(purchaseOrderForm.value, itemOrderForm.value, submitStatus)
+      .subscribe((res:any) => {
         let msg = res.msg
-        if (this.editForm) {
-          this.openSnackBar(`${msg}`, 'Dismiss')
-          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/order/edit']);
-          });
-        }
-        else {
-          this.openSnackBar(`${msg}`, 'Dismiss')
+        this.openSnackBar(`${msg}`, 'Dismiss')
           this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
             this.router.navigate(['/order/new']);
           });
-        }
       })
+    }
+    else{
+      this.purchaseOrderService.put(recordId, purchaseOrderForm.value, itemOrderForm.value, submitStatus)
+      .subscribe((res:any) =>{
+        let msg = res.msg
+        this.openSnackBar(`${msg}`, 'Dismiss')
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate(['/order/edit']);
+          });
+      })
+    }
+    
   }
 
   checkForExponential(event) {
@@ -244,15 +237,15 @@ export class PurchaseOrderComponent implements OnInit {
   checkValidation() {
     let status = true
     if (this.purchaseOrderForm.invalid) {
-      this.purchaseOrderForm.get('companyName').markAsTouched()
-      this.purchaseOrderForm.get('city').markAsTouched()
-      this.purchaseOrderForm.get('zipCode').markAsTouched()
-      this.purchaseOrderForm.get('phoneNumber').markAsTouched()
-      this.purchaseOrderForm.get('contactName').markAsTouched()
-      this.purchaseOrderForm.get('street').markAsTouched()
-      this.purchaseOrderForm.get('vendorName').markAsTouched()
-      this.purchaseOrderForm.get('state').markAsTouched()
-      this.purchaseOrderForm.get('orderDate').markAsTouched()
+      this.purchaseOrderForm.get('CompanyName').markAsTouched()
+      this.purchaseOrderForm.get('City').markAsTouched()
+      this.purchaseOrderForm.get('ZipCode').markAsTouched()
+      this.purchaseOrderForm.get('PhoneNumber').markAsTouched()
+      this.purchaseOrderForm.get('ContactName').markAsTouched()
+      this.purchaseOrderForm.get('Street').markAsTouched()
+      this.purchaseOrderForm.get('VendorName').markAsTouched()
+      this.purchaseOrderForm.get('State').markAsTouched()
+      this.purchaseOrderForm.get('OrderDate').markAsTouched()
       status = false
     }
 
@@ -261,7 +254,7 @@ export class PurchaseOrderComponent implements OnInit {
     else this.itemOrderError = false
 
     if (this.itemOrderForm.invalid || !this.itemOrderForm.touched || this.itemOrderError) {
-      (<FormArray>this.itemOrderForm.get('specialRequests')).controls.forEach((group: FormGroup) => {
+      (<FormArray>this.itemOrderForm.get('SpecialRequests')).controls.forEach((group: FormGroup) => {
         (<any>Object).values(group.controls).forEach((control: FormControl) => {
           control.markAsTouched()
         })
@@ -272,25 +265,12 @@ export class PurchaseOrderComponent implements OnInit {
     return status
   }
 
-  openDialogBox(msg) {
-    this.dialog.open(PurchaseDialogBoxComponent, {
-      width: '450px',
-      data: { msg: msg }
-    })
-  }
-
   viewParticularOrder(orderID) {
-    this.purchaseOrderForm.controls['newOrder'].setValue(orderID)
-    console.log(orderID)
-    this.purchaseOrderService.getParticularOrder(orderID)
+    this.purchaseOrderForm.controls['NewOrder'].setValue(orderID)
+    this.purchaseOrderService.get(orderID)
       .subscribe((res: any) => {
-        if (res.status === 404) {
-          this.openDialogBox(`${orderID} does not exist`)
-        }
-        else {
           this.purchaseOrderTitle = "Update Purchase Order " + orderID
           this.setItemOrderDetails(res)
-        }
       })
   }
 }
