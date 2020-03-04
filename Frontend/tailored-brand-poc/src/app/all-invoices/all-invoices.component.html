@@ -1,75 +1,103 @@
-<div class="invoice-heading">
-  <div class="invoice-head container">
+<div class="page-header-container">
+  <div class="page-header container">
     <span>Invoices</span>
   </div>
 </div>
-<div class="sign-up-div container">
-    <div class="form">
-      <form [formGroup]="invoiceForm">
-
-      <div class="form-top">
-        <div class="form-top-left-items">
-          <p>
-            <label class="items-left">Invoice Number</label>
-            <input type="text" formControlName="invoiceNo" (keydown)="checkForExponential($event)" />
-            <span
-            *ngIf="invoiceForm.controls['invoiceNo'].touched && invoiceForm.controls['invoiceNo'].invalid">Required</span>
-
-          </p>
-          <p>
-            <label class="items-left">Invoice Date</label>
-            <input type="text" formControlName="invoiceToDate"  class="date" placeholder="To Date" onfocus="(this.type='date')"/>
-
-            <span
-            *ngIf="invoiceForm.controls['invoiceToDate'].touched && invoiceForm.controls['invoiceToDate'].invalid">Required</span>
-            <input type="text" formControlName="invoiceFromDate" class="date" placeholder="From Date" onfocus="(this.type='date')">
-            <span
-            *ngIf="invoiceForm.controls['invoiceFromDate'].touched && invoiceForm.controls['invoiceFromDate'].invalid">Required</span>
-
-
-
-          </p>
-
-        </div>
-        <div class="form-top-right-items">
-          <p>
-            <label class="items-right">Order Number</label>
-            <input type="text" id="orderNo" formControlName="orderNo" (keydown)="getItemOrderDetail($event)" />
-            <span
-            *ngIf="invoiceForm.controls['orderNo'].touched && invoiceForm.controls['orderNo'].invalid">Required</span>
-
-          </p>
-        </div>
-       
+<div class="container container-background">
+  <form [formGroup]="invoiceForm" class="container">
+    <div class="row">
+      <div class="col-md-3 col-5 col-form-label">
+        <label class="items-left">Invoice Number</label>
       </div>
-      <div class="form-bottom">
-          <hr>
-        <label>Invoices:</label>
-        <table class="table vendor-item-table">
-          <thead class="thead-dark">
-            <th width='10%' class="right">SNo.</th>
-            <th width='20%' class="right">Invoice No.</th>
-            <th width='20%' class="right">Order No.</th>
-            <th width='20%' class="right">Amount</th>
-            <th>View</th>
-          </thead>
-          <tbody>
-            <tr *ngFor="let id of invoiceData; let i = index">
-              <td class="right" width='10%'>{{ i+1 }}</td>
-              <td class="right" width='20%'>{{ id[0] }}</td>
-              <td class="right" width='20%'>{{ id[1] }}</td>
-              <td class="right" width='20%'>${{ id[2] }}</td>
-              <td><i class="fas fa-eye"></i></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="button-div">
-        </div>
+      <div class="col-md-3 col-7">
+        <input
+          type="text"
+          formControlName="invoiceNo"
+          (keydown)="checkForExponential($event)"
+          class="form-control"
+        />
       </div>
-    </form>
-    <button class="btnn" routerLink="/"><i class="fas fa-arrow-circle-left"></i> Back</button>
 
+      <div class="col-md-3 col-5 col-form-label">
+        <label class="items-right">Order Number</label>
+      </div>
+      <div class="col-md-3 col-7">
+        <input
+          type="text"
+          id="orderNo"
+          formControlName="orderNo"
+          (keydown)="getItemOrderDetail($event)"
+          class="form-control"
+        />
+      </div>
     </div>
-   
-  </div>
-  
+    <div class="row">
+      <div class="col-md-3 col-5 col-form-label">
+        <label class="items-left">Invoice Date</label>
+      </div>
+      <div class="col-md-3 col-7">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fa fa-calendar-alt"></i>
+            </span>
+          </div>
+          <input
+            type="text"
+            formControlName="invoiceToDate"
+            class="date"
+            placeholder="To Date"
+            onfocus="(this.type='date')"
+            class="form-control"
+          />
+        </div>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fa fa-calendar-alt"></i>
+            </span>
+          </div>
+          <input
+            type="text"
+            formControlName="invoiceFromDate"
+            class="date"
+            placeholder="From Date"
+            onfocus="(this.type='date')"
+            class="form-control"
+          />
+        </div>
+      </div>
+    </div>
+    <hr />
+    <label>Invoices:</label>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="thead-dark">
+          <th scope="col" width="10%" class="right">SNo.</th>
+          <th scope="col" width="20%" class="right">Invoice No.</th>
+          <th scope="col" width="20%" class="right">Order No.</th>
+          <th scope="col" width="20%" class="right">Amount</th>
+          <th scope="col">View</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let id of invoiceData; let i = index">
+            <td class="right" width="10%">{{ i + 1 }}</td>
+            <td class="right" width="20%">{{ id[0] }}</td>
+            <td class="right" width="20%">{{ id[1] }}</td>
+            <td class="right" width="20%">${{ id[2] }}</td>
+            <td><i class="fas fa-eye"></i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="button-div"></div>
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-md-1 col-3">
+        <button class="btn btn-dark" routerLink="/"> Back
+        </button>
+      </div>
+    </div>
+  </form>
+
+</div>
