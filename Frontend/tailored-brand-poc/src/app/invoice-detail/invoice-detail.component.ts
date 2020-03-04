@@ -3,7 +3,6 @@ import { FormGroup, FormControl, FormBuilder, Validators, FormArray, ControlCont
 import { InvoiceService } from '../service/invoice.service';
 import { VendorService } from '../service/vendor.service';
 import { Router } from '@angular/router';
-import { from } from 'rxjs';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from "@angular/material";
@@ -48,18 +47,10 @@ export class InvoiceDetailComponent implements OnInit {
     if (this.editInvoice) {
       this.heading = 'Edit Invoice';
     }
-    // this.vendorService.readItem()
-    //   .subscribe((res: any) => {
-    //     this.description = res.table
-    //   })
     let url = this.router.url
     if (!url.endsWith('/new') && !url.endsWith('/edit')) {
       this.getInvoiceDetail(url.split('/')[3])
     }
-    // this.vendorService.readItem()
-    //   .subscribe((res: any) => {
-    //     this.description = res.table
-    //   })
     this.date = new Date().toISOString().substr(0, 10);
 
   }
@@ -129,7 +120,7 @@ export class InvoiceDetailComponent implements OnInit {
     if (event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90))
       return false
     else {
-
+      this.description=this.itemService.listRaw()
       let orderID = this.invoiceForm.get('orderNo').value
       if (event.keyCode === 13 && orderID != '' && this.lastId != orderID) {
         this.lastId = this.invoiceForm.get('orderNo').value

@@ -75,21 +75,22 @@ def readFromU2():
 @app.route('/api/vendor',methods=['POST'])
 def vendorDetails():
 	vendorData =request.get_json()
+	vendorId = random.randrange(12,10**6)
 	itemsId=vendorData['itemId']['items']
 	vendorDetails=vendorData['vendorDetail']
-	vendorDetailU2(vendorDetails,itemsId,vendorData['recordID'])
+	vendorDetailU2(vendorDetails,itemsId,vendorId)
 	return{	'status':200,
-		'msg':"user Updated",
+		'msg':"vendor created",
 		'data':vendorData
 		}
-@app.route('/api/vendor',methods=['PUT'])
-def updateVendor():
+@app.route('/api/vendor/<vendorId>',methods=['PUT'])
+def updateVendor(vendorId):
 	vendorData =request.get_json()
 	itemsId=vendorData['itemId']['items']
 	vendorDetails=vendorData['vendorDetail']
-	vendorDetailU2(vendorDetails,itemsId,vendorData['recordID'])
+	vendorDetailU2(vendorDetails,itemsId,vendorId)
 	return{	'status':200,
-		'msg':"data saved",
+		'msg':"vendor updated",
 		'data':vendorData
 		}
 @app.route('/api/vendor',methods=['GET'])
@@ -140,10 +141,6 @@ def allVendors():
 def particularVendor(vendorId):
 	status = checkExistingRecord("PO.VENDOR.MST",vendorId)
 	if(status):
-		ids={}
-		cost=[]
-		itemData=[]
-		vendorDetail=[]
 		dictItems={}
 		itemId=[]
 		itemDict={}
@@ -166,10 +163,12 @@ def particularVendor(vendorId):
 		vendorDict['City']=data['VEND.ADDRESS_MV'][1]['@VEND.ADDRESS']
 		vendorDict['State']=data['VEND.ADDRESS_MV'][2]['@VEND.ADDRESS']
 		vendorDict['Zip']=data['VEND.ADDRESS_MV'][3]['@VEND.ADDRESS']
-	
+		vendorData = {}		
+		vendorData['particularVendorData'] = vendorDict
+		vendorData['itemIds'] = itemId
+		
 		return{'status':200,
-			'data':vendorDict,
-			'itemIds':itemId		
+			'vendorData':vendorData		
 			}
 	else:
 		return {

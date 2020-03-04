@@ -47,18 +47,16 @@ export class VendorService {
     })
   }
   put(vendorDetail,itemId,vendorId){
-    return this.http.put(this._baseUri+'api/vendor',{
+    return this.http.put(`${this._baseUri}api/vendor/${vendorId}`,{
       vendorDetail:vendorDetail,
-      itemId:itemId,
-      recordID: vendorId
+      itemId:itemId
     })
   }
 
   post(vendorDetail,itemId,vendorId){
     return this.http.post(this._baseUri+'api/vendor',{
       vendorDetail:vendorDetail,
-      itemId:itemId,
-      recordID: vendorId
+      itemId:itemId
     })
   }
 
