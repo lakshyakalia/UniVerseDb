@@ -26,7 +26,8 @@ import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG } from 'ng2-currency-mask/src/currency-mask.config';
 import {IMaskModule} from 'angular-imask';
-import { MatSnackBarModule } from '@angular/material'
+import { MatSnackBarModule } from '@angular/material';
+import { LoginPageComponent } from './login-page/login-page.component'
 
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
@@ -51,7 +52,8 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     FooterComponent,
     AllVendorsComponent,
     AllInvoicesComponent,
-    PurchaseDialogBoxComponent
+    PurchaseDialogBoxComponent,
+    LoginPageComponent
   ],
   imports: [
     BrowserModule,

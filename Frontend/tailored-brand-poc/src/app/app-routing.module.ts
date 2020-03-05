@@ -7,10 +7,12 @@ import { PurchaseOrderComponent } from './purchase-order/purchase-order.componen
 import { AllPurchaseOrdersComponent } from './purchase-order/all-purchase-orders/all-purchase-orders.component';
 import { AllVendorsComponent } from './all-vendors/all-vendors.component';
 import { AllInvoicesComponent } from './all-invoices/all-invoices.component';
+import { LoginPageComponent } from './login-page/login-page.component';
 
 
 const routes: Routes = [
-  { path: '' , component: HomeComponent},
+  { path: '', component: LoginPageComponent },
+  { path: 'home' , component: HomeComponent},
   { path: 'vendor/new' , component: VendorSignUpComponent},
   { path: 'invoice/new' , component: InvoiceDetailComponent },
   { path: 'order/new' , component: PurchaseOrderComponent },
