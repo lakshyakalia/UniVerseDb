@@ -148,12 +148,10 @@ export class VendorSignUpComponent implements OnInit {
     }
     if (this.vendorDetailForm.valid) {
       if(!this.editVendor){
-        let vendorId = Math.floor(Math.random() * 900000) + 100000
-      this.vendorService.post(vendorDetail.value, items.value, vendorId)
+      this.vendorService.post(vendorDetail.value, items.value)
         .subscribe((res: any) => {
-          
           if (res.status == 200) {
-            this.openSnackBar(`Vendor ${vendorId} Created! `, 'Dismiss')
+            this.openSnackBar(res.msg, 'Dismiss')
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
               this.router.navigate(['/vendor/new']);
           }); 

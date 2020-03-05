@@ -11,12 +11,12 @@ app = Flask(__name__)
 CORS(app)
 
 def checkExistingRecord(filename,recordID):
-    fileObject = u2py.File(filename)
-    try:
-        recordObject = fileObject.read(recordID)
-        return True 
-    except u2py.U2Error as e:
-        return False
+	fileObject = u2py.File(filename)
+	try:
+		recordObject = fileObject.read(recordID)
+		return True
+	except u2py.U2Error as e:
+		return False
 
 def vendorDetailU2(vendorDetails,itemsId,recordID):
 	vendorArray=u2py.DynArray()
@@ -32,34 +32,39 @@ def vendorDetailU2(vendorDetails,itemsId,recordID):
 	vendorFile.write(recordID,vendorArray)
 
 def writePurchaseOrder(purchaseOrderDetails,itemOrderDetails,recordID,submitStatus):
-    itemID = quantity = cost = bytes("","utf-8")
-    orderFile = u2py.File("PO.ORDER.MST")
-    orderData = u2py.DynArray()
-    orderData.insert(1,0,0,purchaseOrderDetails['orderDate'])
-    orderData.insert(2,0,0,submitStatus)
-    orderData.insert(7,0,0,purchaseOrderDetails['companyName'])
-    orderData.insert(8,0,0,purchaseOrderDetails['contactName'])
-    orderData.insert(9,0,0,bytes(purchaseOrderDetails['street'],"utf-8") + 
-                u2py.VM + bytes(purchaseOrderDetails['city'],"utf-8") + 
-                u2py.VM + bytes(purchaseOrderDetails['state'],"utf-8") + 
-                u2py.VM+bytes(str(purchaseOrderDetails['zipCode']),"utf-8"))
-    orderData.insert(10,0,0,str(purchaseOrderDetails['phoneNumber']))
+	itemID = quantity = cost = bytes("","utf-8")
+	orderFile = u2py.File("PO.ORDER.MST")
+	orderData = u2py.DynArray()
+	date = u2py.DynArray()
+	print(purchaseOrderDetails['OrderDate'])
+	orderDate = datetime.strptime(purchaseOrderDetails['OrderDate'], "%Y-%m-%d").strftime("%m-%d-%Y")
+	formattedDate = convertDateFormat(orderDate)
 
-    for item in itemOrderDetails:
-        itemID = itemID + bytes(item['itemID'],"utf-8")+u2py.VM
-        quantity = quantity + bytes(str(item['quantity']),"utf-8")+u2py.VM
-        cost = cost + bytes(str(item['unitCost']),"utf-8")+u2py.VM
-    
-    orderData.insert(11,0,0,itemID[:-1])
-    orderData.insert(12,0,0,quantity[:-1])
-    orderData.insert(13,0,0,cost[:-1])
-    orderData.insert(14,0,0,purchaseOrderDetails['vendorName'])
-    orderFile.write(recordID,orderData)
+	orderData.insert(1,0,0,formattedDate)
+	orderData.insert(2,0,0,submitStatus)
+	orderData.insert(7,0,0,purchaseOrderDetails['CompanyName'])
+	orderData.insert(8,0,0,purchaseOrderDetails['ContactName'])
+	orderData.insert(9,0,0,bytes(purchaseOrderDetails['Street'],"utf-8") +
+				u2py.VM + bytes(purchaseOrderDetails['City'],"utf-8") +
+				u2py.VM + bytes(purchaseOrderDetails['State'],"utf-8") +
+				u2py.VM+bytes(str(purchaseOrderDetails['ZipCode']),"utf-8"))
+	orderData.insert(10,0,0,str(purchaseOrderDetails['PhoneNumber']))
+
+	for item in itemOrderDetails:
+		itemID = itemID + bytes(item['ItemID'],"utf-8")+u2py.VM
+		quantity = quantity + bytes(str(item['Quantity']),"utf-8")+u2py.VM
+		cost = cost + bytes(str(item['UnitCost']),"utf-8")+u2py.VM
+
+	orderData.insert(11,0,0,itemID[:-1])
+	orderData.insert(12,0,0,quantity[:-1])
+	orderData.insert(13,0,0,cost[:-1])
+	orderData.insert(14,0,0,purchaseOrderDetails['VendorName'])
+	orderFile.write(recordID,orderData)
 
 @app.route('/api/item',methods=['GET'])
 def readFromU2():
 	cmd=u2py.run("LIST DATA PO.ITEM.MST DESC TOXML",capture=True)
-	my_xml = cmd.strip()	
+	my_xml = cmd.strip()
 	ids={}
 	cost=[]
 	itemData=[]
@@ -79,11 +84,12 @@ def vendorDetails():
 	vendorId = random.randrange(12,10**6)
 	itemsId=vendorData['itemId']['items']
 	vendorDetails=vendorData['vendorDetail']
+
 	vendorDetailU2(vendorDetails,itemsId,vendorId)
 	return{	'status':200,
-		'msg':"vendor created",
-		'data':vendorData
+		'msg':"vendor "+str(vendorId) +" created",
 		}
+
 @app.route('/api/vendor/<vendorId>',methods=['PUT'])
 def updateVendor(vendorId):
 	vendorData =request.get_json()
@@ -94,54 +100,24 @@ def updateVendor(vendorId):
 		'msg':"vendor updated",
 		'data':vendorData
 		}
+
 @app.route('/api/vendor',methods=['GET'])
 def allVendors():
-	ids={}
-	cost=[]
-	itemData=[]
-	vendorDetail=[]
-	dictItems={}
-	itemId=[]
-	cmd=u2py.run("LIST DATA PO.VENDOR.MST VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML",capture=True)
-	my_xml=cmd.strip()
-	data = xmltodict.parse(my_xml)['ROOT']['PO.VENDOR.MST']
-	data1=data
-	if(type(data) is list):
-		for i in range(len(data)):
-			data = data1[i]		
-			for j in data['ITEM.IDS_MV']:
-				if(type(data['ITEM.IDS_MV']) is list):
-					itemId.append(j['@ITEM.IDS'])		
-					ids=data['@_ID']
-				else:
-					itemId.append(data['ITEM.IDS_MV']['@ITEM.IDS'])
-					ids=data['@_ID']   
-			vendorDetail.append(data['@VEND.COMPANY'])
-			vendorDetail.append(data['@VEND.NAME'])
-			vendorDetail.append(data['@VEND.PHONE'])
-			itemData.append(vendorDetail)
-			itemData.append(itemId)
-			dictItems[ids]=itemData
-			itemData=[]
-			itemId=[]
-			vendorDetail=[]
-	else:		
-		itemId.append(data['ITEM.IDS_MV']['@ITEM.IDS'])
-		ids=data['@_ID']   
-		vendorDetail.append(data['@VEND.COMPANY'])
-		vendorDetail.append(data['@VEND.NAME'])
-		vendorDetail.append(data['@VEND.PHONE'])
-		itemData.append(vendorDetail)
-		itemData.append(itemId)
-		dictItems[ids]=itemData
-	return{'status':200,
-		'data':dictItems	
-		}
+	cmd = u2py.run("LIST DATA PO.VENDOR.MST VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML",capture=True)
+	vendorXML = cmd.strip()
+
+	vendor_data = xmltodict.parse(vendorXML)['ROOT']['PO.VENDOR.MST']
+	vendorData = json.loads(json.dumps(vendor_data))
+
+	return {
+		'vendorData': vendorData,
+		'status': 200
+	}
+
 @app.route('/api/vendor/<vendorId>',methods=['GET'])
 def particularVendor(vendorId):
 	status = checkExistingRecord("PO.VENDOR.MST",vendorId)
 	if(status):
-		dictItems={}
 		itemId=[]
 		itemDict={}
 		vendorDict={}
@@ -163,183 +139,193 @@ def particularVendor(vendorId):
 		vendorDict['City']=data['VEND.ADDRESS_MV'][1]['@VEND.ADDRESS']
 		vendorDict['State']=data['VEND.ADDRESS_MV'][2]['@VEND.ADDRESS']
 		vendorDict['Zip']=data['VEND.ADDRESS_MV'][3]['@VEND.ADDRESS']
-		vendorData = {}		
+		vendorData = {}
 		vendorData['particularVendorData'] = vendorDict
 		vendorData['itemIds'] = itemId
-		
+
 		return{'status':200,
-			'vendorData':vendorData		
+			'vendorData':vendorData
 			}
 	else:
 		return {
 			'status':404,
-			'msg':'Order ID not found'
+			'msg':'Vendor not found'
 		}
 #-----------Purchase Order Routes-----------------
+
 @app.route('/api/order',methods=['POST'])
 def saveNewOrder(): 
-    data = request.get_json()
-    recordID = random.randrange(12,10**6)
-    writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['specialRequests'],recordID,data['submitStatus'])
-    return { 
-        'status': 200,
-        'msg':'OrderId '+str(recordID)+' created',
-    }
+	data = request.get_json()
+	recordID = random.randrange(12,10**6)
+	writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['SpecialRequests'],recordID,data['submitStatus'])
+	return {
+		'status': 200,
+		'msg':'OrderId '+str(recordID)+' created',
+	}
 
 @app.route('/api/order/<orderID>',methods=['PUT'])
 def editParticularOrder(orderID):
-    data = request.get_json()
-    writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['specialRequests'],orderID,data['submitStatus'])
-    return { 
-        'status': 200,
-        'msg':'OrderId '+str(orderID)+' updated'
-    }
+	data = request.get_json()
+	writePurchaseOrder(data['purchaseOrderDetails'],data['itemOrderDetails']['SpecialRequests'],orderID,data['submitStatus'])
+	return {
+		'status': 200,
+		'msg':'OrderId '+str(orderID)+' updated'
+	}
 
 @app.route('/api/order',methods=['GET'])
 def getAllOrders():
-    itemList = []
-    itemOrderDataXML = u2py.run("LIST DATA PO.ORDER.MST ORDER.DATE VEND.NAME TOXML",capture=True)
-    xmldata = itemOrderDataXML.strip()
-    itemOrderDict = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
-    if type(itemOrderDict) is list:
-        for item in itemOrderDict:
-            tempDict = {}
-            tempDict['purchaseOrderNo'] = item['@_ID']
-            tempDict['orderDate'] = item['@ORDER.DATE']
-            tempDict['companyName'] = item['@VEND.NAME']
-            itemList.append(tempDict)
-    else:
-        tempDict = {}
-        tempDict['purchaseOrderNo'] = itemOrderDict['@_ID']
-        tempDict['orderDate'] = itemOrderDict['@ORDER.DATE']
-        tempDict['companyName'] = itemOrderDict['@VEND.NAME']
-        itemList.append(tempDict)
+	itemList = []
+	itemOrderDataXML = u2py.run("LIST DATA PO.ORDER.MST ORDER.DATE VEND.NAME BY-DSND ORDER.DATE TOXML",capture=True)
+	xmldata = itemOrderDataXML.strip()
+	itemOrderDict = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
+	if type(itemOrderDict) is list:
+		for item in itemOrderDict:
+			tempDict = {}
+			tempDict['purchaseOrderNo'] = item['@_ID']
+			tempDict['orderDate'] = item['@ORDER.DATE']
+			tempDict['companyName'] = item['@VEND.NAME']
+			itemList.append(tempDict)
+	else:
+		tempDict = {}
+		tempDict['purchaseOrderNo'] = itemOrderDict['@_ID']
+		tempDict['orderDate'] = itemOrderDict['@ORDER.DATE']
+		tempDict['companyName'] = itemOrderDict['@VEND.NAME']
+		itemList.append(tempDict)
 
-    return {
-        'status': 200,
-        'msg':'success',
-        'list': itemList
-    }
+	return {
+		'status': 200,
+		'msg':'success',
+		'data': itemList
+	}
 
 @app.route('/api/order/<orderID>',methods=['GET'])
 def particularOrderDetails(orderID):
-    status = checkExistingRecord('PO.ORDER.MST',orderID)
-    if(status):
-        orderDetailsXML = u2py.run("LIST DATA PO.ORDER.MST "+orderID+" ORDER.DATE ORDER.STATUS COMP.NAME COMP.CONTACT.NAME COMP.ADDRESS COMP.PHONE ORDER.ITEM.IDS ORDER.ITEM.QTY ORDER.ITEM.COST VEND.NAME TOXML",capture=True)
-        xmldata = orderDetailsXML.strip()
-        orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
-        orderDetailsDict = itemDict = {}
-        itemList = []
-        orderDetailsDict['orderDate'] = orderDetail['@ORDER.DATE']
-        orderDetailsDict['companyName'] = orderDetail['@COMP.NAME']
-        orderDetailsDict['phoneNumber'] = orderDetail['@COMP.PHONE']
-        orderDetailsDict['contactName'] = orderDetail['@COMP.CONTACT.NAME']
-        orderDetailsDict['vendorName'] = orderDetail['@VEND.NAME']
+	status = checkExistingRecord('PO.ORDER.MST',orderID)
+	if(status):
+		orderDetailsXML = u2py.run("LIST DATA PO.ORDER.MST "+orderID+" ORDER.DATE ORDER.STATUS COMP.NAME COMP.CONTACT.NAME COMP.ADDRESS COMP.PHONE ORDER.ITEM.IDS ORDER.ITEM.QTY ORDER.ITEM.COST VEND.NAME TOXML",capture=True)
+		xmldata = orderDetailsXML.strip()
+		orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
+		orderDetailsDict = itemDict = {}
+		itemList = []
+		orderDetailsDict['OrderDate'] = orderDetail['@ORDER.DATE']
+		orderDetailsDict['CompanyName'] = orderDetail['@COMP.NAME']
+		orderDetailsDict['PhoneNumber'] = orderDetail['@COMP.PHONE']
+		orderDetailsDict['ContactName'] = orderDetail['@COMP.CONTACT.NAME']
+		orderDetailsDict['VendorName'] = orderDetail['@VEND.NAME']
 
-        orderDetailsDict['street'] = orderDetail['COMP.ADDRESS_MV'][0]['@COMP.ADDRESS']
-        orderDetailsDict['city'] = orderDetail['COMP.ADDRESS_MV'][1]['@COMP.ADDRESS']
-        orderDetailsDict['state'] = orderDetail['COMP.ADDRESS_MV'][2]['@COMP.ADDRESS']
-        orderDetailsDict['zipCode'] = orderDetail['COMP.ADDRESS_MV'][3]['@COMP.ADDRESS']
-        
-        if(type(orderDetail['ORDER.ITEM.IDS_MV']) is list):   
-            for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
-                itemDict = {}
-                itemDict['itemID'] = orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS']
-                itemDict['cost'] = orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST']
-                itemDict['quantity'] = orderDetail['ORDER.ITEM.QTY_MV'][i]['@ORDER.ITEM.QTY']
-                itemList.append(itemDict)
-        else:
-            itemDict = {}
-            itemDict['itemID'] = orderDetail['ORDER.ITEM.IDS_MV']['@ORDER.ITEM.IDS']
-            itemDict['cost'] = orderDetail['ORDER.ITEM.COST_MV']['@ORDER.ITEM.COST']
-            itemDict['quantity'] = orderDetail['ORDER.ITEM.QTY_MV']['@ORDER.ITEM.QTY']
-            itemList.append(itemDict)
-        return {
-            'status': 200,
-            'data': orderDetailsDict,
-            'itemList': itemList,
-            'submitStatus':orderDetail['@ORDER.STATUS']
-        }
-    else:
-        return{
-            'status':404,
-            'msg': 'Order no not found'
-        }
+		orderDetailsDict['Street'] = orderDetail['COMP.ADDRESS_MV'][0]['@COMP.ADDRESS']
+		orderDetailsDict['City'] = orderDetail['COMP.ADDRESS_MV'][1]['@COMP.ADDRESS']
+		orderDetailsDict['State'] = orderDetail['COMP.ADDRESS_MV'][2]['@COMP.ADDRESS']
+		orderDetailsDict['ZipCode'] = orderDetail['COMP.ADDRESS_MV'][3]['@COMP.ADDRESS']
+
+		if type(orderDetail['ORDER.ITEM.IDS_MV']) is list:
+			for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
+				itemDict = {}
+				itemDict['ItemID'] = orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS']
+				itemDict['Cost'] = orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST']
+				itemDict['Quantity'] = orderDetail['ORDER.ITEM.QTY_MV'][i]['@ORDER.ITEM.QTY']
+				itemList.append(itemDict)
+		else:
+			itemDict = {}
+			itemDict['ItemID'] = orderDetail['ORDER.ITEM.IDS_MV']['@ORDER.ITEM.IDS']
+			itemDict['Cost'] = orderDetail['ORDER.ITEM.COST_MV']['@ORDER.ITEM.COST']
+			itemDict['Quantity'] = orderDetail['ORDER.ITEM.QTY_MV']['@ORDER.ITEM.QTY']
+			itemList.append(itemDict)
+		orderDetails = {}
+		orderDetails['orderData'] = orderDetailsDict
+		orderDetails['itemList'] = itemList
+		orderDetails['submitStatus'] = orderDetail['@ORDER.STATUS']
+
+		return {
+			'status': 200,
+			'data': orderDetails
+		}
+	else:
+		return{
+			'status':404,
+			'msg': 'Order no not found'
+		}
+
 
 @app.route('/api/order/item/<itemID>',methods=['GET'])
 def getvendorItemDetails(itemID):
-    itemDescriptionXML = u2py.run("LIST PO.ITEM.MST WITH @ID = "+itemID+" DESC TOXML",capture=True)
+	itemDescriptionXML = u2py.run("LIST PO.ITEM.MST WITH @ID = "+itemID+" DESC TOXML",capture=True)
 
-    xmldata = itemDescriptionXML.strip()
-    itemDescription = xmltodict.parse(xmldata)['ROOT']['PO.ITEM.MST']['@DESC']
-    return {
-        'status':200,
-        'msg':'success',
-        'data':itemDescription
-    }
+	xmldata = itemDescriptionXML.strip()
+	itemDescription = xmltodict.parse(xmldata)['ROOT']['PO.ITEM.MST']['@DESC']
+	return {
+		'status':200,
+		'msg':'success',
+		'data':itemDescription
+	}
 #-----------Purchase Order Routes-----------------
 
 @app.route('/api/invoice/order/<orderId>',methods=['GET'])
 def invoiceOrderDetails(orderId):
-    status = checkExistingRecord('PO.ORDER.MST',orderId)
-    if(status):
-    	orderDetailsXML = u2py.run("LIST DATA PO.ORDER.MST "+orderId+" ORDER.ITEM.IDS ORDER.ITEM.QTY ORDER.ITEM.COST TOXML",capture=True)
-    	xmldata = orderDetailsXML.strip()
-    	# itemCost=itemIds=itemQuantity=data=[]
-    	itemCost = []
-    	itemQuantity  = []
-    	itemIds = []
-    	orderDict={}
-    	orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
-    	for i in range(len(orderDetail['ORDER.ITEM.COST_MV'])):
-        	itemCost.append(orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST'])
-    	for i in range(len(orderDetail['ORDER.ITEM.QTY_MV'])):
-        	itemQuantity.append(orderDetail['ORDER.ITEM.QTY_MV'][i]['@ORDER.ITEM.QTY'])
-    	for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
-        	itemIds.append(orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS'])
-    	return{
-        	'status':200,
-        	'cost':itemCost,
-        	'quantity':itemQuantity,
-        	"ids": itemIds,
-        	"orderID":orderDetail['@_ID']
-     		}
-    else:
-	    return{
+	status = checkExistingRecord('PO.ORDER.MST',orderId)
+	if(status):
+		orderDetailsXML = u2py.run("LIST DATA PO.ORDER.MST "+orderId+" ORDER.ITEM.IDS ORDER.ITEM.QTY ORDER.ITEM.COST TOXML",capture=True)
+		xmldata = orderDetailsXML.strip()
+		itemCost = []
+		itemQuantity  = []
+		itemIds = []
+		orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
+		if(type(orderDetail['ORDER.ITEM.COST_MV']) is list):
+			for i in range(len(orderDetail['ORDER.ITEM.COST_MV'])):
+				itemCost.append(orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST'])
+			for i in range(len(orderDetail['ORDER.ITEM.QTY_MV'])):
+				itemQuantity.append(orderDetail['ORDER.ITEM.QTY_MV'][i]['@ORDER.ITEM.QTY'])
+			for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
+				itemIds.append(orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS'])
+		else:
+			itemCost.append(orderDetail['ORDER.ITEM.COST_MV']['@ORDER.ITEM.COST'])
+			itemIds.append(orderDetail['ORDER.ITEM.IDS_MV']['@ORDER.ITEM.IDS'])
+			itemQuantity.append(orderDetail['ORDER.ITEM.QTY_MV']['@ORDER.ITEM.QTY'])
+		return{
+			'status':200,
+			'cost':itemCost,
+			'quantity':itemQuantity,
+			"ids": itemIds,
+			"orderID":orderDetail['@_ID']
+			}
+	else:
+		return{
 		'status':404,
 		'message':'OrderNo not found'
 		}
+
+
 @app.route('/api/invoice',methods=['GET'])
 def allInvoice():
 	cmd=u2py.run("LIST DATA PO.INVOICE.MST INV.DATE INV.ITEM.IDS INV.ITEM.QTY INV.ITEM.PENDING INV.ITEM.RECEIVED ORDER.NO INV.STATUS INV.AMT TOXML",capture=True)
 	my_xml=cmd.strip()
 	data = xmltodict.parse(my_xml)['ROOT']['PO.INVOICE.MST']
-	invoice=[]
-	invoiceData=[]
+	invoiceDetails = []
+	invoice={}
 	if(type(data) is list):
 		for i in data:
-			invoice.append(i['@_ID'])
-			invoice.append(i['@ORDER.NO'])
-			invoice.append(i['@INV.AMT'])
-			invoice.append(i['@INV.DATE'])
-			invoiceData.append(invoice)
-			invoice=[]
+			invoice['invoiceNo'] = i['@_ID']
+			invoice['orderNo'] = i['@ORDER.NO']
+			invoice['invoiceAmt'] = i['@INV.AMT']
+			invoiceDetails.append(invoice)
+			invoice={}
 	else:
-		invoice.append(data['@_ID'])
-		invoice.append(data['@ORDER.NO'])
-		invoice.append(data['@INV.AMT'])
-		invoice.append(i['@INV.DATE'])
-		invoiceData.append(invoice)
-	return{'status':200,	
-		'data':invoiceData
-		}
+		invoice['invoiceNo'] = data['@_ID']
+		invoice['orderNo'] = data['@ORDER.NO']
+		invoice['invoiceAmt'] = data['@INV.AMT']
+		invoiceDetails.append(invoice)
+	return{
+		'status':200,
+		'data':invoiceDetails
+	}
+
 @app.route('/api/invoice',methods=['POST'])
 def invoiceCreate():
 	data=request.get_json()
 	saveInvoice(data['invoiceDetails']['orderNo'],data['invoiceDetails']['invoiceDetails'],data['invoiceDetails']['invoiceNo'],data['invoiceDetails']['invoiceDate'],data['invoiceDetails']['invoiceAmount'],data['submitStatus'])
 	return{
-        'status':200
-    	}
+		'status':200
+		}
 
 @app.route('/api/invoice/<invoiceId>',methods=['GET'])
 def particularInvoice(invoiceId):
@@ -378,6 +364,7 @@ def particularInvoice(invoiceId):
 		"invoiceAmount":invoiceAmount,
 		"quantityReceived":quantityReceived
 		}
+
 def saveInvoice(orderNo,invoiceDetails,invoiceNo,invoiceDate,invoiceAmount,status):
 	invoiceData=u2py.DynArray()
 	invoiceFile= u2py.File("PO.INVOICE.MST")
@@ -400,6 +387,44 @@ def saveInvoice(orderNo,invoiceDetails,invoiceNo,invoiceDate,invoiceAmount,statu
 	invoiceData.insert(7,0,0,status)
 	invoiceData.insert(8,0,0,invoiceAmount)
 	invoiceFile.write(invoiceNo,invoiceData)
+
+@app.route('/api/invoices',methods=['GET'])
+def filterInvoices():
+	invoiceNo = request.args.get('invoiceNo')
+	invoiceFromDate = request.args.get('invoiceFromDate')
+	invoiceToDate = request.args.get('invoiceToDate')
+	orderNo = request.args.get('orderNo')
+	invoiceList = []
+	invoice_No = order_No = date_from =  date_to = ""
+	if invoiceNo:
+		invoice_No = 'WITH @ID = "' + str(invoiceNo) + '"'
+	if orderNo:
+		order_No = 'WITH ORDER.NO = "' + str(orderNo) + '"'
+	if invoiceFromDate:
+		date_from = 'WITH INV.DATE GE "' + str(invoiceFromDate) + '"'
+	if invoiceToDate:
+		date_to = 'WITH INV.DATE LE "' + str(invoiceToDate) + '"'
+	invoiceFilterXML = u2py.run("LIST DATA ORDER.NO INV.AMT PO.INVOICE.MST {} {} {} {} TOXML".format(invoice_No, order_No, date_from, date_to),capture=True)
+	invoiceListxml = invoiceFilterXML.strip()
+	itemInvoiceDict = xmltodict.parse(invoiceListxml)['ROOT']['PO.INVOICE.MST']
+	if type(itemInvoiceDict) is list:
+		for invItem in itemInvoiceDict:
+			tempInvDict = {}
+			tempInvDict['invoiceNo'] = invItem['@_ID']
+			tempInvDict['orderNo'] = invItem['@ORDER.NO']
+			tempInvDict['invoiceAmt'] = invItem['@INV.AMT']
+			invoiceList.append(tempInvDict)
+	else:
+		tempInvDict = {}
+		tempInvDict['invoiceNo'] = itemInvoiceDict['@_ID']
+		tempInvDict['orderNo'] = itemInvoiceDict['@ORDER.NO']
+		tempInvDict['invoiceAmt'] = itemInvoiceDict['@INV.AMT']
+		invoiceList.append(tempInvDict)
+
+	return {
+		'status':200,
+		'invoiceList': invoiceList
+	}
 
 if __name__ == '__main__':
 	app.run()
