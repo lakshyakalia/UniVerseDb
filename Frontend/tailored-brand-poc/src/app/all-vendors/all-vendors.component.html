@@ -16,7 +16,7 @@
             <th></th>
           </thead>
           <tbody>
-            <tr *ngFor="let vendor of vendors;let i = index">
+            <tr *ngFor="let vendor of vendorService.vendors;let i = index">
               <th scope="col">{{i+1}}</th>
               <td class="text-right">{{ vendor.id }}</td>
               <td>{{ vendor.company }}</td>

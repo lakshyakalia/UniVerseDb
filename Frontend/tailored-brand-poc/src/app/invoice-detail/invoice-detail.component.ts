@@ -100,7 +100,8 @@ export class InvoiceDetailComponent implements OnInit {
     )
 
   getInvoiceDetail(invoiceId) {
-    this.description=this.itemService.listRaw()
+    // TODO: Figure out what this line was supposed to do
+    // this.description=this.itemService.list()
     console.log(this.description)
     this.invoiceService.getInvoice(invoiceId)
       .subscribe((res: any) => {
@@ -138,7 +139,8 @@ export class InvoiceDetailComponent implements OnInit {
       return false
     }
     else {
-      this.description=this.itemService.listRaw()
+      // TODO: Figure out what this line was supposed to do
+      // this.description=this.itemService.list()
       let orderID = this.invoiceForm.get('orderNo').value
       if (event.keyCode === 13 && orderID != '' && this.lastId != orderID) {
         this.lastId = this.invoiceForm.get('orderNo').value

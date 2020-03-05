@@ -31,8 +31,6 @@ export class VendorSignUpComponent implements OnInit {
     });
  }
   selectedState: string = "";  
-  private recordData: any;
-  private itemList: any;
   private itemArray: Array<any> = [];
   itemError : boolean
   lastid:number;
@@ -109,7 +107,7 @@ export class VendorSignUpComponent implements OnInit {
     this.selectedState = res.vendorData.particularVendorData["State"]
     for (let j in res.vendorData.itemIds){
       let id =res.vendorData.itemIds[j].itemId
-      let desc=this.itemService.listRaw()[id][0]
+      let desc=this.itemService.items().find(item => item.id == id).description
       this.createFormControl(id,desc)
     }
 
@@ -120,7 +118,7 @@ export class VendorSignUpComponent implements OnInit {
   }
   selectItem(event) {
     let id = event.item.split("|")[0].trim()
-    let description = this.itemService.listRaw()[id][0]
+    let description = this.itemService.items().find(item => item.id == id).description
 
     let controlArray = this.items.get('items').value
     let status = controlArray.find(element => element.items === id)

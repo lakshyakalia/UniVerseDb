@@ -3,15 +3,25 @@ import { HttpClient } from '@angular/common/http'
 import{environment} from'../../environments/environment'
 import { Item, ItemService } from './item.service'
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { Cacheable } from 'ngx-cacheable';
+
 @Injectable({
   providedIn: 'root'
 })
 export class VendorService {
 
   private _baseUri:string=environment.baseUrl;
-  private _vendorList: string[] = []
   private _vendors: Vendor[] = []
+  get vendors(): Vendor[] {
+    this._prepareVendors()
+    return this._vendors
+  }
+  private _names: string[] = []
+  get names(): string[] {
+    this._prepareNames()
+    return this._names
+  }
   private _selectedVendor: Vendor = {
     id: "",
     company: "",
@@ -25,26 +35,8 @@ export class VendorService {
   private _selectedVendorItemList: string[]
 
   constructor(private http: HttpClient, private itemService: ItemService) {
-    this.http.get(this._baseUri+'api/vendor')
-    .subscribe((res: any) => {
-      for(let vendorId in res.vendorData){
-        let data = res.vendorData[vendorId]
-        this._vendors.push(
-          {
-            id: data['@_ID'],
-            company: data['@VEND.COMPANY'],
-            name: data['@VEND.NAME'],
-            phone: data['@VEND.PHONE'],
-            items: data['ITEM.IDS_MV'].map(rawItem => {return {id: rawItem['@ITEM.IDS']}})
-          }
-        )
-
-      }
-      for(let index in this._vendors)
-      {
-        this._vendorList.push(`${this._vendors[index].id} | ${this._vendors[index].name}`)
-      }
-    })
+    this._prepareVendors()
+    this._prepareNames()
   }
   put(vendorDetail,itemId,vendorId){
     return this.http.put(`${this._baseUri}api/vendor/${vendorId}`,{
@@ -63,13 +55,42 @@ export class VendorService {
   get(vendorId){
     return this.http.get(this._baseUri+`api/vendor/${vendorId}`)
   }
-  
-  listRaw(){
-    return this._vendors
+
+  @Cacheable({
+    maxAge: 5 * 1000
+  })
+  private _list() {
+    return this.http.get(this._baseUri+'api/vendor')
   }
 
-  list(){
-      return this._vendorList
+  private _prepareVendors() {
+    this._list().subscribe((res: any) => {
+      this._vendors = []
+      for(let vendorId in res.data){
+        let record = res.data[vendorId]
+        this._vendors.push(
+          {
+            id: record['@_ID'],
+            company: record['@VEND.COMPANY'],
+            name: record['@VEND.NAME'],
+            phone: record['@VEND.PHONE'],
+            items: record['ITEM.IDS_MV'].map(rawItem => {return {id: rawItem['@ITEM.IDS']}})
+          }
+        )
+      }
+    })
+    return
+  }
+
+  private _prepareNames() {
+    this._list().subscribe((res: any) => {
+      this._names = []
+      for(let vendorId in res.data){
+        let record = res.data[vendorId]
+        this._names.push(`${record['@_ID']} | ${record['@VEND.NAME']}`)
+      }
+    })
+    return
   }
   
   typeahead = (text$: Observable<string>) => 
@@ -77,21 +98,21 @@ export class VendorService {
       debounceTime(200),
       distinctUntilChanged(),
       map(keyword => keyword.length < 2 ? []
-      : this._vendorList.filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
+      : this.names.filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
   )
 
   select(id: string) {
     this._selectedVendor = this._vendors.find(vendor => vendor.id == id)
     let itemIds = this._selectedVendor.items.map(item => item.id)
-    // TODO: Optimize when item.service is refactored to receive Item Records instead of raw data
+    let allItems = this.itemService.items()
     this._selectedVendorItemList = []
-    let allItems = this.itemService.list()
-    let allItemsRaw = this.itemService.listRaw()
     this._selectedVendor.items = []
     itemIds.forEach(itemId => {
-      this._selectedVendorItemList.push(allItems.find(item => item.includes(itemId)))
-      this._selectedVendor.items.push({id: itemId, name: "TODO: Fix item.service", description: allItemsRaw[itemId][0]})
-    });
+      this._selectedVendor.items.push(allItems.find(item => item.id == itemId))
+    })
+    this._selectedVendor.items.forEach(item => {
+      this._selectedVendorItemList.push(`${item.id} | ${item.description}`)
+    })
   }
   
   itemTypeahead = (text$: Observable<string>) => 
