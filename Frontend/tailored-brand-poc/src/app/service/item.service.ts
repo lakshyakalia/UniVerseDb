@@ -20,6 +20,7 @@ export class ItemService {
         this._prepareNames()
         return this._names
     }
+    private _allOrderNo : any
 
     constructor(private http: HttpClient) {
         this._prepareItems()
@@ -63,6 +64,18 @@ export class ItemService {
             map(keyword => keyword.length < 2 ? []
             : this.names().filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
     )
+
+    search = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 2 ? [] : this._allOrderNo.filter(v => v.indexOf(term.toString()) > -1))
+    )
+
+    listOrder(allOrderNo){
+        // console.log(allOrderNo)
+        this._allOrderNo = allOrderNo
+    }
 }
 export class Item {
     id: string

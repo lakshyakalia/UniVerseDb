@@ -36,7 +36,7 @@
           id="orderNo"
           formControlName="orderNo"
           (keydown)="getItemOrderDetail($event)"
-          [ngbTypeahead]="search"
+          [ngbTypeahead]="itemService.search"
         />
         <span
           *ngIf="
@@ -117,7 +117,7 @@
           >
             <td>{{ i + 1 }}</td>
             <td>{{ control.value.itemNo }}</td>
-            <td>{{ description[control.value.itemNo] }}</td>
+            <td>{{ itemDescription(control.value.itemNo) }}</td>
             <td>{{ control.value.quantityOrdered }}</td>
             <td>{{ control.value.quantityPending }}</td>
             <td>

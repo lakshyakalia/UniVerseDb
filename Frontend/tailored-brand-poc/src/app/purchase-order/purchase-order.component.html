@@ -88,7 +88,7 @@
           <label class="items-right">Zip</label>
         </div>
         <div class="col-md-3 col-7">
-          <input class="form-control" type="text" name="zipCode" formControlName="ZipCode" (keydown)="checkForExponential($event)" maxlength="6">
+          <input class="form-control" type="text" name="zipCode" formControlName="ZipCode" (keydown)="checkForExponential($event)" maxlength="6" style="text-align: right;">
           <span
             *ngIf="purchaseOrderForm.controls['ZipCode'].touched && purchaseOrderForm.controls['ZipCode'].invalid">Required</span>
         </div>

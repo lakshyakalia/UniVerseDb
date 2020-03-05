@@ -118,25 +118,25 @@ export class PurchaseOrderComponent implements OnInit {
 
   setItemOrderDetails(res: any) {
     let submitBool = false
-    for (let i in res.orderDetails.orderData) {
-      this.purchaseOrderForm.controls[i].setValue(res.orderDetails.orderData[i])
-      if (res.orderDetails.submitStatus === 'submit') {
+    for (let i in res.data.orderData) {
+      this.purchaseOrderForm.controls[i].setValue(res.data.orderData[i])
+      if (res.data.submitStatus === 'submit') {
         this.purchaseOrderForm.controls['NewOrder'].disable()
         this.purchaseOrderForm.controls[i].disable()
       }
     }
 
-    if (res.orderDetails.submitStatus === 'submit') {
+    if (res.data.submitStatus === 'submit') {
       this.itemOrderForm.controls['VendorItem'].disable()
       this.showButtons = false
       submitBool = true
     }
 
-    for (let j in res.orderDetails.itemList) {
+    for (let j in res.data.itemList) {
       let itemDescription: string
-      let cost = res.orderDetails.itemList[j].Cost
-      let quantity = res.orderDetails.itemList[j].Quantity
-      let vendorItem = res.orderDetails.itemList[j].ItemID
+      let cost = res.data.itemList[j].Cost
+      let quantity = res.data.itemList[j].Quantity
+      let vendorItem = res.data.itemList[j].ItemID
       this.createNewFormControl(vendorItem, itemDescription, quantity, cost)
       this.calculateTotalPrice(j, submitBool)
     }
