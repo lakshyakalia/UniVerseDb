@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http' 
+import { HttpClient , HttpHeaders } from '@angular/common/http' 
 import{environment} from'../../environments/environment'
 import { Item, ItemService } from './item.service'
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import {Http, RequestOptions, Headers } from '@angular/http'
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,13 +22,17 @@ export class VendorService {
     phone: "",
     items: []
   }
+  token:any;
   get selectedVendor(): Vendor {
     return this._selectedVendor
   }
   private _selectedVendorItemList: string[]
 
-  constructor(private http: HttpClient, private itemService: ItemService) {
-    this.http.get(this._baseUri+'api/vendor')
+  constructor(private http: Http, private itemService: ItemService) {
+    let headers = new Headers()
+    headers.append('Authorization',`${localStorage.getItem('token')}`)
+   
+    this.http.get(this._baseUri+'api/vendor',{ headers: headers})
     .subscribe((res: any) => {
       for(let vendorId in res.data)
       {

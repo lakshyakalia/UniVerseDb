@@ -14,6 +14,7 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { VendorSignUpComponent } from './vendor-sign-up/vendor-sign-up.component'
 import { HttpClientModule } from '@angular/common/http';
+import { HttpModule } from '@angular/http'
 import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
 import { InvoiceDetailComponent } from './invoice-detail/invoice-detail.component';
 import { HomeComponent } from './home/home.component';
@@ -73,6 +74,7 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     IMaskModule,
     // <-- ng-bootstrap modules
     NgbTypeaheadModule,
+    HttpModule
     // ng-bootstrap modules -->
   ],
   providers: [

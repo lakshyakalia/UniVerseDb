@@ -13,9 +13,9 @@ export class LoginPageComponent implements OnInit {
   constructor(
     private router: Router,
     private loginService: LoginService
-
+    
   ) { }
-
+token:any;
   ngOnInit() {
     this.loginForm = new FormGroup({
       username: new FormControl('',[Validators.required]),
@@ -41,9 +41,19 @@ export class LoginPageComponent implements OnInit {
     }
     else {
       this.loginService.login(this.loginForm.value)
-      .subscribe((res) => {
+      .subscribe((res:any) => {
         console.log(res)
+        if(res.status==200)
+        {
+        this.token=res.token;
+          console.log(this.token)
+        }
       })
+      console.log(this.token)
+      localStorage.setItem('token',this.token)
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/home']);
+      });
     }
   }
 
