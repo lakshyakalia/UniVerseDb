@@ -36,7 +36,7 @@
           id="orderNo"
           formControlName="orderNo"
           (keydown)="getItemOrderDetail($event)"
-          [ngbTypeahead]="search"
+          [ngbTypeahead]="itemService.search"
         />
         <span
           *ngIf="

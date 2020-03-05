@@ -36,7 +36,7 @@ export class InvoiceDetailComponent implements OnInit {
 
     });
   }
-  ngOnInit() {
+ async ngOnInit() {
 
     this.invoiceForm = this.fb.group({
       invoiceNo: new FormControl('', [Validators.required]),
@@ -76,7 +76,10 @@ export class InvoiceDetailComponent implements OnInit {
   }
 
   submitInvoice(submitStatus) {
-    this.invoiceService.submitNewInvoice(this.invoiceForm.value, submitStatus)
+    if(!this.checkValidation()){
+      return
+    }
+    this.invoiceService.post(this.invoiceForm.value, submitStatus)
       .subscribe((res) => {
         this.openSnackBar(`Invoice Created`, 'Dismiss')
         this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
@@ -84,24 +87,20 @@ export class InvoiceDetailComponent implements OnInit {
         });
       })
   }
+  
   getAllOrderNo() {
     this.purchaseOrderService.list()
       .subscribe((res: any) => {
-        this.allOrderNo = res.itemOrderList.map(value => value['purchaseOrderNo'])
-
+        console.log(res)
+        let itemOrders = res.data.map(value => value['purchaseOrderNo'])
+        console.log(itemOrders)
+        this.itemService.listOrder(itemOrders)
       })
   }
 
-  search = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged(),
-      map(term => term.length < 2 ? [] : this.allOrderNo.filter(v => v.indexOf(term.toString()) > -1))
-    )
+  async getInvoiceDetail(invoiceId) {
+    this.description = await this.itemService.listRaw()
 
-  getInvoiceDetail(invoiceId) {
-    this.description=this.itemService.listRaw()
-    console.log(this.description)
     this.invoiceService.getInvoice(invoiceId)
       .subscribe((res: any) => {
         let len = res.ids.length
@@ -123,9 +122,6 @@ export class InvoiceDetailComponent implements OnInit {
         }
       })
 
-    if (!this.checkValidation()) {
-      return;
-    }
     if (!this.checkValidation()) {
       return;
     }
@@ -168,15 +164,18 @@ export class InvoiceDetailComponent implements OnInit {
     let leftQuantity = quantityOrdered - pendingQuantity
     controlArray.controls[index].get('quantityPending').setValue(leftQuantity)
   }
+  
   checkForExponential(event) {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90) ? false : true
   }
+  
   openDialogBox(msg) {
     this.dialog.open(PurchaseDialogBoxComponent, {
       width: '420px',
       data: { msg: msg }
     })
   }
+
   checkValidation() {
     let status = true
     if (this.invoiceForm.invalid) {
