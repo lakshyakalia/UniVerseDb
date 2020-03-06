@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http' 
+import { HttpClient , HttpHeaders } from '@angular/common/http' 
 import{environment} from'../../environments/environment'
 import { Item, ItemService } from './item.service'
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
 import { Cacheable } from 'ngx-cacheable';
+import { Observable } from 'rxjs';
+import {Http, RequestOptions, Headers } from '@angular/http'
+
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +31,7 @@ export class VendorService {
     phone: "",
     items: []
   }
+  token:any;
   get selectedVendor(): Vendor {
     return this._selectedVendor
   }
@@ -37,6 +40,8 @@ export class VendorService {
   constructor(private http: HttpClient, private itemService: ItemService) {
     this._prepareVendors()
     this._prepareNames()
+    let headers = new Headers()
+    headers.append('Authorization',`${localStorage.getItem('token')}`)
   }
   put(vendorDetail,itemId,vendorId){
     return this.http.put(`${this._baseUri}api/vendor/${vendorId}`,{
