@@ -4,14 +4,16 @@ import { Router } from '@angular/router'
 import { MatSnackBar } from "@angular/material";
 import { PurchaseOrderService } from '../service/purchase-order.service'
 import { StateService } from '../service/state.service'
-import { MatDialog } from '@angular/material/dialog'
+import { MatDialog , MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog'
 import { VendorService } from '../service/vendor.service';
+import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 
 @Component({
   selector: 'purchase-order',
   templateUrl: './purchase-order.component.html',
   styleUrls: ['./purchase-order.component.css']
 })
+
 export class PurchaseOrderComponent implements OnInit {
 
   selectedState: string = ""
@@ -29,6 +31,7 @@ export class PurchaseOrderComponent implements OnInit {
   itemOrderError: boolean
   lastId: number = 0;
   showButtons: boolean = true
+  flag:string ;
 
   constructor(
     private purchaseOrderService: PurchaseOrderService,
@@ -37,9 +40,10 @@ export class PurchaseOrderComponent implements OnInit {
     private dialog: MatDialog,
     public snackBar: MatSnackBar,
     private stateService: StateService,
-    private vendorService: VendorService
+    private vendorService: VendorService,
   ) {
   }
+  
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 4000,
@@ -148,8 +152,22 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   selectVendor(event) {
-    this.vendorService.select(event.item.split("|")[0].trim())
-    this.purchaseOrderForm.controls['VendorName'].setValue(event.item.split("|")[0].trim());
+    let previousValue = this.itemOrderForm.controls.SpecialRequests.value
+    console.log(this.itemOrderForm)
+    if(previousValue.length === 0){
+      this.vendorService.select(event.item.split("|")[0].trim())
+      this.purchaseOrderForm.controls['VendorName'].setValue(event.item.split("|")[0].trim());  
+    }
+    else{
+      this.openDialogBox('Changing the vendor will clear all items from the list. Are you sure you want to proceed?')
+      
+    }
+    
+  }
+
+  clearFormArray(){
+    let control = <FormArray>this.itemOrderForm.controls.SpecialRequests
+    control.controls = []
   }
 
   selectItem(event) {
@@ -278,5 +296,16 @@ export class PurchaseOrderComponent implements OnInit {
         this.purchaseOrderTitle = "Update Purchase Order " + orderID
         this.setItemOrderDetails(res)
       })
+  }
+  openDialogBox(msg){
+    let ref = this.dialog.open(PurchaseDialogBoxComponent,{
+      width: '520px',
+      data:{ msg: msg}
+    }).afterClosed().subscribe((res) =>{
+      
+      if(res.clear){
+        this.clearFormArray()
+      }
+    })
   }
 }
