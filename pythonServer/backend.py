@@ -9,7 +9,7 @@ import pprint
 import json
 import random
 import jwt
-import datetime
+from datetime import datetime
 from collections import OrderedDict
 from flask_cors import CORS,cross_origin
 app = Flask(__name__)
@@ -31,6 +31,12 @@ file_handler.setFormatter(formatter)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
+
+def convertDateFormat(orderDate):
+	date = u2py.DynArray()
+	date.insert(1,0,0,orderDate)
+	formattedDate = date.extract(1).iconv('D-')
+	return formattedDate
 
 def checkuser(username,password):
 	users={"user1":"abc","user2":"xyz","user3":"123"}
