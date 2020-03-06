@@ -12,12 +12,15 @@ export class AllPurchaseOrdersComponent implements OnInit {
   
   itemOrderList : []
 
+  starting : number = 1
+
+  offset : number = 5
+
   constructor(private router: Router,private purchaseOrderService: PurchaseOrderService) { }
 
   ngOnInit() {
-    this.purchaseOrderService.list()
-    .subscribe((res:any)=>{
-      this.itemOrderList = res.data
+    this.purchaseOrderService.list().subscribe((res:any) =>{
+      this.itemOrderList = res
     })
   }
 
