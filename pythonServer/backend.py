@@ -49,7 +49,6 @@ def checkuser(username, password):
         else:
             return 'False'
 
-
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
