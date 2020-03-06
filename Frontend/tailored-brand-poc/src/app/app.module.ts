@@ -14,6 +14,7 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { VendorSignUpComponent } from './vendor-sign-up/vendor-sign-up.component'
 import { HttpClientModule } from '@angular/common/http';
+import { HttpModule } from '@angular/http'
 import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
 import { InvoiceDetailComponent } from './invoice-detail/invoice-detail.component';
 import { HomeComponent } from './home/home.component';
@@ -26,7 +27,8 @@ import { PurchaseDialogBoxComponent } from './purchase-order/purchase-dialog-box
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG } from 'ng2-currency-mask/src/currency-mask.config';
 import {IMaskModule} from 'angular-imask';
-import { MatSnackBarModule } from '@angular/material'
+import { MatSnackBarModule } from '@angular/material';
+import { LoginPageComponent } from './login-page/login-page.component'
 
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
@@ -51,7 +53,8 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     FooterComponent,
     AllVendorsComponent,
     AllInvoicesComponent,
-    PurchaseDialogBoxComponent
+    PurchaseDialogBoxComponent,
+    LoginPageComponent
   ],
   imports: [
     BrowserModule,
@@ -71,6 +74,7 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     IMaskModule,
     // <-- ng-bootstrap modules
     NgbTypeaheadModule,
+    HttpModule
     // ng-bootstrap modules -->
   ],
   providers: [

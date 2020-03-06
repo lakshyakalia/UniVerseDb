@@ -1,5 +1,5 @@
 <div class="page-header-container">
-  <div class="page-header-container">
+  <div class="page-header container">
     <span>Purchase Orders</span>
   </div>
 </div>
@@ -11,7 +11,7 @@
           <th scope="col" width="10%">SNo.</th>
           <th scope="col" width="30%">Purchase Order No.</th>
           <th scope="col" width="30%">Order Date</th>
-          <th scope="col" width="30%">Vendor Name</th>
+          <th scope="col" width="30%" colspan="2">Vendor Name</th>
         </thead>
         <tbody>
           <tr *ngFor="let item of itemOrderList; let i = index">
@@ -19,7 +19,7 @@
             <td class="align-right">{{ item['purchaseOrderNo'] }}</td>
             <td class="align-right">{{ item['orderDate']| date: 'MM/dd/y' }}</td>
             <td class="align-left">{{ item['companyName'] }}</td>
-            <td><i (click)="openParticularOrder(item['purchaseOrderNo'])" class="fa fa-eye"></i></td>
+            <td><i (click)="openParticularOrder(item['purchaseOrderNo'])" class="fas fa-edit"></i></td>
           </tr>
         </tbody>
       </table>
@@ -28,7 +28,7 @@
     <div class="row">
       <div class="col"></div>
       <div class="col-md-1 col-3">
-        <button class="btn btn-dark" routerLink="/">
+        <button class="btn btn-dark" routerLink="/home">
           Back
         </button>
       </div>

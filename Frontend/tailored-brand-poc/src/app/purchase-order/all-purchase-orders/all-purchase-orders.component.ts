@@ -17,7 +17,7 @@ export class AllPurchaseOrdersComponent implements OnInit {
   ngOnInit() {
     this.purchaseOrderService.list()
     .subscribe((res:any)=>{
-      this.itemOrderList = res.list
+      this.itemOrderList = res.data
     })
   }
 

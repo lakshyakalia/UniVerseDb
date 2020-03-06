@@ -31,8 +31,6 @@ export class VendorSignUpComponent implements OnInit {
     });
  }
   selectedState: string = "";  
-  private recordData: any;
-  private itemList: any;
   private itemArray: Array<any> = [];
   itemError : boolean
   lastid:number;
@@ -71,7 +69,7 @@ export class VendorSignUpComponent implements OnInit {
           if(res.status === 404){
             this.openSnackBar(`${res.msg} `, 'Dismiss')
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-              this.router.navigate(['/vendor/edit']);
+              this.router.navigate(['/vendors']);
           }); 
           }
             
@@ -109,7 +107,7 @@ export class VendorSignUpComponent implements OnInit {
     this.selectedState = res.vendorData.particularVendorData["State"]
     for (let j in res.vendorData.itemIds){
       let id =res.vendorData.itemIds[j].itemId
-      let desc=this.itemService.listRaw()[id][0]
+      let desc=this.itemService.items().find(item => item.id == id).description
       this.createFormControl(id,desc)
     }
 
@@ -120,7 +118,7 @@ export class VendorSignUpComponent implements OnInit {
   }
   selectItem(event) {
     let id = event.item.split("|")[0].trim()
-    let description = this.itemService.listRaw()[id][0]
+    let description = this.itemService.items().find(item => item.id == id).description
 
     let controlArray = this.items.get('items').value
     let status = controlArray.find(element => element.items === id)
@@ -148,12 +146,10 @@ export class VendorSignUpComponent implements OnInit {
     }
     if (this.vendorDetailForm.valid) {
       if(!this.editVendor){
-        let vendorId = Math.floor(Math.random() * 900000) + 100000
-      this.vendorService.post(vendorDetail.value, items.value, vendorId)
+      this.vendorService.post(vendorDetail.value, items.value)
         .subscribe((res: any) => {
-          
           if (res.status == 200) {
-            this.openSnackBar(`Vendor ${vendorId} Created! `, 'Dismiss')
+            this.openSnackBar(res.msg, 'Dismiss')
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
               this.router.navigate(['/vendor/new']);
           }); 
@@ -174,9 +170,7 @@ export class VendorSignUpComponent implements OnInit {
           if(res.status==200)
           {
             this.openSnackBar(`Vendor Updated ! `, 'Dismiss')
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-              this.router.navigate(['/vendor/edit']);
-          }); 
+            this.router.navigateByUrl('/vendors'); 
           }
         })
       }

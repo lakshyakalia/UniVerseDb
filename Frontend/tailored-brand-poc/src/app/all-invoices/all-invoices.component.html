@@ -10,25 +10,15 @@
         <label class="items-left">Invoice Number</label>
       </div>
       <div class="col-md-3 col-7">
-        <input
-          type="text"
-          formControlName="invoiceNo"
-          (keydown)="checkForExponential($event)"
-          class="form-control"
-        />
+        <input type="number" formControlName="invoiceNo" class="form-control" />
       </div>
 
       <div class="col-md-3 col-5 col-form-label">
         <label class="items-right">Order Number</label>
       </div>
       <div class="col-md-3 col-7">
-        <input
-          type="text"
-          id="orderNo"
-          formControlName="orderNo"
-          (keydown)="getItemOrderDetail($event)"
-          class="form-control"
-        />
+        <input type="text" id="orderNo" formControlName="orderNo"
+          class="form-control" />
       </div>
     </div>
     <div class="row">
@@ -44,9 +34,9 @@
           </div>
           <input
             type="text"
-            formControlName="invoiceToDate"
+            formControlName="invoiceFromDate"
             class="date"
-            placeholder="To Date"
+            placeholder="From Date"
             onfocus="(this.type='date')"
             class="form-control"
           />
@@ -59,42 +49,54 @@
           </div>
           <input
             type="text"
-            formControlName="invoiceFromDate"
+            formControlName="invoiceToDate"
             class="date"
-            placeholder="From Date"
+            placeholder="To Date"
             onfocus="(this.type='date')"
             class="form-control"
           />
         </div>
       </div>
+      <div class="col-md-3 col-5 col-form-label">
+        
+      </div>
+      <div class="col-md-3 col-7">
+        <button type="button" class="btn btn-dark" (click)="filterInvoiceNo($event,invoiceForm)">Search</button>
+      </div>
     </div>
-          <hr>
-        <label>Invoices:</label>
-        <div class="table-responsive">
-        <table class="table table-striped">
-          <thead class="thead-dark">
-            <th width='10%' class="right">SNo.</th>
-            <th width='20%' class="right">Invoice No.</th>
-            <th width='20%' class="right">Order No.</th>
-            <th width='20%' class="right">Amount</th>
-            <th>View</th>
-          </thead>
-          <tbody>
-            <tr *ngFor="let id of invoiceData; let i = index">
-              <td class="right" width='10%'>{{ i+1 }}</td>
-              <td *ngFor="let data of id; let j=index "class="right" width='20%'>{{ id[j] }}</td>
-              <td (click)="openParticularOrder(id[0])"><i class="fas fa-edit"></i></td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
-        <div class="row">
-          <div class="col"></div>
-          <div class="col-md-1 col-3">
-            <button class="btn btn-dark" routerLink="/"> Back
-            </button>
-          </div>
-        </div>
+    <hr>
+    <label>Invoices:</label>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="thead-dark">
+          <th class="right">SNo.</th>
+          <th class="right">Invoice No.</th>
+          <th class="right">Order No.</th>
+          <th>Invoice Amount</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of invoiceData; let i = index">
+            <td>{{ i+1 }}</td>
+            <td>{{ data['id'] }}</td>
+            <td>{{ data['orderNumber'] }}</td>
+            <td width="15%">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <div class="form-control text-right" style="background-color: lightgray;">{{ data['amount']| number:'1.2-5' }}</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-md-1 col-3">
+        <button type="button" class="btn btn-dark" routerLink="/"> Back
+        </button>
+      </div>
+    </div>
   </form>
-
 </div>

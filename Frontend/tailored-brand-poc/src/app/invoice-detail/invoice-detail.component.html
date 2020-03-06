@@ -36,7 +36,7 @@
           id="orderNo"
           formControlName="orderNo"
           (keydown)="getItemOrderDetail($event)"
-          [ngbTypeahead]="vendorService.itemTypeahead"
+          [ngbTypeahead]="itemService.search"
         />
         <span
           *ngIf="
@@ -79,14 +79,19 @@
         <label class="items-right">Invoice Amount</label>
       </div>
       <div class="col-md-3 col-7">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
         <input
           class="form-control"
           currencyMask
-          [options]="{ prefix: '$ ', thousands: ',', decimal: '.' }"
+          [options]="{ prefix: '', thousands: ',', decimal: '.' }"
           id="invoiceAmount"
           formControlName="invoiceAmount"
           (keydown)="checkForExponential($event)"
         />
+        </div>
         <span
           *ngIf="
             invoiceForm.controls['invoiceAmount'].touched &&
@@ -117,11 +122,12 @@
           >
             <td>{{ i + 1 }}</td>
             <td>{{ control.value.itemNo }}</td>
-            <td>{{ description[control.value.itemNo] }}</td>
+            <td>{{ itemDescription(control.value.itemNo) }}</td>
             <td>{{ control.value.quantityOrdered }}</td>
             <td>{{ control.value.quantityPending }}</td>
             <td>
               <input
+                class="form-control"
                 type="text"
                 formControlName="quantityReceived"
                 (input)="calculatePendingQuantity(i)"
@@ -134,15 +140,15 @@
     <div class="row">
       <div class="col"></div>
       <div class="col-md-1 col-3">
-        <button class="btn btn-dark" (click)="submitInvoice('receive')">
+        <button type="button" class="btn btn-dark" (click)="submitInvoice('receive')">
           Receive
         </button>
       </div>
       <div class="col-md-1 col-3">
-        <button class="btn btn-light" (click)="submitInvoice('draft')">Draft</button>
+        <button type="button" class="btn btn-light" (click)="submitInvoice('draft')">Draft</button>
       </div>
       <div class="mol-md-1 col-3">
-        <button routerLink="/" class="btn btn-light">Cancel</button>
+        <button type="button" routerLink="/" class="btn btn-light">Cancel</button>
       </div>
     </div>
   </form>
