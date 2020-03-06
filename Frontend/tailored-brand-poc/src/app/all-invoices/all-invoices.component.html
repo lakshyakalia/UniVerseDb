@@ -71,9 +71,9 @@
         <tbody>
           <tr *ngFor="let data of invoiceData; let i = index">
             <td>{{ i+1 }}</td>
-            <td>{{ data['invoiceNo'] }}</td>
-            <td>{{ data['orderNo'] }}</td>
-            <td>{{ data['invoiceAmt'] }}</td>
+            <td>{{ data['id'] }}</td>
+            <td>{{ data['orderNumber'] }}</td>
+            <td>{{ data['amount'] }}</td>
           </tr>
         </tbody>
       </table>

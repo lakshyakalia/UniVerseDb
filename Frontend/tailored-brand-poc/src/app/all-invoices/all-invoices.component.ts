@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { InvoiceService } from '../service/invoice.service';
+import { InvoiceService, Invoice } from '../service/invoice.service';
 import { FormGroup, FormControl, FormBuilder,  Validators } from '@angular/forms';
 import{Router} from '@angular/router'
 
@@ -17,7 +17,7 @@ export class AllInvoicesComponent implements OnInit {
   cost = []
   invoice = []
   orderNo
-  invoiceData:any;
+  invoiceData: Invoice[] = [];
 
   ngOnInit() {
     this.invoiceForm = new FormGroup({
@@ -26,11 +26,10 @@ export class AllInvoicesComponent implements OnInit {
       invoiceToDate: new FormControl('',[Validators.required]),
       orderNo : new FormControl('',[Validators.required])
    });
-   this.invoiceService.allInvoice()
-   .subscribe((res:any)=>{
-     console.log(res.data)
-     this.invoiceData=res.data
-   })
+   this.invoiceService.list()
+   .subscribe((res)=>{
+      this.invoiceData = res
+    })
   }
 
   openParticularOrder(orderId){
@@ -43,10 +42,9 @@ export class AllInvoicesComponent implements OnInit {
 
   filterInvoiceNo(event,invoiceForm){
     if(event.keyCode === 13){
-      this.invoiceService.filterList(invoiceForm.value)
+      this.invoiceService.list(invoiceForm.value)
       .subscribe((res:any)=>{
-        console.log(res.invoiceList)
-        this.invoiceData = res.invoiceList
+        this.invoiceData = res
       })
     }
   }

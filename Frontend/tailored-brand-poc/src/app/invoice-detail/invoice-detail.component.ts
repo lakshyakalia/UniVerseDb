@@ -20,7 +20,6 @@ export class InvoiceDetailComponent implements OnInit {
   invoiceForm: FormGroup;
   editInvoice: boolean;
   heading: string = 'New Invoice';
-  description: string;
   lastId: number;
   date: string;
   itemOrderError: boolean
@@ -93,14 +92,11 @@ export class InvoiceDetailComponent implements OnInit {
       .subscribe((res: any) => {
         console.log(res)
         let itemOrders = res.data.map(value => value['purchaseOrderNo'])
-        console.log(itemOrders)
         this.itemService.listOrder(itemOrders)
       })
   }
 
   async getInvoiceDetail(invoiceId) {
-    this.description = await this.itemService.listRaw()
-
     this.invoiceService.getInvoice(invoiceId)
       .subscribe((res: any) => {
         let len = res.ids.length
@@ -130,11 +126,10 @@ export class InvoiceDetailComponent implements OnInit {
 
   getItemOrderDetail(event) {
     if (event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90))
-    { console.log(this.description)
+    {
       return false
     }
     else {
-      this.description=this.itemService.listRaw()
       let orderID = this.invoiceForm.get('orderNo').value
       if (event.keyCode === 13 && orderID != '' && this.lastId != orderID) {
         this.lastId = this.invoiceForm.get('orderNo').value
@@ -190,5 +185,9 @@ export class InvoiceDetailComponent implements OnInit {
     else this.itemOrderError = false
 
     return status
+  }
+
+  itemDescription(id) {
+    return this.itemService.items().find(item => item.id == id).description
   }
 }
