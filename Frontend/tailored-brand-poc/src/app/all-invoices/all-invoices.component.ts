@@ -41,11 +41,11 @@ export class AllInvoicesComponent implements OnInit {
   }
 
   filterInvoiceNo(event,invoiceForm){
-    if(event.keyCode === 13){
+    // if(event.keyCode === 13){
       this.invoiceService.list(invoiceForm.value)
       .subscribe((res:any)=>{
         this.invoiceData = res
       })
-    }
+    // }
   }
 }

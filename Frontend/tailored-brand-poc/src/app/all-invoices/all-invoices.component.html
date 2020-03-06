@@ -10,14 +10,14 @@
         <label class="items-left">Invoice Number</label>
       </div>
       <div class="col-md-3 col-7">
-        <input type="number" formControlName="invoiceNo" (keydown)="filterInvoiceNo($event,invoiceForm)" class="form-control" />
+        <input type="number" formControlName="invoiceNo" class="form-control" />
       </div>
 
       <div class="col-md-3 col-5 col-form-label">
         <label class="items-right">Order Number</label>
       </div>
       <div class="col-md-3 col-7">
-        <input type="text" id="orderNo" formControlName="orderNo" (keydown)="filterInvoiceNo($event,invoiceForm)"
+        <input type="text" id="orderNo" formControlName="orderNo"
           class="form-control" />
       </div>
     </div>
@@ -57,6 +57,12 @@
           />
         </div>
       </div>
+      <div class="col-md-3 col-5 col-form-label">
+        
+      </div>
+      <div class="col-md-3 col-7">
+        <button type="button" class="btn btn-dark" (click)="filterInvoiceNo($event,invoiceForm)">Search</button>
+      </div>
     </div>
     <hr>
     <label>Invoices:</label>
@@ -73,7 +79,14 @@
             <td>{{ i+1 }}</td>
             <td>{{ data['id'] }}</td>
             <td>{{ data['orderNumber'] }}</td>
-            <td>{{ data['amount'] }}</td>
+            <td width="15%">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <div class="form-control text-right" style="background-color: lightgray;">{{ data['amount']| number:'1.2-5' }}</div>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
