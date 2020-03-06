@@ -24,20 +24,30 @@ export class AllInvoicesComponent implements OnInit {
       invoiceNo : new FormControl('',[Validators.required]),
       invoiceFromDate: new FormControl('',[Validators.required]),
       invoiceToDate: new FormControl('',[Validators.required]),
-      orderNo : new FormControl('',[Validators.required]),
-      invoiceAmount : new FormControl()
-        
-
+      orderNo : new FormControl('',[Validators.required])
    });
    this.invoiceService.allInvoice()
    .subscribe((res:any)=>{
+     console.log(res.data)
      this.invoiceData=res.data
    })
   }
+
   openParticularOrder(orderId){
     this.router.navigate([`/invoice/edit/${orderId}`])
   }
+
   checkForExponential(event) {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90) ? false : true
+  }
+
+  filterInvoiceNo(event,invoiceForm){
+    if(event.keyCode === 13){
+      this.invoiceService.filterList(invoiceForm.value)
+      .subscribe((res:any)=>{
+        console.log(res.invoiceList)
+        this.invoiceData = res.invoiceList
+      })
+    }
   }
 }
