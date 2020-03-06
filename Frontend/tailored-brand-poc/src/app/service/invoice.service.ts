@@ -8,8 +8,7 @@ export class InvoiceService {
   baseUri:string =environment.baseUrl
   constructor(private http: HttpClient) { }
 
-  submitNewInvoice(invoiceDetails,submitStatus){
-    // console.log(invoiceDetails.invoiceNo)
+  post(invoiceDetails,submitStatus){
     return this.http.post(this.baseUri+'api/invoice',{
       invoiceDetails: invoiceDetails,
       submitStatus: submitStatus
@@ -17,14 +16,23 @@ export class InvoiceService {
     })
     
   }
+
   allInvoice()
   {
     return this.http.get(this.baseUri+'api/invoice')
   }
+  
   getInvoice(invoiceId){
     return this.http.get(this.baseUri+`api/invoice/${invoiceId}`)
   }
+  
   getParticularOrder(orderID){
     return this.http.get(this.baseUri+`api/invoice/order/${orderID}`)
+  }
+
+  filterList(invoiceValues){
+    return this.http.get(this.baseUri+`api/invoices`,{
+      params: invoiceValues
+    })
   }
 }

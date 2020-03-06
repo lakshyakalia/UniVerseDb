@@ -7,8 +7,9 @@ import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-bo
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from "@angular/material";
 import { ItemService } from '../service/item.service';
-
-
+import { PurchaseOrderService } from '../service/purchase-order.service';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-invoice-detail',
@@ -23,16 +24,19 @@ export class InvoiceDetailComponent implements OnInit {
   lastId: number;
   date: string;
   itemOrderError: boolean
+  allOrderNo: any = []
+  public model: any;
 
-  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog , public snackBar: MatSnackBar) { }
+
+  constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog, public snackBar: MatSnackBar, private purchaseOrderService: PurchaseOrderService) { }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-       duration: 4000,
-       
+      duration: 4000,
+
     });
- }
-  ngOnInit() {
+  }
+ async ngOnInit() {
 
     this.invoiceForm = this.fb.group({
       invoiceNo: new FormControl('', [Validators.required]),
@@ -52,6 +56,7 @@ export class InvoiceDetailComponent implements OnInit {
       this.getInvoiceDetail(url.split('/')[3])
     }
     this.date = new Date().toISOString().substr(0, 10);
+    this.getAllOrderNo()
 
   }
   initiateForm(ids, quantity,quantityReceived): FormGroup {
@@ -71,19 +76,31 @@ export class InvoiceDetailComponent implements OnInit {
   }
 
   submitInvoice(submitStatus) {
-    this.invoiceService.submitNewInvoice(this.invoiceForm.value, submitStatus)
+    if(!this.checkValidation()){
+      return
+    }
+    this.invoiceService.post(this.invoiceForm.value, submitStatus)
       .subscribe((res) => {
         this.openSnackBar(`Invoice Created`, 'Dismiss')
         this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
           this.router.navigate(['/invoice/new']);
-      }); 
+        });
+      })
+  }
+  
+  getAllOrderNo() {
+    this.purchaseOrderService.list()
+      .subscribe((res: any) => {
+        console.log(res)
+        let itemOrders = res.data.map(value => value['purchaseOrderNo'])
+        console.log(itemOrders)
+        this.itemService.listOrder(itemOrders)
       })
   }
 
+  async getInvoiceDetail(invoiceId) {
+    this.description = await this.itemService.listRaw()
 
-  getInvoiceDetail(invoiceId) {
-    this.description=this.itemService.listRaw()
-    console.log(this.description)
     this.invoiceService.getInvoice(invoiceId)
       .subscribe((res: any) => {
         let len = res.ids.length
@@ -105,9 +122,6 @@ export class InvoiceDetailComponent implements OnInit {
         }
       })
 
-    if (!this.checkValidation()) {
-      return;
-    }
     if (!this.checkValidation()) {
       return;
     }
@@ -136,7 +150,7 @@ export class InvoiceDetailComponent implements OnInit {
               this.openSnackBar(`${res.message}`, 'Dismiss')
               this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
                 this.router.navigate(['/invoice/new']);
-            }); 
+              });
             }
           })
       }
@@ -150,15 +164,18 @@ export class InvoiceDetailComponent implements OnInit {
     let leftQuantity = quantityOrdered - pendingQuantity
     controlArray.controls[index].get('quantityPending').setValue(leftQuantity)
   }
+  
   checkForExponential(event) {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90) ? false : true
   }
+  
   openDialogBox(msg) {
     this.dialog.open(PurchaseDialogBoxComponent, {
       width: '420px',
       data: { msg: msg }
     })
   }
+
   checkValidation() {
     let status = true
     if (this.invoiceForm.invalid) {
