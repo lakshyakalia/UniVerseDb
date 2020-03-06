@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import{ environment } from'../../environments/environment'
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -27,11 +29,29 @@ export class PurchaseOrderService {
     })
   }
 
-  list(){
-    return this.http.get(`${this.baseUri}api/order`)
+  list(): Observable<Order[]>{
+    return this.http.get<UvResponse<[]>>(this.baseUri+`api/order`).pipe(
+      map(response => response.data.map(record => 
+        <Order>{
+          purchaseOrderNo: record['@_ID'],
+          orderDate: record['@ORDER.DATE'],
+          companyName: record['@VEND.NAME']
+        }
+      ))
+    )
   }
   
   get(orderID){
     return this.http.get(`${this.baseUri}api/order/${orderID}`)
   }
+}
+
+export class Order{
+  purchaseOrderNo : string
+  orderDate : string
+  companyName: string
+}
+
+export class UvResponse<T> {
+  data: T
 }

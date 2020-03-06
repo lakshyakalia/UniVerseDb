@@ -44,6 +44,7 @@ export class VendorService {
     headers.append('Authorization',`${localStorage.getItem('token')}`)
   }
   put(vendorDetail,itemId,vendorId){
+    this.vendors
     return this.http.put(`${this._baseUri}api/vendor/${vendorId}`,{
       vendorDetail:vendorDetail,
       itemId:itemId
