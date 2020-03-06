@@ -27,6 +27,7 @@ export class VendorService {
   constructor(private http: HttpClient, private itemService: ItemService) {
     this.http.get(this._baseUri+'api/vendor')
     .subscribe((res: any) => {
+      console.log(res.data)
       for(let vendorId in res.data)
       {
         let data = res.data[vendorId]
