@@ -1,14 +1,60 @@
 from flask import Flask
 from flask import request
+from flask import jsonify
+from flask import make_response
+from functools import wraps
 import u2py
 import xmltodict
 import pprint
 import json
 import random
+import jwt
+import datetime
 from collections import OrderedDict
 from flask_cors import CORS,cross_origin
 app = Flask(__name__)
+app.config['SECRET_KEY']='thisisthesercretkey'
 CORS(app)
+
+##################JWT is working 
+def checkuser(username,password):
+	users={"user1":"abc","user2":"xyz","user3":"123"}
+	for keys in users.keys():
+		if(keys==username):
+			if(users[username]==password):
+				return 'True'
+			else:
+				return 'False'
+		else:
+			return 'False'
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args,**kwargs):
+        token=request.headers.get('Authorization')
+        print(token)
+        if not token:
+            print("")
+            return{"msg":"Token is missing"
+                },403
+        try:
+            data=jwt.decode(token,app.config['SECRET_KEY'])
+            return data
+        except:
+            return{'msg':'Token is invalid'},403
+    return decorated
+
+
+@app.route('/login',methods=['POST'])
+def login():
+	auth=request.get_json()
+	print(auth['loginDetails'])
+	username=auth['loginDetails']['username']
+	password=auth['loginDetails']['password']
+	if(checkuser(username,password)):
+		token=jwt.encode({'username':username,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=30)},app.config['SECRET_KEY'])
+		return {'token': token.decode('UTF-8'),"status":200}
+	return make_response('Could not verify!',401)
 
 def checkExistingRecord(filename,recordID):
 	fileObject = u2py.File(filename)
@@ -102,6 +148,7 @@ def updateVendor(vendorId):
 		}
 
 @app.route('/api/vendor',methods=['GET'])
+####@token_required this decorater is not working 
 def allVendors():
 	cmd = u2py.run("LIST DATA PO.VENDOR.MST VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML",capture=True)
 	vendorXML = cmd.strip()
