@@ -139,17 +139,27 @@ def vendorGet(vendorId):
 
 @app.route('/api/order', methods=['GET'])
 def purchaseOrderList():
-    orders = []
+    orderLimit = 5
+    skip = int(request.args.get('skipLimit'))
     command = "LIST DATA PO.ORDER.MST ORDER.DATE VEND.NAME BY-DSND ORDER.DATE TOXML"
     logger.debug(command)
     command_execute = u2py.run(command, capture=True)
     orders_data_xml = command_execute.strip()
     orders_data = xmltodict.parse(orders_data_xml)['ROOT']['PO.ORDER.MST']
     orders = json.loads(json.dumps(orders_data))
+    actualLastOrder = orders[-1]
+    paginatedOrder = orders[skip:orderLimit+skip]
+    lastPaginatedOrder = paginatedOrder[-1]
+    if actualLastOrder['@_ID'] is lastPaginatedOrder['@_ID']:
+        lastOrder = True
+    else:
+        lastOrder = False
     return {
         'status': 200,
-        'data': orders
+        'data': paginatedOrder,
+        'lastOrder': lastOrder
     }
+
 
 @app.route('/api/order', methods=['POST'])
 def purchaseOrderCreate():

@@ -29,23 +29,8 @@ export class PurchaseOrderService {
     })
   }
 
-  list(): Observable<Order[]>{
-    return this.http.get<UvResponse<[]>>(this.baseUri+`api/order`).pipe(
-      map(response => 
-        response.data["length"] != undefined ?
-        response.data.map(record => 
-        <Order>{
-          purchaseOrderNo: record['@_ID'],
-          orderDate: record['@ORDER.DATE'],
-          companyName: record['@VEND.NAME']
-        })
-        : [<Order>{
-            purchaseOrderNo: response.data['@_ID'],
-            orderDate: response.data['@ORDER.DATE'],
-            companyName: response.data['@VEND.NAME']
-          }]
-      )
-    )
+  list(skipLimit){
+    return this.http.get(this.baseUri+`api/order`,{ params: { skipLimit: skipLimit }})
   }
   
   get(orderID){
@@ -61,4 +46,5 @@ export class Order{
 
 export class UvResponse<T> {
   data: T
+  lastOrder: T
 }
