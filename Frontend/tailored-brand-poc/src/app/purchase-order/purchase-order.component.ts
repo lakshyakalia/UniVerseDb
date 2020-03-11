@@ -123,7 +123,12 @@ export class PurchaseOrderComponent implements OnInit {
   setItemOrderDetails(res: any) {
     let submitBool = false
     for (let i in res.data.orderData) {
-      this.purchaseOrderForm.controls[i].setValue(res.data.orderData[i])
+      if(this.purchaseOrderForm.controls[i] == this.purchaseOrderForm.controls["OrderDate"]) {
+        let date = new Date(Date.parse(res.data.orderData[i])).toISOString().substr(0, 10)
+        this.purchaseOrderForm.controls[i].setValue(date)
+      }
+      else
+        this.purchaseOrderForm.controls[i].setValue(res.data.orderData[i])
       if (res.data.submitStatus === 'submit') {
         this.purchaseOrderForm.controls['NewOrder'].disable()
         this.purchaseOrderForm.controls[i].disable()
@@ -153,7 +158,6 @@ export class PurchaseOrderComponent implements OnInit {
 
   selectVendor(event) {
     let previousValue = this.itemOrderForm.controls.SpecialRequests.value
-    console.log(this.itemOrderForm)
     if(previousValue.length === 0){
       this.vendorService.select(event.item.split("|")[0].trim())
       this.purchaseOrderForm.controls['VendorName'].setValue(event.item.split("|")[0].trim());  

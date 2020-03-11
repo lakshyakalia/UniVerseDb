@@ -11,7 +11,6 @@ export class LoginService {
 
   constructor(private http: HttpClient) { }
   login(loginDetails){
-    console.log(loginDetails)
     return this.http.post(this.baseUri+'login',{
       loginDetails: loginDetails,
 

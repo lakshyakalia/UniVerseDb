@@ -145,8 +145,9 @@ export class VendorSignUpComponent implements OnInit {
       return
     }
     if (this.vendorDetailForm.valid) {
+      let itemIds = items.value.items.map(item => item.items)
       if(!this.editVendor){
-      this.vendorService.post(vendorDetail.value, items.value)
+      this.vendorService.post(vendorDetail.value, itemIds)
         .subscribe((res: any) => {
           if (res.status == 200) {
             this.openSnackBar(res.msg, 'Dismiss')
@@ -165,7 +166,7 @@ export class VendorSignUpComponent implements OnInit {
         })
       }
       else{
-        this.vendorService.put(vendorDetail.value,items.value,this.vendorId)
+        this.vendorService.put(vendorDetail.value, itemIds, this.vendorId)
         .subscribe((res:any)=>{
           if(res.status==200)
           {

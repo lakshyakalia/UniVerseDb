@@ -15,29 +15,36 @@ export class PurchaseOrderService {
 
   post(purchaseOrderValues, itemOrderValues,submitStatus){
     return this.http.post(`${this.baseUri}api/order`,{
-      purchaseOrderDetails: purchaseOrderValues,
-      itemOrderDetails: itemOrderValues,
-      submitStatus: submitStatus
+      details: purchaseOrderValues,
+      itemDetails: itemOrderValues["SpecialRequests"],
+      status: submitStatus
     })
   }
 
   put(recordId, purchaseOrderValues, itemOrderValues, submitStatus){
     return this.http.put(`${this.baseUri}api/order/${recordId}`,{
-      purchaseOrderDetails: purchaseOrderValues,
-      itemOrderDetails: itemOrderValues,
-      submitStatus: submitStatus
+      details: purchaseOrderValues,
+      itemDetails: itemOrderValues["SpecialRequests"],
+      status: submitStatus
     })
   }
 
   list(): Observable<Order[]>{
     return this.http.get<UvResponse<[]>>(this.baseUri+`api/order`).pipe(
-      map(response => response.data.map(record => 
+      map(response => 
+        response.data["length"] != undefined ?
+        response.data.map(record => 
         <Order>{
           purchaseOrderNo: record['@_ID'],
           orderDate: record['@ORDER.DATE'],
           companyName: record['@VEND.NAME']
-        }
-      ))
+        })
+        : [<Order>{
+            purchaseOrderNo: response.data['@_ID'],
+            orderDate: response.data['@ORDER.DATE'],
+            companyName: response.data['@VEND.NAME']
+          }]
+      )
     )
   }
   

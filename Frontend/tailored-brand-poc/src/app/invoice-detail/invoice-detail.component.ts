@@ -135,7 +135,6 @@ export class InvoiceDetailComponent implements OnInit {
         this.invoiceService.getParticularOrder(orderID)
           .subscribe((res: any) => {
             if (res.status == 200) {
-              console.log(res)
               let len = res.ids.length
               for (let i = 0; i < len; i++) {
                 this.createNewFormControl(res.ids[i], res.quantity[i],res.quantityPending[i])
