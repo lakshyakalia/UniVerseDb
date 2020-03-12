@@ -175,16 +175,32 @@ def vendorGet(vendorId):
 
 @app.route('/api/order', methods=['GET'])
 def purchaseOrderList():
-    orders = []
+    orderLimit = 5
+    skip = int(request.args.get('skipLimit'))
+    skipStatus = request.args.get('pagination')
+
+    lastOrder = False
     command = "LIST DATA PO.ORDER.MST ORDER.DATE VEND.NAME BY-DSND ORDER.DATE TOXML"
     logger.debug(command)
     command_execute = u2py.run(command, capture=True)
     orders_data_xml = command_execute.strip()
     orders_data = xmltodict.parse(orders_data_xml)['ROOT']['PO.ORDER.MST']
     orders = json.loads(json.dumps(orders_data))
+    totalOrders = len(orders)
+    if skipStatus == 'true':
+        actualLastOrder = orders[-1]
+        paginatedOrder = orders[skip:orderLimit+skip]
+        lastPaginatedOrder = paginatedOrder[-1]
+        if actualLastOrder['@_ID'] is lastPaginatedOrder['@_ID']:
+            lastOrder = True
+        else:
+            lastOrder = False
+        orders = paginatedOrder
     return {
         'status': 200,
-        'data': orders
+        'data': orders,
+        'lastOrder': lastOrder,
+        'totalOrders': totalOrders
     }
 
 @app.route('/api/order', methods=['POST'])
@@ -266,27 +282,33 @@ def invoiceList():
     invoiceFromDate = request.args.get('invoiceFromDate')
     invoiceToDate = request.args.get('invoiceToDate')
     orderNo = request.args.get('orderNo')
-    invoiceList = []
+
     invoice_No = order_No = date_from = date_to = ""
-    if invoiceNo:
+    if invoiceNo and invoiceNo != 'null':
         invoice_No = ' WITH @ID = "' + str(invoiceNo) + '"'
-    if orderNo:
+    if orderNo and orderNo != 'null':
         order_No = ' WITH ORDER.NO = "' + str(orderNo) + '"'
-    if invoiceFromDate:
+    if invoiceFromDate and invoiceFromDate != 'null':
         date_from = ' WITH INV.DATE GE "' + str(invoiceFromDate) + '"'
-    if invoiceToDate:
+    if invoiceToDate and invoiceToDate != 'null':
         date_to = ' WITH INV.DATE LE "' + str(invoiceToDate) + '"'
     command = "LIST DATA ORDER.NO INV.AMT PO.INVOICE.MST{}{}{}{} TOXML".format(invoice_No, order_No, date_from, date_to)
     logger.debug(command)
     command_execute = u2py.run(command, capture=True)
-    invoices_data_xml = command_execute.strip()
-    invoices_data = xmltodict.parse(invoices_data_xml)['ROOT']['PO.INVOICE.MST']
-    invoices = json.loads(json.dumps(invoices_data))
+    data = command_execute.strip()
+    invoices_data = xmltodict.parse(data)['ROOT']
+    if invoices_data is not None:
+        invoices = json.loads(json.dumps(invoices_data['PO.INVOICE.MST']))
+    else:
+        invoices = []
+    if type(invoices) is not list :
+        invoiceList = []
+        invoiceList.append(invoices)
+        invoices = invoiceList
     return {
         'status': 200,
         'data': invoices
     }
-
 
 @app.route('/api/invoice', methods=['POST'])
 def invoiceCreate():

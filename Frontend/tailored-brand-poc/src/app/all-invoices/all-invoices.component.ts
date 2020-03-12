@@ -11,6 +11,8 @@ import{Router} from '@angular/router'
 export class AllInvoicesComponent implements OnInit {
   invoiceForm : FormGroup;
   orderId:number;
+  length = 100;
+  pageSize = 10
   constructor(private router: Router,private invoiceService : InvoiceService) { }
 
   quantity = []
@@ -47,5 +49,8 @@ export class AllInvoicesComponent implements OnInit {
         this.invoiceData = res
       })
     // }
+  }
+  pagination(event){
+    console.log(event)
   }
 }
