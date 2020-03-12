@@ -61,15 +61,21 @@ def allItems():
 ## VENDORS API #################
 ################################
 
-
+@app.route('/api/vendor', methods=['GET'])
 def vendorNoXml() :
+   
+    pageIndex = int(request.args.get('pageIndex'))
+    pageSize = int(request.args.get('pageSize'))
+    skipStatus = request.args.get('pagination')
+   
+
     orderFile = u2py.File("PO.VENDOR.MST")
     fileList=u2py.List(0,orderFile)
     idData=fileList.readlist()
     totalCount=idData.dcount(u2py.FM)+1
     recordid=[]
-    count=5
-    start=1
+    count= (pageIndex + 1)* pageSize + 1
+    start= pageIndex * pageSize + 1
     if(count>totalCount):
     	count=totalCount
     for i in range(start,count):
@@ -78,29 +84,31 @@ def vendorNoXml() :
     data={}
     for ids in recordid:
     	field=[]
-    	for vendor in range(1,5):#this is the dict size(trying to make it dynamic)
+    	for vendor in range(1,6):#this is the dict size(trying to make it dynamic)
     		details=[]
-    		value=orderFile.readv(ids,vendor)
+    		value=list(orderFile.readv(ids,vendor))
     		if(value[0][0] != ''):
     			for i in range(len(value)):
     				details.append(value[i][0])
     			field.append(details)
     			data[ids]=field
     return{"data":data}
-@app.route('/api/vendor', methods=['GET'])
-def vendorList():
-    command = "LIST DATA PO.VENDOR.MST VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML"
-    logger.debug(command)
-    command_execute = u2py.run(command, capture=True)
-    vendors_data_xml = command_execute.strip()
+    # return {"data":[]}
 
-    vendors_data = xmltodict.parse(vendors_data_xml)['ROOT']['PO.VENDOR.MST']
-    vendors = json.loads(json.dumps(vendors_data))
 
-    return {
-        'status': 200,
-        'data': vendors
-    }
+#def vendorList():
+    # command = "LIST DATA PO.VENDOR.MST VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML"
+    # logger.debug(command)
+    # command_execute = u2py.run(command, capture=True)
+    # vendors_data_xml = command_execute.strip()
+
+    # vendors_data = xmltodict.parse(vendors_data_xml)['ROOT']['PO.VENDOR.MST']
+    # vendors = json.loads(json.dumps(vendors_data))
+
+    # return {
+    #     'status': 200,
+    #     'data': vendors
+    # }
 
 @app.route('/api/vendor', methods=['POST'])
 def vendorCreate():
@@ -317,7 +325,7 @@ def invoiceCreate():
                 data['invoiceDetails']['invoiceNo'], data['invoiceDetails']['invoiceDate'],
                 data['invoiceDetails']['invoiceAmount'], data['submitStatus'])
     return {
-        'status': 200,// Function to convert number into string 
+        'status': 200,
 
         'msg': 'Invoice {} generated'.format(data['invoiceDetails']['invoiceNo'])
     }
@@ -407,7 +415,6 @@ def invoicePurchaseOrderItemsGet(orderId):
 @app.route('/login', methods=['POST'])
 def login():
     auth = request.get_json()
-    print(auth['loginDetails'])
     username = auth['loginDetails']['username']
     password = auth['loginDetails']['password']
     if (checkuser(username, password)):
@@ -498,9 +505,7 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = request.headers.get('Authorization')
-        print(token)
         if not token:
-            print("")
             return {"msg": "Token is missing"
                     }, 403
         try:

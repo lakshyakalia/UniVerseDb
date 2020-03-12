@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {VendorService} from '../service/vendor.service'
+import {VendorService,Vendor} from '../service/vendor.service'
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
 import {PageEvent} from '@angular/material/paginator';
@@ -11,14 +11,47 @@ import {PageEvent} from '@angular/material/paginator';
 })
 export class AllVendorsComponent implements OnInit {
   length = 100;
-  pageSize = 10
-  pageEvent: PageEvent; 
+  pageSize = 5
+  pageEvent: PageEvent;
+  pageIndex = 0
+
+  rowId : number = 0
+ vendorData : Vendor[] = []
   constructor(private vendorService: VendorService , private dialog : MatDialog) { }
 
-  ngOnInit() {}
+
+  ngOnInit() {
+    let event = {
+      pageIndex: this.pageIndex,
+      pageSize: this.pageSize
+    }
+    this.pagination(event)
+  }
 
   pagination(event){
-    console.log(event)
+    this.pageIndex = event.pageIndex
+    this.pageSize = event.pageSize
+
+    this.rowId = this.pageIndex * this.pageSize + 1
+    this.paginateVendor()
+  }
+
+  paginateVendor(){
+    this.vendorService.list(this.pageIndex,this.pageSize,true).subscribe((res:any)=>{
+      this.vendorData  = []
+      for(let vendorId in res.data){
+        let record = res.data[vendorId]
+        this.vendorData.push(
+          {
+            id: vendorId,
+            company: record[0][0],
+            name: record[1][0],
+            phone: record[3][0],
+            items: record[4].map(rawItem => {return rawItem})
+          }
+        )
+      }
+    })
   }
   openDialogBox(msg){
     this.dialog.open(PurchaseDialogBoxComponent,{
