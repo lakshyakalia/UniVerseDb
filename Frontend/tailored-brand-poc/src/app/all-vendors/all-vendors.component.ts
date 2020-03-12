@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {VendorService} from '../service/vendor.service'
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
+import {PageEvent} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-all-vendors',
@@ -9,11 +10,16 @@ import { MatDialog } from '@angular/material/dialog'
   styleUrls: ['./all-vendors.component.css']
 })
 export class AllVendorsComponent implements OnInit {
-
+  length = 100;
+  pageSize = 10
+  pageEvent: PageEvent; 
   constructor(private vendorService: VendorService , private dialog : MatDialog) { }
 
   ngOnInit() {}
 
+  pagination(event){
+    console.log(event)
+  }
   openDialogBox(msg){
     this.dialog.open(PurchaseDialogBoxComponent,{
       width: '250px',

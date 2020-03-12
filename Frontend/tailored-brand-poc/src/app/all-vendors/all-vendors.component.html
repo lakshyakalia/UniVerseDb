@@ -30,7 +30,15 @@
             </tr>
           </tbody>
         </table>
+        <mat-paginator [length]="length"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        (page)="pagination($event)">
+        </mat-paginator>
+<span>{{pageEvent}}</span>
       </div>
+
+
       <div class="row">
         <div class="col"></div>
         <div class="col-md-2 col-3">
