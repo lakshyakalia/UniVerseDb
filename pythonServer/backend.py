@@ -139,9 +139,12 @@ def vendorGet(vendorId):
 
 @app.route('/api/order', methods=['GET'])
 def purchaseOrderList():
-    orderLimit = 5
-    skip = int(request.args.get('skipLimit'))
+    pageIndex = int(request.args.get('pageIndex'))
+    pageSize = int(request.args.get('pageSize'))
     skipStatus = request.args.get('pagination')
+
+    start = pageIndex * pageSize + 1
+    end = (pageIndex + 1) * pageSize
 
     lastOrder = False
     command = "LIST DATA PO.ORDER.MST ORDER.DATE VEND.NAME BY-DSND ORDER.DATE TOXML"
@@ -153,7 +156,7 @@ def purchaseOrderList():
     totalOrders = len(orders)
     if skipStatus == 'true':
         actualLastOrder = orders[-1]
-        paginatedOrder = orders[skip:orderLimit+skip]
+        paginatedOrder = orders[start:end+1]
         lastPaginatedOrder = paginatedOrder[-1]
         if actualLastOrder['@_ID'] is lastPaginatedOrder['@_ID']:
             lastOrder = True

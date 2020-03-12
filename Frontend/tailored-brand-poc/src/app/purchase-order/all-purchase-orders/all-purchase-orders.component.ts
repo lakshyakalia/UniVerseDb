@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { PurchaseOrderService, Order } from '../../service/purchase-order.service'
-
+import {MatPaginatorModule} from '@angular/material/paginator';
 import { Router } from '@angular/router'
 
 @Component({
@@ -9,32 +9,37 @@ import { Router } from '@angular/router'
   styleUrls: ['./all-purchase-orders.component.css']
 })
 export class AllPurchaseOrdersComponent implements OnInit {
-
+  length : number;
+  pageIndex = 0
+  pageSize = 5;
   itemOrderList: []
 
-  skipLimit: number = 0
+  rowId : number = 0
 
-  disablePrevButton: boolean
+  ngOnInit() { 
+    let event = {
+      pageIndex : this.pageIndex,
+      pageSize : this.pageSize
+    }
 
-  disableNextButton: boolean
+    this.pagination(event)
+  }
 
   paginationRecords : string
 
   constructor(private router: Router, private purchaseOrderService: PurchaseOrderService) { }
 
-  listOrder(skipLimit) {
-    if (skipLimit === 0) this.disablePrevButton = true
-    else this.disablePrevButton = false
+  pagination(event){
+    this.pageIndex = event.pageIndex
+    this.pageSize = event.pageSize
 
-    this.purchaseOrderService.list(skipLimit,true).subscribe((res: any) => {
-      
-      this.disableNextButton = res.lastOrder
-      if(res.lastOrder){
-        this.paginationRecords = `Showing ${this.skipLimit + 1}-${ res.totalOrders } of ${res.totalOrders} records`
-      }
-      else{
-        this.paginationRecords = `Showing ${this.skipLimit + 1}-${this.skipLimit + 5} of ${res.totalOrders} records`
-      }
+    this.rowId = this.pageIndex * this.pageSize + 1
+    this.paginateOrders(this.pageIndex,this.pageSize)
+  }
+
+  paginateOrders(pageIndex,pageSize){
+    this.purchaseOrderService.pagination(pageIndex,pageSize,true).subscribe((res:any) =>{
+      this.length = res.totalOrders
       this.itemOrderList = res.data.map(record => <Order>{
         purchaseOrderNo: record['@_ID'],
         orderDate: record['@ORDER.DATE'],
@@ -43,23 +48,8 @@ export class AllPurchaseOrdersComponent implements OnInit {
     })
   }
 
-  ngOnInit() {
-    this.listOrder(this.skipLimit)
-
-  }
-
   openParticularOrder(orderNo) {
     this.router.navigate([`/order/edit/${orderNo}`])
   }
 
-  nextPagination() {
-    this.disablePrevButton = false
-    this.skipLimit = this.skipLimit + 5
-    this.listOrder(this.skipLimit)
-  }
-
-  previousPagination() {
-    this.skipLimit = this.skipLimit - 5
-    this.listOrder(this.skipLimit)
-  }
 }
