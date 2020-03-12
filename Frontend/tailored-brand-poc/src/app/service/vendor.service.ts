@@ -43,17 +43,18 @@ export class VendorService {
     let headers = new Headers()
     headers.append('Authorization',`${localStorage.getItem('token')}`)
   }
-  put(vendorDetail,itemId,vendorId){
+  put(vendorDetail, itemIds, vendorId){
+    this.vendors
     return this.http.put(`${this._baseUri}api/vendor/${vendorId}`,{
-      vendorDetail:vendorDetail,
-      itemId:itemId
+      vendorDetail: vendorDetail,
+      itemIds: itemIds
     })
   }
 
-  post(vendorDetail,itemId){
+  post(vendorDetail, itemIds){
     return this.http.post(this._baseUri+'api/vendor',{
-      vendorDetail:vendorDetail,
-      itemId:itemId
+      vendorDetail: vendorDetail,
+      itemIds: itemIds
     })
   }
 
@@ -79,7 +80,9 @@ export class VendorService {
             company: record['@VEND.COMPANY'],
             name: record['@VEND.NAME'],
             phone: record['@VEND.PHONE'],
-            items: record['ITEM.IDS_MV'].map(rawItem => {return {id: rawItem['@ITEM.IDS']}})
+            items: record['ITEM.IDS_MV']["length"] != undefined ?
+              record['ITEM.IDS_MV'].map(rawItem => {return {id: rawItem['@ITEM.IDS']}})
+              : [{id: record['@ITEM.IDS']}]
           }
         )
       }
@@ -124,7 +127,7 @@ export class VendorService {
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(keyword => keyword.length < 2 ? []
+      map(keyword => (keyword.length < 2 || !this._selectedVendorItemList) ? []
       : this._selectedVendorItemList.filter(v => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1).slice(0, 10))
   )
 }

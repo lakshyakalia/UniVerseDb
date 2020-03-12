@@ -73,7 +73,6 @@ export class ItemService {
     )
 
     listOrder(allOrderNo){
-        // console.log(allOrderNo)
         this._allOrderNo = allOrderNo
     }
 }

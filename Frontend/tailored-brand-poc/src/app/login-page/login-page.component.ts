@@ -42,14 +42,11 @@ token:any;
     else {
       this.loginService.login(this.loginForm.value)
       .subscribe((res:any) => {
-        console.log(res)
         if(res.status==200)
         {
         this.token=res.token;
-          console.log(this.token)
         }
       })
-      console.log(this.token)
       localStorage.setItem('token',this.token)
       this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
         this.router.navigate(['/home']);

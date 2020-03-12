@@ -58,14 +58,14 @@ export class InvoiceDetailComponent implements OnInit {
     this.getAllOrderNo()
 
   }
-  initiateForm(ids, quantity,quantityReceived): FormGroup {
+  initiateForm(ids, quantity,quantityPending): FormGroup {
     this.date = new Date().toISOString().substr(0, 10);
     return this.fb.group({
       itemNo: new FormControl(ids),
       description: new FormControl(),
       quantityOrdered: new FormControl(quantity),
-      quantityPending: [0],
-      quantityReceived: new FormControl(quantityReceived)
+      quantityPending: new FormControl(quantityPending),
+      quantityReceived: new FormControl()
     })
   }
 
@@ -90,7 +90,6 @@ export class InvoiceDetailComponent implements OnInit {
   getAllOrderNo() {
     this.purchaseOrderService.list()
       .subscribe((res: any) => {
-        console.log(res)
         let itemOrders = res.data.map(value => value['purchaseOrderNo'])
         this.itemService.listOrder(itemOrders)
       })
@@ -138,7 +137,7 @@ export class InvoiceDetailComponent implements OnInit {
             if (res.status == 200) {
               let len = res.ids.length
               for (let i = 0; i < len; i++) {
-                this.createNewFormControl(res.ids[i], res.quantity[i],0)
+                this.createNewFormControl(res.ids[i], res.quantity[i],res.quantityPending[i])
               }
             }
             if (res.status == 404) {
@@ -168,7 +167,7 @@ export class InvoiceDetailComponent implements OnInit {
     this.dialog.open(PurchaseDialogBoxComponent, {
       width: '420px',
       data: { msg: msg }
-    })
+    })  
   }
 
   checkValidation() {

@@ -11,7 +11,7 @@
             <th scope="col" width="10%">S.No.</th>
             <th scope="col" width="10%">Vendor No.</th>
             <th scope="col" width="30%">Vendor Company</th>
-            <th scope="col" width="20%">Vendor</th>
+            <th scope="col" width="20%">Name</th>
             <th scope="col" width="30%">Phone No.</th>
             <th></th>
           </thead>
@@ -33,6 +33,11 @@
       </div>
       <div class="row">
         <div class="col"></div>
+        <div class="col-md-2 col-3">
+          <button class="btn btn-dark" (click)="downloadFile()">
+            Download
+          </button>
+        </div>
         <div class="col-md-1 col-3">
           <button class="btn btn-dark" routerLink="/home">
             Back

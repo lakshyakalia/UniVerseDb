@@ -29,6 +29,7 @@ import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG } from 'ng2-currency-mask/src/
 import {IMaskModule} from 'angular-imask';
 import { MatSnackBarModule } from '@angular/material';
 import { LoginPageComponent } from './login-page/login-page.component'
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
@@ -74,7 +75,8 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     IMaskModule,
     // <-- ng-bootstrap modules
     NgbTypeaheadModule,
-    HttpModule
+    HttpModule,
+    MatPaginatorModule
     // ng-bootstrap modules -->
   ],
   providers: [
