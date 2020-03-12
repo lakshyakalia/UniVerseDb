@@ -29,8 +29,8 @@ export class PurchaseOrderService {
     })
   }
 
-  list(skipLimit){
-    return this.http.get(this.baseUri+`api/order`,{ params: { skipLimit: skipLimit }})
+  list(skipLimit,skipStatus){
+    return this.http.get(this.baseUri+`api/order`,{ params: { skipLimit: skipLimit,pagination: skipStatus }})
   }
   
   get(orderID){

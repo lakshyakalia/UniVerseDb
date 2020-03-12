@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import{environment} from '../../environments/environment';
 import { Cacheable } from 'ngx-cacheable';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
@@ -41,6 +41,16 @@ export class InvoiceService {
         }
       ))
     )
+  }
+
+  rawlist(filters?): Observable<Invoice[]>{
+    return this.http.get<UvResponse<[]>>(this.baseUri+`api/invoices`,{
+      params: filters
+    }).pipe(
+      filter(response =>{
+        console.log(response)
+      })
+          )
   }
 
 }
