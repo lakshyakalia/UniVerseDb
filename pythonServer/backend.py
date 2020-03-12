@@ -33,7 +33,7 @@ logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
 def checkuser(username,password):
-	users={"user1":"abc","user2":"xyz","user3":"123"}
+	users={"jhon":"abc","stuart":"xyz","robin":"123"}
 	for keys in users.keys():
 		if(keys==username):
 			if(users[username]==password):
