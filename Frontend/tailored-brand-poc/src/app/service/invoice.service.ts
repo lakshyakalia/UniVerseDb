@@ -42,17 +42,6 @@ export class InvoiceService {
       ))
     )
   }
-
-  rawlist(filters?): Observable<Invoice[]>{
-    return this.http.get<UvResponse<[]>>(this.baseUri+`api/invoices`,{
-      params: filters
-    }).pipe(
-      filter(response =>{
-        console.log(response)
-      })
-          )
-  }
-
 }
 export class Invoice {
   id: string

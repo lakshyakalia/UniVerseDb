@@ -15,7 +15,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of itemOrderList; let i = index">
-            <td class="align-right">{{ skipLimit + i + 1 }}</td>
+            <td class="align-right">{{rowId+i }}</td>
             <td class="align-right">{{ item['purchaseOrderNo'] }}</td>
             <td class="align-right">{{ item['orderDate']| date: 'MM/dd/y' }}</td>
             <td class="align-left">{{ item['companyName'] }}</td>
@@ -23,12 +23,17 @@
           </tr>
         </tbody>
       </table>
+      <mat-paginator [length]="length"
+              [pageSize]="pageSize"
+              [pageSizeOptions]="[5]"
+              (page)="pagination($event)">
+      </mat-paginator>
     </div>
-    <span class="d-flex justify-content-end mb-2">{{ paginationRecords }}</span>
+    <!-- <span class="d-flex justify-content-end mb-2">{{ paginationRecords }}</span> -->
   </div>
   <div class="d-flex justify-content-end">
-    <button [disabled]="disablePrevButton" class="btn btn-dark mr-2" type="button" (click)="previousPagination()">Previous</button>
-    <button  [disabled]="disableNextButton" class="btn btn-dark mr-2" type="button" (click)="nextPagination()">Next</button>
+    <!-- <button [disabled]="disablePrevButton" class="btn btn-dark mr-2" type="button" (click)="previousPagination()">Previous</button>
+    <button  [disabled]="disableNextButton" class="btn btn-dark mr-2" type="button" (click)="nextPagination()">Next</button> -->
     <button class="btn btn-dark" routerLink="/home">
       Back
     </button>   
