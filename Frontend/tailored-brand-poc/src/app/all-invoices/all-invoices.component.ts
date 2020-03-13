@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { InvoiceService, Invoice } from '../service/invoice.service';
 import { FormGroup, FormControl, FormBuilder,  Validators } from '@angular/forms';
 import{Router} from '@angular/router'
+import {PageEvent} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-all-invoices',
@@ -11,8 +12,9 @@ import{Router} from '@angular/router'
 export class AllInvoicesComponent implements OnInit {
   invoiceForm : FormGroup;
   orderId:number;
-  length = 100;
-  pageSize = 10
+  length : number;
+  pageIndex = 0
+  pageSize = 5;
   constructor(private router: Router,private invoiceService : InvoiceService) { }
 
   quantity = []
@@ -20,6 +22,7 @@ export class AllInvoicesComponent implements OnInit {
   invoice = []
   orderNo
   invoiceData: Invoice[] = [];
+  rowId : number = 0
 
   ngOnInit() {
     this.invoiceForm = new FormGroup({
@@ -28,10 +31,15 @@ export class AllInvoicesComponent implements OnInit {
       invoiceToDate: new FormControl('',[Validators.required]),
       orderNo : new FormControl('',[Validators.required])
    });
-   this.invoiceService.list()
-   .subscribe((res)=>{
-      this.invoiceData = res
-    })
+  //  this.invoiceService.list()
+  //  .subscribe((res)=>{
+  //     this.invoiceData = res
+  //   })
+    let event = {
+      pageIndex : this.pageIndex,
+      pageSize : this.pageSize
+    }
+    this.pagination(event)
   }
 
   openParticularOrder(orderId){
@@ -42,15 +50,27 @@ export class AllInvoicesComponent implements OnInit {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90) ? false : true
   }
 
-  filterInvoiceNo(event,invoiceForm){
-    // if(event.keyCode === 13){
-      this.invoiceService.list(invoiceForm.value)
-      .subscribe((res:any)=>{
-        this.invoiceData = res
-      })
-    // }
-  }
+  // filterInvoiceNo(event,invoiceForm){
+  //     this.invoiceService.list(invoiceForm.value)
+  //     .subscribe((res:any)=>{
+  //       this.invoiceData = res
+  //     })
+  // }
   pagination(event){
-    console.log(event)
+    this.pageIndex = event.pageIndex
+    this.pageSize = event.pageSize
+    this.rowId = this.pageIndex * this.pageSize + 1
+    this.paginateInvoices(this.pageIndex,this.pageSize)
+  }
+  paginateInvoices(pageIndex,pageSize){
+    this.invoiceService.list(pageIndex,pageSize,true).subscribe((res:any) =>{
+      this.length = res.totalOrders
+      console.log(res)
+      // this.itemOrderList = res.data.map(record => {
+      //   purchaseOrderNo: record['@_ID'],
+      //   orderDate: record['@ORDER.DATE'],
+      //   companyName: record['@VEND.NAME']
+      // })
+    })
   }
 }
