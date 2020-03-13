@@ -62,7 +62,7 @@ def allItems():
 ################################
 
 @app.route('/api/vendor', methods=['GET'])
-def vendorNoXml() :
+def vendorList() :
    
     pageIndex = int(request.args.get('pageIndex'))
     pageSize = int(request.args.get('pageSize'))
@@ -81,35 +81,33 @@ def vendorNoXml() :
     for i in range(start,count):
     	tm=idData.extract(i)
     	recordid.append(list(tm)[0][0])
-    data={}
+    vendData={}
     for ids in recordid:
     	field=[]
     	for vendor in range(1,6):#this is the dict size(trying to make it dynamic)
     		details=[]
     		value=list(orderFile.readv(ids,vendor))
+		
     		if(value[0][0] != ''):
     			for i in range(len(value)):
     				details.append(value[i][0])
     			field.append(details)
-    			data[ids]=field
-    return{"data":data}
-    # return {"data":[]}
-
-
-#def vendorList():
-    # command = "LIST DATA PO.VENDOR.MST VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML"
-    # logger.debug(command)
-    # command_execute = u2py.run(command, capture=True)
-    # vendors_data_xml = command_execute.strip()
-
-    # vendors_data = xmltodict.parse(vendors_data_xml)['ROOT']['PO.VENDOR.MST']
-    # vendors = json.loads(json.dumps(vendors_data))
-
-    # return {
-    #     'status': 200,
-    #     'data': vendors
-    # }
-
+    			vendData[ids]=field
+    data=mappingVendor(vendData)
+    return{"data":data,
+		"totalCount":totalCount}
+def mappingVendor(data):
+	vendor={}	
+	for key in data.keys():
+		details = {}
+		details['vendorCompany'] = data[key][0][0]
+		details['vendorName'] = data[key][1][0]
+		details['address'] = data[key][2]
+		details['phoneNo'] = data[key][3]
+		details['itemId'] = data[key][4]
+		vendor[key] = details
+	return vendor
+		
 @app.route('/api/vendor', methods=['POST'])
 def vendorCreate():
     vendorData = request.get_json()
@@ -518,4 +516,3 @@ def token_required(f):
 
 
 if __name__ == '__main__':
-    app.run()
