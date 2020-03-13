@@ -63,18 +63,18 @@ def allItems():
 
 @app.route('/api/vendor', methods=['GET'])
 def vendorList() :
-   
-    pageIndex = int(request.args.get('pageIndex'))
-    pageSize = int(request.args.get('pageSize'))
     skipStatus = request.args.get('pagination')
-   
-
+    if(skipStatus):
+   	pageIndex = int(request.args.get('pageIndex'))
+    	pageSize = int(request.args.get('pageSize'))
+	count= (pageIndex + 1)* pageSize + 1
+    else:
+	count=totalCount
     orderFile = u2py.File("PO.VENDOR.MST")
     fileList=u2py.List(0,orderFile)
     idData=fileList.readlist()
     totalCount=idData.dcount(u2py.FM)+1
     recordid=[]
-    count= (pageIndex + 1)* pageSize + 1
     start= pageIndex * pageSize + 1
     if(count>totalCount):
     	count=totalCount
@@ -516,3 +516,4 @@ def token_required(f):
 
 
 if __name__ == '__main__':
+    app.run()
