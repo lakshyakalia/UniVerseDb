@@ -72,7 +72,6 @@ export class VendorService {
   }
 
   list(pageIndex,pageSize,skipStatus){
-    console.log(pageIndex,pageSize)
     return this.http.get(this._baseUri+'api/vendor',{
       params: {
         skipStatus: skipStatus,
@@ -85,6 +84,7 @@ export class VendorService {
   prepareVendors() {
     this._list().subscribe((res: any) => {
       this._vendors = []
+
       for(let vendorId in res.data){
         let record = res.data[vendorId]
         this._vendors.push(

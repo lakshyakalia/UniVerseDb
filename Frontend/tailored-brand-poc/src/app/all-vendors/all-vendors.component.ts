@@ -10,11 +10,10 @@ import {PageEvent} from '@angular/material/paginator';
   styleUrls: ['./all-vendors.component.css']
 })
 export class AllVendorsComponent implements OnInit {
-  length = 100;
+  length :number;
   pageSize = 5
   pageEvent: PageEvent;
   pageIndex = 0
-
   rowId : number = 0
  vendorData : Vendor[] = []
   constructor(private vendorService: VendorService , private dialog : MatDialog) { }
@@ -39,15 +38,16 @@ export class AllVendorsComponent implements OnInit {
   paginateVendor(){
     this.vendorService.list(this.pageIndex,this.pageSize,true).subscribe((res:any)=>{
       this.vendorData  = []
+      this.length=res.totalCount
       for(let vendorId in res.data){
         let record = res.data[vendorId]
         this.vendorData.push(
           {
             id: vendorId,
-            company: record[0][0],
-            name: record[1][0],
-            phone: record[3][0],
-            items: record[4].map(rawItem => {return rawItem})
+            company: record['vendorCompany'],
+            name: record['vendorName'].toString(),
+            phone: record['phoneNo'].toString(),
+            items: record['itemId'].map(rawItem => {return rawItem})
           }
         )
       }
