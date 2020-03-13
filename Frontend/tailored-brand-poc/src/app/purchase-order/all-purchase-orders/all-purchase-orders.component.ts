@@ -38,13 +38,9 @@ export class AllPurchaseOrdersComponent implements OnInit {
   }
 
   paginateOrders(pageIndex,pageSize){
-    this.purchaseOrderService.pagination(pageIndex,pageSize,true).subscribe((res:any) =>{
-      this.length = res.totalOrders
-      this.itemOrderList = res.data.map(record => <Order>{
-        purchaseOrderNo: record['@_ID'],
-        orderDate: record['@ORDER.DATE'],
-        companyName: record['@VEND.NAME']
-      })
+    this.purchaseOrderService.list(pageIndex,pageSize,true).subscribe((res:any) =>{
+      this.length = res.totalCount
+      this.itemOrderList = res.data
     })
   }
 

@@ -28,12 +28,8 @@ export class PurchaseOrderService {
       status: submitStatus
     })
   }
-
-  list(skipLimit,skipStatus){
-    return this.http.get(this.baseUri+`api/order`,{ params: { skipLimit: skipLimit,pagination: skipStatus }})
-  }
-
-  pagination(pageIndex,pageSize,skipStatus){
+  
+  list(pageIndex,pageSize,skipStatus){
     return this.http.get(this.baseUri+`api/order`,{ params: { pageIndex: pageIndex,pageSize: pageSize,pagination: skipStatus }})
   }
   

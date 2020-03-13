@@ -142,32 +142,35 @@ def purchaseOrderList():
     pageIndex = int(request.args.get('pageIndex'))
     pageSize = int(request.args.get('pageSize'))
     skipStatus = request.args.get('pagination')
-
     start = pageIndex * pageSize + 1
     end = (pageIndex + 1) * pageSize
-
     lastOrder = False
-    command = "LIST DATA PO.ORDER.MST ORDER.DATE VEND.NAME BY-DSND ORDER.DATE TOXML"
-    logger.debug(command)
-    command_execute = u2py.run(command, capture=True)
-    orders_data_xml = command_execute.strip()
-    orders_data = xmltodict.parse(orders_data_xml)['ROOT']['PO.ORDER.MST']
-    orders = json.loads(json.dumps(orders_data))
-    totalOrders = len(orders)
-    if skipStatus == 'true':
-        actualLastOrder = orders[-1]
-        paginatedOrder = orders[start:end+1]
-        lastPaginatedOrder = paginatedOrder[-1]
-        if actualLastOrder['@_ID'] is lastPaginatedOrder['@_ID']:
+    saveList_name = 'PAGE.LIST'
+
+    u2py.run('SELECT {}'.format('PO.ORDER.MST'), capture=True)
+    u2py.run('SAVE.LIST {}'.format(saveList_name))
+
+    dataFile = u2py.File('PO.ORDER.MST')
+    myList = u2py.List(0, saveList_name)
+    t_id = myList.readlist()
+    totalCount = t_id.dcount(u2py.FM)
+
+    data =[]
+    for x in range(start, end + 1):
+        if x > totalCount:
             lastOrder = True
-        else:
-            lastOrder = False
-        orders = paginatedOrder
+            break
+        id = t_id.extract(x)
+        date = list(dataFile.readv(id, 0))[0][0]
+        vendorName = list(dataFile.readv(id, 14))[0][0]
+        id = list(id)[0][0]
+        orderDict = convertOrderData(date, vendorName,id)
+        data.append(orderDict)
     return {
         'status': 200,
-        'data': orders,
+        'data': data,
         'lastOrder': lastOrder,
-        'totalOrders': totalOrders
+        'totalCount': totalCount
     }
 
 @app.route('/api/order', methods=['POST'])
@@ -476,6 +479,13 @@ def token_required(f):
             return {'msg': 'Token is invalid'}, 403
 
     return decorated
+
+def mappingOrder(date,vendorName,id):
+    orderDict = {}
+    orderDict['date'] = date
+    orderDict['vendorName'] = vendorName
+    orderDict['id'] = id
+    return orderDict
 
 
 if __name__ == '__main__':
