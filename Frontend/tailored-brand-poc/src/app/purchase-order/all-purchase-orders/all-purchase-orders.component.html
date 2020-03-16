@@ -5,6 +5,44 @@
 </div>
 <div class="container container-background">
   <div class="container">
+    <form [formGroup]="purchaseOrderForm" (ngSubmit)="filter(purchaseOrderForm.value)">
+      <div class="row">
+        <div class="col-md-3 col-5 col-form-label">
+          <label class="items-left">Order Number</label>
+        </div>
+        <div class="col-md-3 col-7">
+      <input type="text" placeholder="orderNo" formControlName="OrderNo" class="form-control">
+    </div>
+    <div class="col-md-3 col-5 col-form-label">
+      <label class="items-right">Vendor Name</label>
+    </div>
+    <div class="col-md-3 col-7">
+      <input type="text" placeholder="vendor name" formControlName="VendorName" class="form-control">
+    </div>
+</div>
+<div class="row">
+  <div class="col-md-3 col-5 col-form-label">
+    <label class="items-left">From Date</label>
+  </div>
+  <div class="col-md-3 col-7">
+
+      <input type="date" formControlName="FromDate" class="form-control">
+      </div>
+      <div class="col-md-3 col-5 col-form-label">
+        <label class="items-right">To Date</label>
+      </div>
+      <div class="col-md-3 col-7">
+
+      <input type="date" formControlName="ToDate" class="form-control">
+      </div>
+      </div>
+      <div class="row">
+        <div class="col"></div>
+        <div class="col-md-3">
+      <button type="submit" class="btn btn-dark">Filter</button>
+    </div>
+      </div>
+    </form>
     <div class="table-responsive">
       <table class="table table-striped">
         <thead class="thead-dark">

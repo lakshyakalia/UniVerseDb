@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core'
 import { PurchaseOrderService, Order } from '../../service/purchase-order.service'
-import {MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { Router } from '@angular/router'
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-all-purchase-orders',
@@ -29,6 +30,13 @@ export class AllPurchaseOrdersComponent implements OnInit {
 
   constructor(private router: Router, private purchaseOrderService: PurchaseOrderService) { }
 
+  purchaseOrderForm = new FormGroup({
+    OrderNo: new FormControl(''),
+    VendorName: new FormControl(''),
+    FromDate: new FormControl(''),
+    ToDate: new FormControl('')
+  })
+
   pagination(event){
     this.pageIndex = event.pageIndex
     this.pageSize = event.pageSize
@@ -38,7 +46,20 @@ export class AllPurchaseOrdersComponent implements OnInit {
   }
 
   paginateOrders(pageIndex,pageSize){
-    this.purchaseOrderService.list(pageIndex,pageSize,true).subscribe((res:any) =>{
+    let values = this.purchaseOrderForm.value
+    values['pageIndex'] = pageIndex
+    values['pageSize'] = pageSize
+    
+    this.purchaseOrderService.list(values).subscribe((res:any) =>{
+      this.length = res.totalCount
+      this.itemOrderList = res.data
+    })
+  }
+
+  filter(values){
+    values['pageIndex'] = 0
+    values['pageSize'] = this.pageSize
+    this.purchaseOrderService.list(values).subscribe((res:any) =>{
       this.length = res.totalCount
       this.itemOrderList = res.data
     })
@@ -47,5 +68,4 @@ export class AllPurchaseOrdersComponent implements OnInit {
   openParticularOrder(orderNo) {
     this.router.navigate([`/order/edit/${orderNo}`])
   }
-
 }
