@@ -28,9 +28,15 @@ export class PurchaseOrderService {
       status: submitStatus
     })
   }
-  
+
   list(pageIndex,pageSize,skipStatus){
-    return this.http.get(this.baseUri+`api/order`,{ params: { pageIndex: pageIndex,pageSize: pageSize,pagination: skipStatus }})
+    return this.http.get(this.baseUri+`api/order`,{ 
+      params: { 
+        pageIndex: pageIndex,
+        pageSize: pageSize,
+        pagination: skipStatus 
+      }
+    })
   }
   
   get(orderID){

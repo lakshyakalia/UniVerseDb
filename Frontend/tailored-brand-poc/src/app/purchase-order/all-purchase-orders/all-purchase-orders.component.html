@@ -19,7 +19,7 @@
             <td class="align-right">{{ item.id }}</td>
             <td class="align-right">{{ item.date | date: 'MM/dd/y' }}</td>
             <td class="align-left">{{ item.vendorName }}</td>
-            <td><i (click)="openParticularOrder(item['purchaseOrderNo'])" class="fas fa-edit"></i></td>
+            <td><i (click)="openParticularOrder(item.id)" class="fas fa-edit"></i></td>
           </tr>
         </tbody>
       </table>
