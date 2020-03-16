@@ -18,7 +18,7 @@ export class AllVendorsComponent implements OnInit {
   ngOnInit() {}
 
   pagination(event){
-    console.log(event)
+    
   }
   openDialogBox(msg){
     this.dialog.open(PurchaseDialogBoxComponent,{
