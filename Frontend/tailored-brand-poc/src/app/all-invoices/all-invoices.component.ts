@@ -31,10 +31,6 @@ export class AllInvoicesComponent implements OnInit {
       invoiceToDate: new FormControl('',[Validators.required]),
       orderNo : new FormControl('',[Validators.required])
    });
-  //  this.invoiceService.list()
-  //  .subscribe((res)=>{
-  //     this.invoiceData = res
-  //   })
     let event = {
       pageIndex : this.pageIndex,
       pageSize : this.pageSize
@@ -50,12 +46,6 @@ export class AllInvoicesComponent implements OnInit {
     return event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90) ? false : true
   }
 
-  // filterInvoiceNo(event,invoiceForm){
-  //     this.invoiceService.list(invoiceForm.value)
-  //     .subscribe((res:any)=>{
-  //       this.invoiceData = res
-  //     })
-  // }
   pagination(event){
     this.pageIndex = event.pageIndex
     this.pageSize = event.pageSize
@@ -66,11 +56,6 @@ export class AllInvoicesComponent implements OnInit {
     this.invoiceService.list(pageIndex,pageSize,true).subscribe((res:any) =>{
       this.length = res.totalOrders
       console.log(res)
-      // this.itemOrderList = res.data.map(record => {
-      //   purchaseOrderNo: record['@_ID'],
-      //   orderDate: record['@ORDER.DATE'],
-      //   companyName: record['@VEND.NAME']
-      // })
     })
   }
 }
