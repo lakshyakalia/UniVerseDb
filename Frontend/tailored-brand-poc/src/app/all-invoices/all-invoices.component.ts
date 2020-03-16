@@ -55,7 +55,6 @@ export class AllInvoicesComponent implements OnInit {
   paginateInvoices(pageIndex,pageSize){
     this.invoiceService.list(pageIndex,pageSize,true).subscribe((res:any) =>{
       this.length = res.totalOrders
-      console.log(res)
     })
   }
 }
