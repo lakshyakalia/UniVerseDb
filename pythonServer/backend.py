@@ -425,7 +425,7 @@ def upsertVendor(details, itemIds, recordID):
 
 def upsertPurchaseOrder(details, itemDetails, recordID, status):
     orderDate = datetime.strptime(details['OrderDate'], "%Y-%m-%d").strftime("%m-%d-%Y")
-    formattedDate = convertDateFormat(orderDate)
+    formattedDate = convertDateFormat(orderDate,'internal')
     address = [details['Street'], details['City'], details['State'], details['ZipCode']]
     itemIds = []
     quantities = []
@@ -507,25 +507,22 @@ def filterPurchaseOrder(orderNo, vendorName, fromDate, toDate):
 
     return commandLine
 
-def mappingOrder(date,vendorName,id):
+def mappingOrder(date, vendorName, id):
     orderDict = {}
-    orderDict['date'] = date
+    orderDict['date'] = convertDateFormat(date,'external')
     orderDict['vendorName'] = vendorName
     orderDict['id'] = id
     return orderDict
 
-def convertDateFormat(orderDate):
+def convertDateFormat(orderDate,format):
     date = u2py.DynArray()
     date.insert(1, 0, 0, orderDate)
-    formattedDate = date.extract(1).iconv('D-')
+    if format == 'internal':
+        formattedDate = date.extract(1).iconv('D-')
+    else:
+        formattedDate = str(date.extract(1).oconv('D-'))
     return formattedDate
 
-
-def changeDateFormat(orderDate):
-    date = u2py.DynArray()
-    date.insert(1, 0, 0, orderDate)
-    formattedDate = str(date.extract(1).oconv('D-'))
-    return formattedDate
 
 
 if __name__ == '__main__':
