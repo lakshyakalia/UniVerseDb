@@ -290,8 +290,6 @@ def invoiceList():
     t_id = myList.readlist()
     totalCount = t_id.dcount(u2py.FM)
 
-    print(start)
-    print(end)
     data = []
     for x in range(start, end+1):
         if x > totalCount:
@@ -539,7 +537,6 @@ def filterInvoice(invoiceToDate,invoiceNo,invoiceFromDate,orderNo):
     if invoiceToDate and invoiceToDate != 'null':
         date_to = ' AND WITH INV.DATE LE "' + str(invoiceToDate) + '"'
     command = "SELECT {}{}{}{}{}".format('PO.INVOICE.MST',invoice_No, order_No, date_from, date_to)
-    print(command)
     return command
 
 
