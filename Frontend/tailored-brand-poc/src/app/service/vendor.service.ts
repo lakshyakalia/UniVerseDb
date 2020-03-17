@@ -68,16 +68,17 @@ export class VendorService {
     maxAge: 5 * 1000
   })
   private _list() {
-    return this.http.get(this._baseUri+'api/vendor')
+    let values = {
+      allVendors : 'true'
+    }
+    return this.http.get(this._baseUri+'api/vendor',{
+      params: values
+    })
   }
 
-  list(pageIndex,pageSize,skipStatus){
+  list(filter){
     return this.http.get(this._baseUri+'api/vendor',{
-      params: {
-        skipStatus: skipStatus,
-        pageIndex: pageIndex,
-        pageSize: pageSize
-      }
+      params: filter
     })
   }
 
@@ -106,7 +107,7 @@ export class VendorService {
       this._names = []
       for(let vendorId in res.data){
         let record = res.data[vendorId]
-        this._names.push(`${record[vendorId]} | ${record[1][0]}`)
+        this._names.push(`${vendorId} | ${record['vendorName']}`)
       }
     })
     return

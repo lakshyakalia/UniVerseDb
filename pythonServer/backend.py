@@ -61,52 +61,77 @@ def allItems():
 ## VENDORS API #################
 ################################
 
-@app.route('/api/vendor', methods=['GET'])
-def vendorList() :
-    skipStatus = request.args.get('pagination')
-    if(skipStatus):
-   	pageIndex = int(request.args.get('pageIndex'))
-    	pageSize = int(request.args.get('pageSize'))
-	count= (pageIndex + 1)* pageSize + 1
+def filterVendor(vendorNo, vendorName,vendorCompany):
+    vendor_No = vendor_Name = vendor_Company = ""
+    if vendorNo and vendorNo != 'null':
+        vendor_No = ' WITH @ID = "' + str(vendorNo) + '"'
+    if vendorName and vendorName != 'null':
+        vendor_Name = 'AND WITH VEND.NAME = "' + vendorName + '"'
+    if vendorCompany and vendorCompany != 'null':
+        vendor_Company = 'AND WITH VEND.COMPANY = "' + vendorCompany + '"'
+
+    if not vendorNo and not vendorName and not vendorCompany:
+        commandLine = 'SELECT {}'.format('PO.VENDOR.MST')
     else:
-	count=totalCount
-    orderFile = u2py.File("PO.VENDOR.MST")
-    fileList=u2py.List(0,orderFile)
-    idData=fileList.readlist()
-    totalCount=idData.dcount(u2py.FM)+1
-    recordid=[]
-    start= pageIndex * pageSize + 1
-    if(count>totalCount):
-    	count=totalCount
-    for i in range(start,count):
-    	tm=idData.extract(i)
-    	recordid.append(list(tm)[0][0])
-    vendData={}
-    for ids in recordid:
-    	field=[]
-    	for vendor in range(1,6):#this is the dict size(trying to make it dynamic)
-    		details=[]
-    		value=list(orderFile.readv(ids,vendor))
-		
-    		if(value[0][0] != ''):
-    			for i in range(len(value)):
-    				details.append(value[i][0])
-    			field.append(details)
-    			vendData[ids]=field
-    data=mappingVendor(vendData)
-    return{"data":data,
-		"totalCount":totalCount}
-def mappingVendor(data):
-	vendor={}	
-	for key in data.keys():
-		details = {}
-		details['vendorCompany'] = data[key][0][0]
-		details['vendorName'] = data[key][1][0]
-		details['address'] = data[key][2]
-		details['phoneNo'] = data[key][3]
-		details['itemId'] = data[key][4]
-		vendor[key] = details
-	return vendor
+        commandLine = 'SELECT {} {} {} {}'.format('PO.VENDOR.MST', vendor_No, vendor_Name, vendor_Company)
+    
+    line= commandLine.find('PO.VENDOR.MST  AND')
+    if (line != -1):
+        commandLine = commandLine.replace('PO.VENDOR.MST  AND','PO.VENDOR.MST')
+    return commandLine
+
+@app.route('/api/vendor', methods=['GET'])
+def vendorList():
+    allVendors = request.args.get('allVendors')
+    saveList_name = 'PAGE.LIST'
+    if allVendors != 'true':
+        start =1
+        pageIndex = int(request.args.get('pageIndex'))
+        pageSize = int(request.args.get('pageSize'))
+        vendorNo = request.args.get('VendorNo')
+        vendorName = request.args.get('Name')
+        vendorCompany = request.args.get('Company')
+        start = pageIndex * pageSize + 1
+        end = (pageIndex + 1) * pageSize
+        lastOrder = False
+        commandLine = filterVendor(vendorNo, vendorName,vendorCompany)
+    else:
+        start = 1
+        commandLine = 'SELECT {}'.format('PO.VENDOR.MST')
+
+    u2py.run(commandLine, capture=True)
+    u2py.run('SAVE.LIST {}'.format(saveList_name))
+
+    dataFile = u2py.File('PO.VENDOR.MST')
+    myList = u2py.List(0, saveList_name)
+    t_id = myList.readlist()
+    totalCount = t_id.dcount(u2py.FM)
+    if allVendors == 'true':
+        end = totalCount - 1
+    data = {}	
+    for x in range(start, end + 1):
+        if x > totalCount:
+            break
+        ids = t_id.extract(x)
+        vendorCompany = list(dataFile.readv(ids, 1))[0][0]
+        vendorName = list(dataFile.readv(ids, 2))[0][0]
+        vendorPhone = list(dataFile.readv(ids, 4))[0][0]
+        vendorItems = list(dataFile.readv(ids, 5))
+        vendorId = list(ids)[0][0]
+        orderDict = mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId)
+        data[vendorId]=(orderDict)
+    return {
+        'status': 200,
+        'data': data,
+        'totalCount': totalCount
+    }
+def mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId):
+	details = {}
+	details['vendorCompany'] = vendorCompany
+	details['vendorName'] = vendorName
+	details['phoneNo'] = vendorPhone
+	details['itemId'] = vendorItems
+	return details
 		
 @app.route('/api/vendor', methods=['POST'])
 def vendorCreate():
@@ -517,3 +542,4 @@ def token_required(f):
 
 if __name__ == '__main__':
     app.run()
+

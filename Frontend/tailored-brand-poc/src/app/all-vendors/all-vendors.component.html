@@ -5,6 +5,38 @@
 </div>
 <div class="container container-background">
     <div class="container">
+      <form [formGroup]="vendorSearch" class="container" (ngSubmit)=" paginateVendor(vendorSearch.value)">
+
+      <div class="row">
+
+        <div class="col-md-3 col-5 col-form-label">
+          Vendor No.
+        </div>
+        <div class="col-md-3 col-7">
+          <input class="form-control" type="text" placeholder="Vendor No."  formControlName='VendorNo' style="text-align: right;" />
+        </div>
+        <div class="col-md-3 col-5 col-form-label">
+          Vendor Name
+        </div>
+        <div class="col-md-3 col-7">
+          <input class="form-control" type="text" placeholder="Vendor Name" formControlName='Name' style="text-align: right;" />
+        </div>
+      </div>
+        <div class="row">
+          <div class="col-md-3 col-5 col-form-label">
+            Vendor Company
+          </div>
+          <div class="col-md-3 col-7">
+            <input class="form-control" type="text" placeholder="Vendor Company" formControlName='Company' style="text-align: right;" />
+          </div>
+        <div class="col-md-3 col-5 col-form-label">
+        </div>
+        <div class="col-md-3 col-7">
+          <button type="submit" class="btn btn-dark">Search</button>
+        </div>
+
+      </div>
+    </form>
       <div class="table-responsive">
         <table class="table table-striped">
           <thead class="thead-dark">
