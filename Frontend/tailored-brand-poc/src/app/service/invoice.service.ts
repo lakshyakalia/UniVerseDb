@@ -29,13 +29,9 @@ export class InvoiceService {
   @Cacheable({
     maxAge: 5 * 1000
   })
-  list(pageIndex,pageSize,skipStatus){
+  list(filter){
     return this.http.get(this.baseUri+`api/invoices`,{
-      params: { 
-        pageIndex: pageIndex,
-        pageSize: pageSize,
-        pagination: skipStatus
-      }
+      params: filter
     })
   }
 }

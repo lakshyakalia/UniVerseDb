@@ -10,27 +10,25 @@ import {PageEvent} from '@angular/material/paginator';
   styleUrls: ['./all-invoices.component.css']
 })
 export class AllInvoicesComponent implements OnInit {
-  invoiceForm : FormGroup;
   orderId:number;
   length : number;
   pageIndex = 0
   pageSize = 5;
   constructor(private router: Router,private invoiceService : InvoiceService) { }
 
-  quantity = []
-  cost = []
-  invoice = []
   orderNo
   invoiceData: Invoice[] = [];
   rowId : number = 0
 
+  invoiceForm = new FormGroup({
+    invoiceNo : new FormControl('',[Validators.required]),
+    invoiceFromDate: new FormControl('',[Validators.required]),
+    invoiceToDate: new FormControl('',[Validators.required]),
+    orderNo : new FormControl('',[Validators.required])
+ });
+
   ngOnInit() {
-    this.invoiceForm = new FormGroup({
-      invoiceNo : new FormControl('',[Validators.required]),
-      invoiceFromDate: new FormControl('',[Validators.required]),
-      invoiceToDate: new FormControl('',[Validators.required]),
-      orderNo : new FormControl('',[Validators.required])
-   });
+    
     let event = {
       pageIndex : this.pageIndex,
       pageSize : this.pageSize
@@ -50,10 +48,14 @@ export class AllInvoicesComponent implements OnInit {
     this.pageIndex = event.pageIndex
     this.pageSize = event.pageSize
     this.rowId = this.pageIndex * this.pageSize + 1
-    this.paginateInvoices(this.pageIndex,this.pageSize)
+    this.paginateInvoices()
   }
-  paginateInvoices(pageIndex,pageSize){
-    this.invoiceService.list(pageIndex,pageSize,true).subscribe((res:any) =>{
+  paginateInvoices(){
+    let values = this.invoiceForm.value
+    values['pageIndex'] = this.pageIndex
+    values['pageSize'] = this.pageSize
+    this.invoiceService.list(values).subscribe((res:any) =>{
+      console.log(res)
       this.length = res.totalOrder
     })
   }

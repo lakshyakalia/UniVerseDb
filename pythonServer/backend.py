@@ -242,14 +242,7 @@ def purchaseOrderGet(orderID):
 ################################
 ## INVOICE API #################
 ################################
-
-@app.route('/api/invoices', methods=['GET'])
-def invoiceList():
-    invoiceNo = request.args.get('invoiceNo')
-    invoiceFromDate = request.args.get('invoiceFromDate')
-    invoiceToDate = request.args.get('invoiceToDate')
-    orderNo = request.args.get('orderNo')
-
+def filterInvoice(invoiceToDate,invoiceNo,invoiceFromDate,orderNo):
     invoice_No = order_No = date_from = date_to = ""
     if invoiceNo and invoiceNo != 'null':
         invoice_No = ' WITH @ID = "' + str(invoiceNo) + '"'
@@ -260,22 +253,59 @@ def invoiceList():
     if invoiceToDate and invoiceToDate != 'null':
         date_to = ' WITH INV.DATE LE "' + str(invoiceToDate) + '"'
     command = "LIST DATA ORDER.NO INV.AMT PO.INVOICE.MST{}{}{}{} TOXML".format(invoice_No, order_No, date_from, date_to)
-    logger.debug(command)
-    command_execute = u2py.run(command, capture=True)
-    data = command_execute.strip()
-    invoices_data = xmltodict.parse(data)['ROOT']
-    if invoices_data is not None:
-        invoices = json.loads(json.dumps(invoices_data['PO.INVOICE.MST']))
+    return command
+
+@app.route('/api/invoices', methods=['GET'])
+def invoiceList():
+    allInvoices = False
+    invoiceNo = request.args.get('invoiceNo')
+    invoiceFromDate = request.args.get('invoiceFromDate')
+    invoiceToDate = request.args.get('invoiceToDate')
+    orderNo = request.args.get('orderNo')
+    pageIndex = int(request.args.get('pageIndex'))
+    pageSize = int(request.args.get('pageSize'))
+    saveList_name = 'INVOICE.LIST'
+    if invoiceNo and  invoiceFromDate and invoiceToDate and orderNo != 'null':
+        start = pageIndex * pageSize + 1
+        end = (pageIndex + 1) * pageSize
+        commandLine = filterInvoice(invoiceToDate,invoiceNo,invoiceFromDate,orderNo)
     else:
-        invoices = []
-    if type(invoices) is not list :
-        invoiceList = []
-        invoiceList.append(invoices)
-        invoices = invoiceList
+        start = 1
+        allInvoices = True
+        commandLine = 'SELECT {}'.format('PO.INVOICE.MST')
+
+    u2py.run(commandLine, capture=True)
+    u2py.run('SAVE.LIST {}'.format(saveList_name))
+
+    dataFile = u2py.File('PO.INVOICE.MST')
+    # myList = u2py.List(0, saveList_name)
+    # t_id = myList.readlist()
+    # totalCount = t_id.dcount(u2py.FM)
+    #
+    # if allInvoices:
+    #     end = totalCount - 1
+    # data = []
+    # for x in range(start, end+1):
+    #     if x > totalCount:
+    #         break
+    #     id = t_id.extract(x)
+    #     orderNo = list(dataFile.readv(id, 6))[0][0]
+    #     invoiceAmt = list(dataFile.readv(id, 8))[0][0]
+    #     id = list(id)[0][0]
+    #
+    #     vendorDict = mappingInvoices(orderNo,invoiceAmt,id)
+    #     data.append(vendorDict)
     return {
         'status': 200,
-        'data': invoices
+        # 'data': data
     }
+
+def mappingInvoices(orderNo,invoiceAmount,id):
+    details = {}
+    details['id'] = id
+    details['orderNo'] = orderNo
+    details['invoiceAmount'] = invoiceAmount
+    return details
 
 @app.route('/api/invoice', methods=['POST'])
 def invoiceCreate():
@@ -480,3 +510,4 @@ def token_required(f):
 
 if __name__ == '__main__':
     app.run()
+
