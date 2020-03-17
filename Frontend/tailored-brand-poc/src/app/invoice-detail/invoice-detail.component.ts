@@ -88,9 +88,11 @@ export class InvoiceDetailComponent implements OnInit {
   }
   
   getAllOrderNo() {
-    this.purchaseOrderService.list(0,false)
+    let value = {}
+    value['allOrders'] = true
+    this.purchaseOrderService.list(value)
       .subscribe((res: any) => {
-        let itemOrders = res.data.map(value => value['@_ID'])
+        let itemOrders = res.data.map(value => value['id'])
         this.itemService.listOrder(itemOrders)
       })
   }

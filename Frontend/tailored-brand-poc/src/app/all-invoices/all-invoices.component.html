@@ -61,7 +61,7 @@
         
       </div>
       <div class="col-md-3 col-7">
-        <button type="button" class="btn btn-dark" (click)="filterInvoiceNo($event,invoiceForm)">Search</button>
+        <button type="button" class="btn btn-dark" (click)="paginateInvoices()">Search</button>
       </div>
     </div>
     <hr>
@@ -76,7 +76,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let data of invoiceData; let i = index">
-            <td>{{ i+1 }}</td>
+            <td>{{ rowId + i }}</td>
             <td>{{ data['id'] }}</td>
             <td>{{ data['orderNumber'] }}</td>
             <td width="15%">

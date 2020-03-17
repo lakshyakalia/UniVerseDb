@@ -13,7 +13,7 @@ export class AllInvoicesComponent implements OnInit {
   orderId:number;
   length : number;
   pageIndex = 0
-  pageSize = 5;
+  pageSize = 5
   constructor(private router: Router,private invoiceService : InvoiceService) { }
 
   orderNo
@@ -47,16 +47,24 @@ export class AllInvoicesComponent implements OnInit {
   pagination(event){
     this.pageIndex = event.pageIndex
     this.pageSize = event.pageSize
+
     this.rowId = this.pageIndex * this.pageSize + 1
-    this.paginateInvoices()
-  }
-  paginateInvoices(){
     let values = this.invoiceForm.value
+    values['allVendors'] = true
+    this.list(values)
+  }
+  list(values){
     values['pageIndex'] = this.pageIndex
     values['pageSize'] = this.pageSize
     this.invoiceService.list(values).subscribe((res:any) =>{
-      console.log(res)
-      this.length = res.totalOrder
+      this.length = res.totalInvoices
+      this.invoiceData = res.data
     })
+  }
+
+  paginateInvoices(){
+    let values = this.invoiceForm.value
+    values['allVendors'] = false
+    this.list(values)
   }
 }
