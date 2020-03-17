@@ -139,35 +139,53 @@ def vendorGet(vendorId):
 
 @app.route('/api/order', methods=['GET'])
 def purchaseOrderList():
-    pageIndex = int(request.args.get('pageIndex'))
-    pageSize = int(request.args.get('pageSize'))
-    skipStatus = request.args.get('pagination')
+    allOrders = request.args.get('allOrders')
 
-    start = pageIndex * pageSize + 1
-    end = (pageIndex + 1) * pageSize
+    if allOrders is None:
+        saveList_name = 'PAGE.LIST'
+        pageIndex = int(request.args.get('pageIndex'))
+        pageSize = int(request.args.get('pageSize'))
+        orderNo = request.args.get('OrderNo')
 
-    lastOrder = False
-    command = "LIST DATA PO.ORDER.MST ORDER.DATE VEND.NAME BY-DSND ORDER.DATE TOXML"
-    logger.debug(command)
-    command_execute = u2py.run(command, capture=True)
-    orders_data_xml = command_execute.strip()
-    orders_data = xmltodict.parse(orders_data_xml)['ROOT']['PO.ORDER.MST']
-    orders = json.loads(json.dumps(orders_data))
-    totalOrders = len(orders)
-    if skipStatus == 'true':
-        actualLastOrder = orders[-1]
-        paginatedOrder = orders[start:end+1]
-        lastPaginatedOrder = paginatedOrder[-1]
-        if actualLastOrder['@_ID'] is lastPaginatedOrder['@_ID']:
+        vendorName = request.args.get('VendorName')
+        fromDate = request.args.get('FromDate')
+        toDate = request.args.get('ToDate')
+
+        start = pageIndex * pageSize + 1
+        end = (pageIndex + 1) * pageSize
+        lastOrder = False
+        commandLine = filterPurchaseOrder(orderNo, vendorName, fromDate, toDate)
+    else:
+        start = 1
+        saveList_name = 'TEMP.LIST'
+        commandLine = 'SELECT {}'.format('PO.ORDER.MST')
+
+    u2py.run(commandLine, capture=True)
+    u2py.run('SAVE.LIST {}'.format(saveList_name))
+
+    dataFile = u2py.File('PO.ORDER.MST')
+    myList = u2py.List(0, saveList_name)
+    t_id = myList.readlist()
+    totalCount = t_id.dcount(u2py.FM)
+    if allOrders is not None:
+        end = totalCount - 1
+    data = []
+    for x in range(start, end + 1):
+        if x > totalCount:
             lastOrder = True
-        else:
-            lastOrder = False
-        orders = paginatedOrder
+            break
+        id = t_id.extract(x)
+
+        date = list(dataFile.readv(id, 1))[0][0]
+        vendorName = list(dataFile.readv(id, 14))[0][0]
+        id = list(id)[0][0]
+        orderDict = mappingOrder(date, vendorName, id)
+        data.append(orderDict)
     return {
         'status': 200,
-        'data': orders,
+        'data': data,
         'lastOrder': lastOrder,
-        'totalOrders': totalOrders
+        'totalCount': totalCount
     }
 
 @app.route('/api/order', methods=['POST'])
@@ -420,12 +438,6 @@ def login():
 ## HELPER METHODS ##############
 ################################
 
-def convertDateFormat(orderDate):
-    date = u2py.DynArray()
-    date.insert(1 , 0 , 0 , orderDate)
-    formattedDate = date.extract(1).iconv('D-')
-    return formattedDate
-
 def checkExistingRecord(filename, recordID):
     fileObject = u2py.File(filename)
     try:
@@ -443,7 +455,7 @@ def upsertVendor(details, itemIds, recordID):
 
 def upsertPurchaseOrder(details, itemDetails, recordID, status):
     orderDate = datetime.strptime(details['OrderDate'], "%Y-%m-%d").strftime("%m-%d-%Y")
-    formattedDate = convertDateFormat(orderDate)
+    formattedDate = convertDateFormat(orderDate,'internal')
     address = [details['Street'], details['City'], details['State'], details['ZipCode']]
     itemIds = []
     quantities = []
@@ -506,6 +518,41 @@ def token_required(f):
             return {'msg': 'Token is invalid'}, 403
 
     return decorated
+
+def filterPurchaseOrder(orderNo, vendorName, fromDate, toDate):
+    order_No = vendor_Name = from_Date = to_Date = ""
+    if orderNo and orderNo != 'null':
+        order_No = ' WITH @ID = "' + str(orderNo) + '"'
+    if vendorName and vendorName != 'null':
+        vendor_Name = ' AND WITH VEND.NAME = "' + vendorName + '"'
+    if fromDate and fromDate != 'null':
+        from_Date = ' AND WITH ORDER.DATE GE "' + str(fromDate) + '"'
+    if toDate and toDate != 'null':
+        to_Date = ' AND WITH ORDER.DATE LE "' + str(toDate) + '"'
+
+    if not orderNo and not vendorName and not fromDate and not toDate:
+        commandLine = 'SELECT {}'.format('PO.ORDER.MST')
+    else:
+        commandLine = 'SELECT {} {} {} {} {}'.format('PO.ORDER.MST', order_No, vendor_Name, from_Date, to_Date)
+
+    return commandLine
+
+def mappingOrder(date, vendorName, id):
+    orderDict = {}
+    orderDict['date'] = convertDateFormat(date,'external')
+    orderDict['vendorName'] = vendorName
+    orderDict['id'] = id
+    return orderDict
+
+def convertDateFormat(orderDate,format):
+    date = u2py.DynArray()
+    date.insert(1, 0, 0, orderDate)
+    if format == 'internal':
+        formattedDate = date.extract(1).iconv('D-')
+    else:
+        formattedDate = str(date.extract(1).oconv('D-'))
+    return formattedDate
+
 
 
 if __name__ == '__main__':

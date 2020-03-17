@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpParams } from '@angular/common/http'
 import{ environment } from'../../environments/environment'
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -29,12 +29,10 @@ export class PurchaseOrderService {
     })
   }
 
-  list(skipLimit,skipStatus){
-    return this.http.get(this.baseUri+`api/order`,{ params: { skipLimit: skipLimit,pagination: skipStatus }})
-  }
-
-  pagination(pageIndex,pageSize,skipStatus){
-    return this.http.get(this.baseUri+`api/order`,{ params: { pageIndex: pageIndex,pageSize: pageSize,pagination: skipStatus }})
+  list(filter){
+    return this.http.get(this.baseUri+`api/order`,{ 
+      params: filter
+    })
   }
   
   get(orderID){
