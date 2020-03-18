@@ -40,8 +40,8 @@ export class VendorService {
   private _selectedVendorItemList: string[]
 
   constructor(private http: HttpClient, private itemService: ItemService) {
-    // this.prepareVendors()
-    // this._prepareNames()
+    this.prepareVendors()
+     this._prepareNames()
     let headers = new Headers()
     headers.append('Authorization',`${localStorage.getItem('token')}`)
   }
@@ -85,22 +85,22 @@ export class VendorService {
   prepareVendors() {
     this._list().subscribe((res: any) => {
       this._vendors = []
-
       for(let vendorId in res.data){
         let record = res.data[vendorId]
         this._vendors.push(
           {
             id: vendorId,
-            company: record[0][0],
-            name: record[1][0],
-            phone: record[3][0],
-            items: record[4].map(rawItem => {return rawItem})
+            company: record['vendorCompany'],
+            name: record['vendorName'],
+            phone: record['phoneNo'],
+            items: record['itemId'].map(rawItem => {return rawItem})
           }
         )
+        
       }
     })
     return
-  }
+   }
 
   private _prepareNames() {
     this._list().subscribe((res: any) => {

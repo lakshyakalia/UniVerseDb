@@ -51,6 +51,5 @@ export class AllInvoicesComponent implements OnInit {
     // }
   }
   pagination(event){
-    console.log(event)
   }
 }
