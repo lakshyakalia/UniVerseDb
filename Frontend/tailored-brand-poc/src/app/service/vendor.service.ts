@@ -123,13 +123,14 @@ export class VendorService {
 
   select(id: string) {
     this._selectedVendor = this._vendors.find(vendor => vendor.id == id)
-    let itemIds = this._selectedVendor.items.map(item => item.id)
+    let itemIds = this._selectedVendor.items
     let allItems = this.itemService.items()
     this._selectedVendorItemList = []
     this._selectedVendor.items = []
     itemIds.forEach(itemId => {
-      this._selectedVendor.items.push(allItems.find(item => item.id == itemId))
-    })
+      let items = allItems.find(item => item.id == itemId)
+      this._selectedVendor.items.push(items)
+      })
     this._selectedVendor.items.forEach(item => {
       this._selectedVendorItemList.push(`${item.id} | ${item.description}`)
     })
