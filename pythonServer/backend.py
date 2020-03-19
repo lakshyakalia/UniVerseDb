@@ -48,12 +48,23 @@ def checkuser(username,password):
 
 @app.route('/api/item', methods=['GET'])
 def allItems():
-    command = "LIST DATA PO.ITEM.MST DESC TOXML"
-    logger.debug(command)
-    command_execute = u2py.run(command, capture=True)
-    items_data_xml = command_execute.strip()
-    items_data = xmltodict.parse(items_data_xml)['ROOT']['PO.ITEM.MST']
-    items = json.loads(json.dumps(items_data))
+    itemFile=u2py.File("PO.ITEM.MST")
+    fileList=u2py.List(0,itemFile)
+    idData=fileList.readlist()
+    totalCount=idData.dcount(u2py.FM)+1
+    recordid=[]
+    start=1
+    for i in range(start,totalCount):
+        tm=idData.extract(i)
+        recordid.append(list(tm)[0][0])
+    items=[]
+    for ids in recordid:
+        field={}
+        item=list(itemFile.readv(ids,1))
+        desc=list(itemFile.readv(ids,2))
+        field['@_ID']=item
+        field['@DESC']=desc
+        items.append(field)
 
     return {"data": items}, 200
 
