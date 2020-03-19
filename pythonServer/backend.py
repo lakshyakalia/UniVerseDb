@@ -414,7 +414,6 @@ def invoicePurchaseOrderItemsGet(orderId):
 @app.route('/login', methods=['POST'])
 def login():
     auth = request.get_json()
-    print(auth['loginDetails'])
     username = auth['loginDetails']['username']
     password = auth['loginDetails']['password']
     if (checkuser(username, password)):
@@ -499,9 +498,7 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = request.headers.get('Authorization')
-        print(token)
         if not token:
-            print("")
             return {"msg": "Token is missing"
                     }, 403
         try:
