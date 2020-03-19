@@ -15,7 +15,7 @@
           type="text"
           id="invoiceNo"
           formControlName="invoiceNo"
-          (keydown)="checkForExponential($event)"
+          (keydown.enter)="getInvoice()" 
         />
         <span
           *ngIf="
@@ -37,6 +37,7 @@
           formControlName="orderNo"
           (keydown)="getItemOrderDetail($event)"
           [ngbTypeahead]="itemService.search"
+          (selectItem)="selectOrder($event)"
         />
         <span
           *ngIf="
@@ -140,12 +141,12 @@
     <div class="row">
       <div class="col"></div>
       <div class="col-md-1 col-3">
-        <button type="button" class="btn btn-dark" (click)="submitInvoice('receive')">
+        <button *ngIf="showButton" type="button" class="btn btn-dark" (click)="submitInvoice('receive')">
           Receive
         </button>
       </div>
       <div class="col-md-1 col-3">
-        <button type="button" class="btn btn-light" (click)="submitInvoice('draft')">Draft</button>
+        <button *ngIf="showButton" type="button" class="btn btn-light" (click)="submitInvoice('draft')">Draft</button>
       </div>
       <div class="mol-md-1 col-3">
         <button type="button" routerLink="/home" class="btn btn-light">Cancel</button>

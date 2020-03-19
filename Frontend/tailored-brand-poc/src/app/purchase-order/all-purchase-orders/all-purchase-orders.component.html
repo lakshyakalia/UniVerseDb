@@ -64,10 +64,11 @@
       <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="[5]" (page)="pagination($event)">
       </mat-paginator>
     </div>
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-dark" routerLink="/home" style="margin-top: 10px;">
+        Back
+      </button>
+    </div>
   </div>
-  <div class="d-flex justify-content-end">
-    <button class="btn btn-dark" routerLink="/home">
-      Back
-    </button>
-  </div>
+
 </div>

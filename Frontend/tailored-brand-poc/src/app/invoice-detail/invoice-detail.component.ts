@@ -10,6 +10,7 @@ import { ItemService } from '../service/item.service';
 import { PurchaseOrderService } from '../service/purchase-order.service';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-invoice-detail',
@@ -25,7 +26,9 @@ export class InvoiceDetailComponent implements OnInit {
   itemOrderError: boolean
   allOrderNo: any = []
   public model: any;
-
+  showButton : boolean = true;
+  quantityReceived : any
+  previousValue : number = 0;
 
   constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog, public snackBar: MatSnackBar, private purchaseOrderService: PurchaseOrderService) { }
 
@@ -54,6 +57,11 @@ export class InvoiceDetailComponent implements OnInit {
     if (!url.endsWith('/new') && !url.endsWith('/edit')) {
       this.getInvoiceDetail(url.split('/')[3])
     }
+    if (url.endsWith('/edit')){
+      this.invoiceForm.controls['orderNo'].disable()
+      this.invoiceForm.controls['invoiceAmount'].disable()
+      this.invoiceForm.controls['invoiceDate'].disable()
+    }
     this.date = new Date().toISOString().substr(0, 10);
     this.getAllOrderNo()
 
@@ -80,9 +88,15 @@ export class InvoiceDetailComponent implements OnInit {
     }
     this.invoiceService.post(this.invoiceForm.value, submitStatus)
       .subscribe((res) => {
-        this.openSnackBar(`Invoice Created`, 'Dismiss')
+        let invoiceAction = 'Created'
+        let nextPage = '/new'
+        if(!this.router.url.endsWith('/invoice/new')){
+          invoiceAction = 'Updated'
+          nextPage = '/edit'
+        }
+        this.openSnackBar(`Invoice ${invoiceAction}`, 'Dismiss')
         this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-          this.router.navigate(['/invoice/new']);
+          this.router.navigate([`/invoice/${nextPage}`]);
         });
       })
   }
@@ -100,6 +114,8 @@ export class InvoiceDetailComponent implements OnInit {
   async getInvoiceDetail(invoiceId) {
     this.invoiceService.getInvoice(invoiceId)
       .subscribe((res: any) => {
+        console.log(res)
+        this.quantityReceived = res.quantityReceived
         let len = res.ids.length
         this.invoiceForm.controls['invoiceDate'].setValue(res.invoiceDate[0])
         this.invoiceForm.controls['invoiceNo'].setValue(res.invoiceNo[0])
@@ -108,14 +124,22 @@ export class InvoiceDetailComponent implements OnInit {
         let status : boolean = false
         if(res.invoiceStatus[0] === 'receive'){
           status = true
-          this.invoiceForm.controls['invoiceDate'].disable()
           this.invoiceForm.controls['invoiceNo'].disable()
-          this.invoiceForm.controls['orderNo'].disable()
-          this.invoiceForm.controls['invoiceAmount'].disable()          
+          this.showButton = false
+        }
+        else{
+          this.invoiceForm.controls['invoiceDate'].enable()
+          this.invoiceForm.controls['orderNo'].enable()
+          this.invoiceForm.controls['invoiceAmount'].enable() 
         }
 
         for (let i = 0; i < len; i++) {
           this.createNewFormControl(res.ids[i], res.quantity[i],res.quantityReceived[i])
+        }
+        
+        if(res.invoiceStatus[0] === 'receive'){
+          const control = <FormArray>this.invoiceForm.controls['invoiceDetails']
+          control.controls.forEach(data => data.disable())
         }
       })
 
@@ -123,6 +147,38 @@ export class InvoiceDetailComponent implements OnInit {
       return;
     }
   }
+
+
+  getInvoice(){
+    if(!this.router.url.endsWith(`/new`)){
+    let invoiceNo = this.invoiceForm.controls['invoiceNo'].value
+    this.getInvoiceDetail(invoiceNo)
+    }
+    else{
+      return
+    }
+  }
+
+  selectOrder(event) {
+   console.log(event)
+   if(this.previousValue == 0){
+       this.previousValue = event.item
+   }
+   else{
+    // this.invoiceForm.controls.invoiceDetails.reset()
+     console.log(this.invoiceForm.controls.invoiceDetails.value)
+     this.previousValue = event.item
+   }
+    // if(previousValue.length === 0){
+      // this.vendorService.select(event.item.split("|")[0].trim())
+      // this.purchaseOrderForm.controls['VendorName'].setValue(event.item.split("|")[0].trim());  
+    // }
+    // else{
+    //   this.openDialogBox('Changing the vendor will clear all items from the list. Are you sure you want to proceed?')
+      
+    // }
+    
+ }
 
 
   getItemOrderDetail(event) {
@@ -153,11 +209,21 @@ export class InvoiceDetailComponent implements OnInit {
     }
   }
 
+
   calculatePendingQuantity(index) {
-    let controlArray = <FormArray>this.invoiceForm.get('invoiceDetails')
-    let pendingQuantity = controlArray.value[index].quantityReceived
+        let controlArray = <FormArray>this.invoiceForm.get('invoiceDetails')
+    let receivedQuantity = controlArray.value[index].quantityReceived
     let quantityOrdered = controlArray.value[index].quantityOrdered
-    let leftQuantity = quantityOrdered - pendingQuantity
+    let url = this.router.url
+    let leftQuantity
+    if (!url.endsWith('/new')) {
+      let initialPendingQuantity = this.quantityReceived[index]
+      leftQuantity =  initialPendingQuantity - receivedQuantity
+    }
+    else{
+      leftQuantity = quantityOrdered - receivedQuantity
+    }
+    
     controlArray.controls[index].get('quantityPending').setValue(leftQuantity)
   }
   

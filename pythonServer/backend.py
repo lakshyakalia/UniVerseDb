@@ -295,11 +295,12 @@ def invoiceList():
         if x > totalCount:
             break
         id = t_id.extract(x)
+        invoiceDate = list(dataFile.readv(id, 1))[0][0]
         orderNo = list(dataFile.readv(id, 6))[0][0]
         invoiceAmt = list(dataFile.readv(id, 8))[0][0]
         id = list(id)[0][0]
 
-        vendorDict = mappingInvoices(orderNo,invoiceAmt,id)
+        vendorDict = mappingInvoices(invoiceDate,orderNo,invoiceAmt,id)
         data.append(vendorDict)
     return {
         'status': 200,
@@ -307,11 +308,12 @@ def invoiceList():
         'totalInvoices': totalCount
     }
 
-def mappingInvoices(orderNo,invoiceAmount,id):
+def mappingInvoices(invoiceDate,orderNo,invoiceAmount,id):
     details = {}
     details['id'] = id
     details['orderNumber'] = orderNo
     details['amount'] = invoiceAmount
+    details['date'] = convertDateFormat(invoiceDate,'external')
     return details
 
 @app.route('/api/invoice', methods=['POST'])
@@ -342,7 +344,7 @@ def invoiceGet(invoiceId):
     my_xml = command_execute.strip()
     data = xmltodict.parse(my_xml)['ROOT']['PO.INVOICE.MST']
     invoiceNo.append(data['@_ID'])
-    invoiceDate.append(data['@INV.DATE'])
+    invoiceDate.append(convertDateFormat(data['@INV.DATE'],'external'))
     orderNo.append(data['@ORDER.NO'])
     invoiceAmount.append(data['@INV.AMT'])
     invoiceStatus.append(data['@INV.STATUS'])
