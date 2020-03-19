@@ -178,14 +178,14 @@ def vendorGet(vendorId):
         orderFile = u2py.File("PO.VENDOR.MST")
         vendorData={}
         vendorDict={}
-        vendorDict['Company']=list(orderFile.readv(35656082,1))[0][0]
-        vendorDict['Contact']=list(orderFile.readv(35656082,2))[0][0]
-        vendorDict['Street']=list(orderFile.readv(35656082,3))[0][0]
-        vendorDict['City']=list(orderFile.readv(35656082,3))[1][0]
-        vendorDict['State']=list(orderFile.readv(35656082,3))[2][0]
-        vendorDict['Zip']=list(orderFile.readv(35656082,3))[3][0]
-        vendorDict['Phone']=list(orderFile.readv(35656082,4))[0][0]
-        itemid=list(orderFile.readv(35656082,5))
+        vendorDict['Company']=list(orderFile.readv(vendorId,1))[0][0]
+        vendorDict['Contact']=list(orderFile.readv(vendorId,2))[0][0]
+        vendorDict['Street']=list(orderFile.readv(vendorId,3))[0][0]
+        vendorDict['City']=list(orderFile.readv(vendorId,3))[1][0]
+        vendorDict['State']=list(orderFile.readv(vendorId,3))[2][0]
+        vendorDict['Zip']=list(orderFile.readv(vendorId,3))[3][0]
+        vendorDict['Phone']=list(orderFile.readv(vendorId,4))[0][0]
+        itemid=list(orderFile.readv(vendorId,5))
         items=[]
    
         for i in itemid:
