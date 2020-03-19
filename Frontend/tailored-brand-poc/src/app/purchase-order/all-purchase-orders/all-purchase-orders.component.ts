@@ -42,27 +42,23 @@ export class AllPurchaseOrdersComponent implements OnInit {
     this.pageSize = event.pageSize
 
     this.rowId = this.pageIndex * this.pageSize + 1
-    this.paginateOrders(this.pageIndex,this.pageSize)
-  }
-
-  paginateOrders(pageIndex,pageSize){
     let values = this.purchaseOrderForm.value
-    values['pageIndex'] = pageIndex
-    values['pageSize'] = pageSize
     
-    this.purchaseOrderService.list(values).subscribe((res:any) =>{
-      this.length = res.totalCount
-      this.itemOrderList = res.data
-    })
+    this.list(values)
   }
 
-  filter(values){
-    values['pageIndex'] = 0
+  list(values){
+    values['pageIndex'] = this.pageIndex
     values['pageSize'] = this.pageSize
     this.purchaseOrderService.list(values).subscribe((res:any) =>{
       this.length = res.totalCount
       this.itemOrderList = res.data
     })
+  }
+
+  filter(){
+    let values = this.purchaseOrderForm.value
+    this.list(values)
   }
 
   openParticularOrder(orderNo) {
