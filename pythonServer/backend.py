@@ -60,8 +60,8 @@ def allItems():
     items=[]
     for ids in recordid:
         field={}
-        item=list(itemFile.readv(ids,1))
-        desc=list(itemFile.readv(ids,2))
+        item=list(itemFile.readv(ids,1))[0][0]
+        desc=list(itemFile.readv(ids,2))[0][0]
         field['@_ID']=item
         field['@DESC']=desc
         items.append(field)
@@ -175,33 +175,26 @@ def vendorUpdate(vendorId):
 def vendorGet(vendorId):
     status = checkExistingRecord("PO.VENDOR.MST", vendorId)
     if (status):
-        itemId = []
-        itemDict = {}
-        vendorDict = {}
-        command = "LIST DATA PO.VENDOR.MST " + vendorId + " VEND.COMPANY VEND.NAME VEND.ADDRESS VEND.PHONE ITEM.IDS TOXML"
-        logger.debug(command)
-        command_execute = u2py.run(command, capture=True)
-        my_xml = command_execute.strip()
-        data = xmltodict.parse(my_xml)['ROOT']['PO.VENDOR.MST']
-        if (type(data['ITEM.IDS_MV']) is list):
-            for j in range(len(data['ITEM.IDS_MV'])):
-                itemDict = {}
-                itemDict['itemId'] = data['ITEM.IDS_MV'][j]['@ITEM.IDS']
-                itemId.append(itemDict)
-        else:
-            itemDict['itemId'] = data['ITEM.IDS_MV']['@ITEM.IDS']
-            itemId.append(itemDict)
-        vendorDict['Company'] = data['@VEND.COMPANY']
-        vendorDict['Contact'] = data['@VEND.NAME']
-        vendorDict['Phone'] = data['@VEND.PHONE']
-        vendorDict['Street'] = data['VEND.ADDRESS_MV'][0]['@VEND.ADDRESS']
-        vendorDict['City'] = data['VEND.ADDRESS_MV'][1]['@VEND.ADDRESS']
-        vendorDict['State'] = data['VEND.ADDRESS_MV'][2]['@VEND.ADDRESS']
-        vendorDict['Zip'] = data['VEND.ADDRESS_MV'][3]['@VEND.ADDRESS']
-        vendorData = {}
-        vendorData['particularVendorData'] = vendorDict
-        vendorData['itemIds'] = itemId
-
+        orderFile = u2py.File("PO.VENDOR.MST")
+        vendorData={}
+        vendorDict={}
+        vendorDict['Company']=list(orderFile.readv(35656082,1))[0][0]
+        vendorDict['Contact']=list(orderFile.readv(35656082,2))[0][0]
+        vendorDict['Street']=list(orderFile.readv(35656082,3))[0][0]
+        vendorDict['City']=list(orderFile.readv(35656082,3))[1][0]
+        vendorDict['State']=list(orderFile.readv(35656082,3))[2][0]
+        vendorDict['Zip']=list(orderFile.readv(35656082,3))[3][0]
+        vendorDict['Phone']=list(orderFile.readv(35656082,4))[0][0]
+        itemid=list(orderFile.readv(35656082,5))
+        items=[]
+   
+        for i in itemid:
+                itemsa={}
+                itemsa["itemId"]=i[0]
+                items.append(itemsa)
+        vendorData["particularVendorData"]=vendorDict
+        vendorData["itemIds"]=items
+        print(vendorData)
         return {
             'status': 200,
             'vendorData': vendorData
