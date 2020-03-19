@@ -126,6 +126,7 @@ def vendorList():
         'totalCount': totalCount
     }
 def mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId):
+        vendorItems = [items[0] for items in vendorItems]
 	details = {}
 	details['vendorCompany'] = vendorCompany
 	details['vendorName'] = vendorName
