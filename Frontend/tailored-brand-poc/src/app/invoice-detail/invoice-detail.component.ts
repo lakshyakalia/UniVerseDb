@@ -114,7 +114,8 @@ export class InvoiceDetailComponent implements OnInit {
   async getInvoiceDetail(invoiceId) {
     this.invoiceService.getInvoice(invoiceId)
       .subscribe((res: any) => {
-        console.log(res)
+        let  arr = <FormArray>this.invoiceForm.controls.invoiceDetails
+        arr.controls = []
         this.quantityReceived = res.quantityReceived
         let len = res.ids.length
         this.invoiceForm.controls['invoiceDate'].setValue(res.invoiceDate[0])
@@ -148,7 +149,6 @@ export class InvoiceDetailComponent implements OnInit {
     }
   }
 
-
   getInvoice(){
     if(!this.router.url.endsWith(`/new`)){
     let invoiceNo = this.invoiceForm.controls['invoiceNo'].value
@@ -159,28 +159,6 @@ export class InvoiceDetailComponent implements OnInit {
     }
   }
 
-  selectOrder(event) {
-   console.log(event)
-   if(this.previousValue == 0){
-       this.previousValue = event.item
-   }
-   else{
-    // this.invoiceForm.controls.invoiceDetails.reset()
-     console.log(this.invoiceForm.controls.invoiceDetails.value)
-     this.previousValue = event.item
-   }
-    // if(previousValue.length === 0){
-      // this.vendorService.select(event.item.split("|")[0].trim())
-      // this.purchaseOrderForm.controls['VendorName'].setValue(event.item.split("|")[0].trim());  
-    // }
-    // else{
-    //   this.openDialogBox('Changing the vendor will clear all items from the list. Are you sure you want to proceed?')
-      
-    // }
-    
- }
-
-
   getItemOrderDetail(event) {
     if (event.keyCode == 69 || event.keyCode == 190 || event.keyCode == 107 || event.keyCode == 189 || (event.keyCode >= 65 && event.keyCode <= 90))
     {
@@ -190,6 +168,8 @@ export class InvoiceDetailComponent implements OnInit {
       let orderID = this.invoiceForm.get('orderNo').value
       if (event.keyCode === 13 && orderID != '' && this.lastId != orderID) {
         this.lastId = this.invoiceForm.get('orderNo').value
+        let  arr = <FormArray>this.invoiceForm.controls.invoiceDetails
+        arr.controls = []
         this.invoiceService.getParticularOrder(orderID)
           .subscribe((res: any) => {
             if (res.status == 200) {
@@ -211,7 +191,8 @@ export class InvoiceDetailComponent implements OnInit {
 
 
   calculatePendingQuantity(index) {
-        let controlArray = <FormArray>this.invoiceForm.get('invoiceDetails')
+    debugger
+    let controlArray = <FormArray>this.invoiceForm.get('invoiceDetails')
     let receivedQuantity = controlArray.value[index].quantityReceived
     let quantityOrdered = controlArray.value[index].quantityOrdered
     let url = this.router.url

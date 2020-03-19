@@ -319,8 +319,10 @@ def mappingInvoices(invoiceDate,orderNo,invoiceAmount,id):
 @app.route('/api/invoice', methods=['POST'])
 def invoiceCreate():
     data = request.get_json()
+    date = data['invoiceDetails']['invoiceDate']
+    convertedDate = convertDateFormat(date,'internal')
     upsertInvoice(data['invoiceDetails']['orderNo'], data['invoiceDetails']['invoiceDetails'],
-                data['invoiceDetails']['invoiceNo'], data['invoiceDetails']['invoiceDate'],
+                data['invoiceDetails']['invoiceNo'], convertedDate ,
                 data['invoiceDetails']['invoiceAmount'], data['submitStatus'])
     return {
         'status': 200,
@@ -352,11 +354,11 @@ def invoiceGet(invoiceId):
         for i in range(len(data['INV.ITEM.IDS_MV'])):
             ids.append(data['INV.ITEM.IDS_MV'][i]['@INV.ITEM.IDS'])
             quantity.append(data['INV.ITEM.QTY_MV'][i]['@INV.ITEM.QTY'])
-            quantityReceived.append(data['INV.ITEM.RECEIVED_MV'][i]['@INV.ITEM.RECEIVED'])
+            quantityReceived.append(data['INV.ITEM.PENDING_MV'][i]['@INV.ITEM.PENDING'])
     else:
         ids.append(data['INV.ITEM.IDS_MV']['@INV.ITEM.IDS'])
         quantity.append(data['INV.ITEM.QTY_MV']['@INV.QTY.IDS'])
-        quantityReceived.append(data['INV.ITEM.RECEIVED_MV']['@INV.ITEM.RECEIVED'])
+        quantityReceived.append(data['INV.ITEM.PENDING_MV']['@INV.ITEM.PENDING'])
     return {
         "status": 200,
         "invoiceNo": invoiceNo,
