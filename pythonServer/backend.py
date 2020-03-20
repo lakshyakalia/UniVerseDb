@@ -320,7 +320,8 @@ def mappingInvoices(invoiceDate,orderNo,invoiceAmount,id):
 def invoiceCreate():
     data = request.get_json()
     date = data['invoiceDetails']['invoiceDate']
-    convertedDate = convertDateFormat(date,'internal')
+    invoiceDate = datetime.strptime(date, "%Y-%m-%d").strftime("%m-%d-%Y")
+    convertedDate = convertDateFormat(invoiceDate,'internal')
     upsertInvoice(data['invoiceDetails']['orderNo'], data['invoiceDetails']['invoiceDetails'],
                 data['invoiceDetails']['invoiceNo'], convertedDate ,
                 data['invoiceDetails']['invoiceAmount'], data['submitStatus'])
