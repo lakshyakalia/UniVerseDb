@@ -361,9 +361,7 @@ def invoiceCreate():
 
 @app.route('/api/invoice/<invoiceId>', methods=['GET'])
 def invoiceGet(invoiceId):
-    command = "LIST DATA PO.INVOICE.MST " + invoiceId + " INV.DATE INV.ITEM.IDS INV.ITEM.QTY INV.ITEM.PENDING INV.ITEM.RECEIVED ORDER.NO INV.STATUS INV.AMT TOXML"
-    logger.debug(command)
-    command_execute = u2py.run(command, capture=True)
+    orderFile = u2py.File("PO.INVOICE.MST")
     invoiceNo = []
     invoiceDate = []
     orderNo = []
@@ -372,22 +370,17 @@ def invoiceGet(invoiceId):
     quantity = []
     invoiceStatus = []
     quantityReceived = []
-    my_xml = command_execute.strip()
-    data = xmltodict.parse(my_xml)['ROOT']['PO.INVOICE.MST']
-    invoiceNo.append(data['@_ID'])
-    invoiceDate.append(data['@INV.DATE'])
-    orderNo.append(data['@ORDER.NO'])
-    invoiceAmount.append(data['@INV.AMT'])
-    invoiceStatus.append(data['@INV.STATUS'])
-    if (type(data['INV.ITEM.IDS_MV']) is list):
-        for i in range(len(data['INV.ITEM.IDS_MV'])):
-            ids.append(data['INV.ITEM.IDS_MV'][i]['@INV.ITEM.IDS'])
-            quantity.append(data['INV.ITEM.QTY_MV'][i]['@INV.ITEM.QTY'])
-            quantityReceived.append(data['INV.ITEM.RECEIVED_MV'][i]['@INV.ITEM.RECEIVED'])
-    else:
-        ids.append(data['INV.ITEM.IDS_MV']['@INV.ITEM.IDS'])
-        quantity.append(data['INV.ITEM.QTY_MV']['@INV.QTY.IDS'])
-        quantityReceived.append(data['INV.ITEM.RECEIVED_MV']['@INV.ITEM.RECEIVED'])
+    invoiceNo.append(invoiceId)
+    invoiceDate.append(convertDateFormat(list(orderFile.readv(invoiceId,1))[0][0],'external'))
+    orderNo.append(list(orderFile.readv(invoiceId,6))[0][0])
+    invoiceStatus.append(list(orderFile.readv(invoiceId,7))[0][0])
+    invoiceAmount.append(list(orderFile.readv(invoiceId,8))[0][0])
+    itemsId=list(orderFile.readv(invoiceId,2))
+    for i in range(len(itemsId)):
+        ids.append(list(orderFile.readv(invoiceId,2))[i][0])
+        quantity.append(list(orderFile.readv(invoiceId,3))[i][0])
+        quantityReceived.append(list(orderFile.readv(invoiceId,5))[i][0])
+        quantityReceived.append(list(orderFile.readv(invoiceId,9))[i][0])
     return {
         "status": 200,
         "invoiceNo": invoiceNo,
