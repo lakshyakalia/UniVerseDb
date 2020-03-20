@@ -210,52 +210,31 @@ def purchaseOrderUpdate(orderId):
 @app.route('/api/order/<orderID>', methods=['GET'])
 def purchaseOrderGet(orderID):
     status = checkExistingRecord('PO.ORDER.MST', orderID)
-    if (status):
-        command = "LIST DATA PO.ORDER.MST " + orderID + " ORDER.DATE ORDER.STATUS COMP.NAME COMP.CONTACT.NAME COMP.ADDRESS COMP.PHONE ORDER.ITEM.IDS ORDER.ITEM.QTY ORDER.ITEM.COST VEND.NAME TOXML"
-        logger.debug(command)
-        command_execute = u2py.run(command, capture=True)
-        xmldata = command_execute.strip()
-        orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
-        orderDetailsDict = itemDict = {}
-        itemList = []
-        orderDetailsDict['OrderDate'] = orderDetail['@ORDER.DATE']
-        orderDetailsDict['CompanyName'] = orderDetail['@COMP.NAME']
-        orderDetailsDict['PhoneNumber'] = orderDetail['@COMP.PHONE']
-        orderDetailsDict['ContactName'] = orderDetail['@COMP.CONTACT.NAME']
-        orderDetailsDict['VendorName'] = orderDetail['@VEND.NAME']
+    if status:
+        commandLine = 'SELECT {}'.format('PO.ORDER.MST')
+        saveList_name = 'PAGE.LIST'
+        u2py.run(commandLine, capture=True)
+        u2py.run('SAVE.LIST {}'.format(saveList_name))
 
-        orderDetailsDict['Street'] = orderDetail['COMP.ADDRESS_MV'][0]['@COMP.ADDRESS']
-        orderDetailsDict['City'] = orderDetail['COMP.ADDRESS_MV'][1]['@COMP.ADDRESS']
-        orderDetailsDict['State'] = orderDetail['COMP.ADDRESS_MV'][2]['@COMP.ADDRESS']
-        orderDetailsDict['ZipCode'] = orderDetail['COMP.ADDRESS_MV'][3]['@COMP.ADDRESS']
-
-        if (type(orderDetail['ORDER.ITEM.IDS_MV']) is list):
-            for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
-                itemDict = {}
-                itemDict['ItemID'] = orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS']
-                itemDict['Cost'] = orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST']
-                itemDict['Quantity'] = orderDetail['ORDER.ITEM.QTY_MV'][i]['@ORDER.ITEM.QTY']
-                itemList.append(itemDict)
-        else:
-            itemDict = {}
-            itemDict['ItemID'] = orderDetail['ORDER.ITEM.IDS_MV']['@ORDER.ITEM.IDS']
-            itemDict['Cost'] = orderDetail['ORDER.ITEM.COST_MV']['@ORDER.ITEM.COST']
-            itemDict['Quantity'] = orderDetail['ORDER.ITEM.QTY_MV']['@ORDER.ITEM.QTY']
-            itemList.append(itemDict)
-        orderDetails = {}
-        orderDetails['orderData'] = orderDetailsDict
-        orderDetails['itemList'] = itemList
-        orderDetails['submitStatus'] = orderDetail['@ORDER.STATUS']
+        dataFile = u2py.File('PO.ORDER.MST')
+        orderDetail = mapPurchaseOrder(dataFile, orderID)
+        itemList = mapOrderItems(dataFile, orderID)
+        submitStatus = list(dataFile.readv(orderID, 2))[0][0]
 
         return {
             'status': 200,
-            'data': orderDetails
+            'data': {
+                'orderData' : orderDetail,
+                'itemList':itemList,
+                'submitStatus': submitStatus
+            }
         }
     else:
         return {
             'status': 404,
             'msg': 'Order no not found'
         }
+
 
 ################################
 ## INVOICE API #################
@@ -558,6 +537,32 @@ def convertDateFormat(orderDate,format):
         formattedDate = str(date.extract(1).oconv('D-'))
     return formattedDate
 
+def mapPurchaseOrder(dataFile,orderID):
+    orderDetailsDict = {}
+    date = list(dataFile.readv(orderID, 1))[0][0]
+    orderDetailsDict['OrderDate'] = convertDateFormat(date,'external')
+    orderDetailsDict['CompanyName'] = list(dataFile.readv(orderID, 7))[0][0]
+    orderDetailsDict['ContactName'] = list(dataFile.readv(orderID, 8))[0][0]
+    orderDetailsDict['PhoneNumber'] = list(dataFile.readv(orderID, 10))[0][0]
+    orderDetailsDict['VendorName'] = list(dataFile.readv(orderID, 14))[0][0]
+    orderDetailsDict['Street'] = list(dataFile.readv(orderID, 9))[0][0]
+    orderDetailsDict['City'] = list(dataFile.readv(orderID, 9))[1][0]
+    orderDetailsDict['State'] = list(dataFile.readv(orderID, 9))[2][0]
+    orderDetailsDict['ZipCode'] = list(dataFile.readv(orderID, 9))[3][0]
+    return orderDetailsDict
+
+def mapOrderItems(dataFile,orderID):
+    itemId = [items[0] for items in list(dataFile.readv(orderID, 11))]
+    cost = [items[0] for items in list(dataFile.readv(orderID, 12))]
+    quantity= [items[0] for items in list(dataFile.readv(orderID, 13))]
+    itemList = []
+    for i in range(len(itemId)):
+        itemDict = {}
+        itemDict['ItemID'] = itemId[i]
+        itemDict['Cost'] = cost[i]
+        itemDict['Quantity'] = quantity[i]
+        itemList.append(itemDict)
+    return itemList
 
 
 if __name__ == '__main__':
