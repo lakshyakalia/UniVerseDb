@@ -29,6 +29,7 @@ export class InvoiceDetailComponent implements OnInit {
   showButton : boolean = true;
   quantityReceived : any
   previousValue : number = 0;
+  quantityPendingDefault : number = 0;
 
   constructor(private vendorService: VendorService, private invoiceService: InvoiceService, private itemService: ItemService, private router: Router, private fb: FormBuilder, private dialog: MatDialog, public snackBar: MatSnackBar, private purchaseOrderService: PurchaseOrderService) { }
 
@@ -176,7 +177,7 @@ export class InvoiceDetailComponent implements OnInit {
             if (res.status == 200) {
               let len = res.ids.length
               for (let i = 0; i < len; i++) {
-                this.createNewFormControl(res.ids[i], res.quantity[i],0)
+                this.createNewFormControl(res.ids[i], res.quantity[i],this.quantityPendingDefault)
               }
             }
             if (res.status == 404) {
