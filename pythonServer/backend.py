@@ -397,31 +397,20 @@ def invoiceGet(invoiceId):
 def invoicePurchaseOrderItemsGet(orderId):
     status = checkExistingRecord('PO.ORDER.MST', orderId)
     if (status):
-        command = "LIST DATA PO.ORDER.MST " + orderId + " ORDER.ITEM.IDS ORDER.ITEM.QTY ORDER.ITEM.COST TOXML"
-        logger.debug(command)
-        command_execute = u2py.run(command, capture=True)
-        xmldata = command_execute.strip()
+        orderFile = u2py.File("PO.ORDER.MST")
         itemCost = []
         itemQuantity = []
         itemIds = []
-        orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
-        if (type(orderDetail['ORDER.ITEM.COST_MV']) is list):
-            for i in range(len(orderDetail['ORDER.ITEM.COST_MV'])):
-                itemCost.append(orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST'])
-            for i in range(len(orderDetail['ORDER.ITEM.QTY_MV'])):
-                itemQuantity.append(orderDetail['ORDER.ITEM.QTY_MV'][i]['@ORDER.ITEM.QTY'])
-            for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
-                itemIds.append(orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS'])
-        else:
-            itemCost.append(orderDetail['ORDER.ITEM.COST_MV']['@ORDER.ITEM.COST'])
-            itemIds.append(orderDetail['ORDER.ITEM.IDS_MV']['@ORDER.ITEM.IDS'])
-            itemQuantity.append(orderDetail['ORDER.ITEM.QTY_MV']['@ORDER.ITEM.QTY'])
+        items=list(orderFile.readv(orderId,11))
+        for i in range(len(items)):
+                itemIds.append(list(orderFile.readv(orderId,11))[i][0])
+                itemCost.append(list(orderFile.readv(orderId,13))[i][0])
+                itemQuantity.append(list(orderFile.readv(orderId,12))[i][0])
         return {
             'status': 200,
             'cost': itemCost,
             'quantity': itemQuantity,
             "ids": itemIds,
-            "orderID": orderDetail['@_ID']
         }
     else:
         return {
