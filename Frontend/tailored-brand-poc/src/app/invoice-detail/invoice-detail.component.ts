@@ -191,7 +191,6 @@ export class InvoiceDetailComponent implements OnInit {
 
 
   calculatePendingQuantity(index) {
-    debugger
     let controlArray = <FormArray>this.invoiceForm.get('invoiceDetails')
     let receivedQuantity = controlArray.value[index].quantityReceived
     let quantityOrdered = controlArray.value[index].quantityOrdered
