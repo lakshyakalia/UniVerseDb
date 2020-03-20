@@ -118,7 +118,8 @@ export class InvoiceDetailComponent implements OnInit {
         arr.controls = []
         this.quantityReceived = res.quantityReceived
         let len = res.ids.length
-        this.invoiceForm.controls['invoiceDate'].setValue(res.invoiceDate[0])
+        let date = new Date(Date.parse(res.invoiceDate[0])).toISOString().substr(0, 10)
+        this.invoiceForm.controls['invoiceDate'].setValue(date)
         this.invoiceForm.controls['invoiceNo'].setValue(res.invoiceNo[0])
         this.invoiceForm.controls['orderNo'].setValue(res.orderNo[0])
         this.invoiceForm.controls['invoiceAmount'].setValue(res.invoiceAmount[0])
