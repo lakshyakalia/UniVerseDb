@@ -15,10 +15,12 @@ export class VendorService {
 
   private _baseUri:string=environment.baseUrl;
   private _vendors: Vendor[] = []
+
   get vendors(): Vendor[] {
-    this._prepareVendors()
+    this.prepareVendors()
     return this._vendors
   }
+
   private _names: string[] = []
   get names(): string[] {
     this._prepareNames()
@@ -38,8 +40,8 @@ export class VendorService {
   private _selectedVendorItemList: string[]
 
   constructor(private http: HttpClient, private itemService: ItemService) {
-    this._prepareVendors()
-    this._prepareNames()
+    this.prepareVendors()
+     this._prepareNames()
     let headers = new Headers()
     headers.append('Authorization',`${localStorage.getItem('token')}`)
   }
@@ -66,36 +68,46 @@ export class VendorService {
     maxAge: 5 * 1000
   })
   private _list() {
-    return this.http.get(this._baseUri+'api/vendor')
+    let values = {
+      allVendors : 'true'
+    }
+    return this.http.get(this._baseUri+'api/vendor',{
+      params: values
+    })
   }
 
-  private _prepareVendors() {
+  list(filter){
+    return this.http.get(this._baseUri+'api/vendor',{
+      params: filter
+    })
+  }
+
+  prepareVendors() {
     this._list().subscribe((res: any) => {
       this._vendors = []
       for(let vendorId in res.data){
         let record = res.data[vendorId]
         this._vendors.push(
           {
-            id: record['@_ID'],
-            company: record['@VEND.COMPANY'],
-            name: record['@VEND.NAME'],
-            phone: record['@VEND.PHONE'],
-            items: record['ITEM.IDS_MV']["length"] != undefined ?
-              record['ITEM.IDS_MV'].map(rawItem => {return {id: rawItem['@ITEM.IDS']}})
-              : [{id: record['@ITEM.IDS']}]
+            id: vendorId,
+            company: record['vendorCompany'],
+            name: record['vendorName'],
+            phone: record['phoneNo'],
+            items: record['itemId'].map(rawItem => {return rawItem})
           }
         )
+        
       }
     })
     return
-  }
+   }
 
   private _prepareNames() {
     this._list().subscribe((res: any) => {
       this._names = []
       for(let vendorId in res.data){
         let record = res.data[vendorId]
-        this._names.push(`${record['@_ID']} | ${record['@VEND.NAME']}`)
+        this._names.push(`${vendorId} | ${record['vendorName']}`)
       }
     })
     return
@@ -111,13 +123,14 @@ export class VendorService {
 
   select(id: string) {
     this._selectedVendor = this._vendors.find(vendor => vendor.id == id)
-    let itemIds = this._selectedVendor.items.map(item => item.id)
+    let itemIds = this._selectedVendor.items
     let allItems = this.itemService.items()
     this._selectedVendorItemList = []
     this._selectedVendor.items = []
     itemIds.forEach(itemId => {
-      this._selectedVendor.items.push(allItems.find(item => item.id == itemId))
-    })
+      let items = allItems.find(item => item.id == itemId)
+      this._selectedVendor.items.push(items)
+      })
     this._selectedVendor.items.forEach(item => {
       this._selectedVendorItemList.push(`${item.id} | ${item.description}`)
     })
@@ -136,5 +149,5 @@ export class Vendor {
   company: string
   name: string
   phone: string
-  items: Item[]
+  items: any
 }

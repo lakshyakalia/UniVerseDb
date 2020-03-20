@@ -88,9 +88,9 @@ export class InvoiceDetailComponent implements OnInit {
   }
   
   getAllOrderNo() {
-    this.purchaseOrderService.list()
+    this.purchaseOrderService.list(0,false)
       .subscribe((res: any) => {
-        let itemOrders = res.data.map(value => value['purchaseOrderNo'])
+        let itemOrders = res.data.map(value => value['@_ID'])
         this.itemService.listOrder(itemOrders)
       })
   }
@@ -137,7 +137,7 @@ export class InvoiceDetailComponent implements OnInit {
             if (res.status == 200) {
               let len = res.ids.length
               for (let i = 0; i < len; i++) {
-                this.createNewFormControl(res.ids[i], res.quantity[i],res.quantityPending[i])
+                this.createNewFormControl(res.ids[i], res.quantity[i],0)
               }
             }
             if (res.status == 404) {

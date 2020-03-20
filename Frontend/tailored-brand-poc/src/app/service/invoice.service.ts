@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import{environment} from '../../environments/environment';
 import { Cacheable } from 'ngx-cacheable';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
@@ -42,7 +42,6 @@ export class InvoiceService {
       ))
     )
   }
-
 }
 export class Invoice {
   id: string
