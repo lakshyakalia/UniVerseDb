@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core'
 import { PurchaseOrderService, Order } from '../../service/purchase-order.service'
-
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { Router } from '@angular/router'
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-all-purchase-orders',
@@ -9,57 +10,58 @@ import { Router } from '@angular/router'
   styleUrls: ['./all-purchase-orders.component.css']
 })
 export class AllPurchaseOrdersComponent implements OnInit {
-
+  length : number;
+  pageIndex = 0
+  pageSize = 5;
   itemOrderList: []
 
-  skipLimit: number = 0
+  rowId : number = 0
 
-  disablePrevButton: boolean
+  ngOnInit() { 
+    let event = {
+      pageIndex : this.pageIndex,
+      pageSize : this.pageSize
+    }
 
-  disableNextButton: boolean
+    this.pagination(event)
+  }
 
   paginationRecords : string
 
   constructor(private router: Router, private purchaseOrderService: PurchaseOrderService) { }
 
-  listOrder(skipLimit) {
-    if (skipLimit === 0) this.disablePrevButton = true
-    else this.disablePrevButton = false
+  purchaseOrderForm = new FormGroup({
+    OrderNo: new FormControl(''),
+    VendorName: new FormControl(''),
+    FromDate: new FormControl(''),
+    ToDate: new FormControl('')
+  })
 
-    this.purchaseOrderService.list(skipLimit,true).subscribe((res: any) => {
-      
-      this.disableNextButton = res.lastOrder
-      if(res.lastOrder){
-        this.paginationRecords = `Showing ${this.skipLimit + 1}-${ res.totalOrders } of ${res.totalOrders} records`
-      }
-      else{
-        this.paginationRecords = `Showing ${this.skipLimit + 1}-${this.skipLimit + 5} of ${res.totalOrders} records`
-      }
-      this.itemOrderList = res.data.map(record => <Order>{
-        purchaseOrderNo: record['@_ID'],
-        orderDate: record['@ORDER.DATE'],
-        companyName: record['@VEND.NAME']
-      })
+  pagination(event){
+    this.pageIndex = event.pageIndex
+    this.pageSize = event.pageSize
+
+    this.rowId = this.pageIndex * this.pageSize + 1
+    let values = this.purchaseOrderForm.value
+    
+    this.list(values)
+  }
+
+  list(values){
+    values['pageIndex'] = this.pageIndex
+    values['pageSize'] = this.pageSize
+    this.purchaseOrderService.list(values).subscribe((res:any) =>{
+      this.length = res.totalCount
+      this.itemOrderList = res.data
     })
   }
 
-  ngOnInit() {
-    this.listOrder(this.skipLimit)
-
+  filter(){
+    let values = this.purchaseOrderForm.value
+    this.list(values)
   }
 
   openParticularOrder(orderNo) {
     this.router.navigate([`/order/edit/${orderNo}`])
-  }
-
-  nextPagination() {
-    this.disablePrevButton = false
-    this.skipLimit = this.skipLimit + 5
-    this.listOrder(this.skipLimit)
-  }
-
-  previousPagination() {
-    this.skipLimit = this.skipLimit - 5
-    this.listOrder(this.skipLimit)
   }
 }

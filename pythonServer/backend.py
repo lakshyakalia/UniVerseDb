@@ -211,32 +211,53 @@ def vendorGet(vendorId):
 
 @app.route('/api/order', methods=['GET'])
 def purchaseOrderList():
-    orderLimit = 5
-    skip = int(request.args.get('skipLimit'))
-    skipStatus = request.args.get('pagination')
+    allOrders = request.args.get('allOrders')
 
-    lastOrder = False
-    command = "LIST DATA PO.ORDER.MST ORDER.DATE VEND.NAME BY-DSND ORDER.DATE TOXML"
-    logger.debug(command)
-    command_execute = u2py.run(command, capture=True)
-    orders_data_xml = command_execute.strip()
-    orders_data = xmltodict.parse(orders_data_xml)['ROOT']['PO.ORDER.MST']
-    orders = json.loads(json.dumps(orders_data))
-    totalOrders = len(orders)
-    if skipStatus == 'true':
-        actualLastOrder = orders[-1]
-        paginatedOrder = orders[skip:orderLimit+skip]
-        lastPaginatedOrder = paginatedOrder[-1]
-        if actualLastOrder['@_ID'] is lastPaginatedOrder['@_ID']:
+    if allOrders is None:
+        saveList_name = 'PAGE.LIST'
+        pageIndex = int(request.args.get('pageIndex'))
+        pageSize = int(request.args.get('pageSize'))
+        orderNo = request.args.get('OrderNo')
+
+        vendorName = request.args.get('VendorName')
+        fromDate = request.args.get('FromDate')
+        toDate = request.args.get('ToDate')
+
+        start = pageIndex * pageSize + 1
+        end = (pageIndex + 1) * pageSize
+        lastOrder = False
+        commandLine = filterPurchaseOrder(orderNo, vendorName, fromDate, toDate)
+    else:
+        start = 1
+        saveList_name = 'TEMP.LIST'
+        commandLine = 'SELECT {}'.format('PO.ORDER.MST')
+
+    u2py.run(commandLine, capture=True)
+    u2py.run('SAVE.LIST {}'.format(saveList_name))
+
+    dataFile = u2py.File('PO.ORDER.MST')
+    myList = u2py.List(0, saveList_name)
+    t_id = myList.readlist()
+    totalCount = t_id.dcount(u2py.FM)
+    if allOrders is not None:
+        end = totalCount - 1
+    data = []
+    for x in range(start, end + 1):
+        if x > totalCount:
             lastOrder = True
-        else:
-            lastOrder = False
-        orders = paginatedOrder
+            break
+        id = t_id.extract(x)
+
+        date = list(dataFile.readv(id, 1))[0][0]
+        vendorName = list(dataFile.readv(id, 14))[0][0]
+        id = list(id)[0][0]
+        orderDict = mappingOrder(date, vendorName, id)
+        data.append(orderDict)
     return {
         'status': 200,
-        'data': orders,
+        'data': data,
         'lastOrder': lastOrder,
-        'totalOrders': totalOrders
+        'totalCount': totalCount
     }
 
 @app.route('/api/order', methods=['POST'])
@@ -261,52 +282,31 @@ def purchaseOrderUpdate(orderId):
 @app.route('/api/order/<orderID>', methods=['GET'])
 def purchaseOrderGet(orderID):
     status = checkExistingRecord('PO.ORDER.MST', orderID)
-    if (status):
-        command = "LIST DATA PO.ORDER.MST " + orderID + " ORDER.DATE ORDER.STATUS COMP.NAME COMP.CONTACT.NAME COMP.ADDRESS COMP.PHONE ORDER.ITEM.IDS ORDER.ITEM.QTY ORDER.ITEM.COST VEND.NAME TOXML"
-        logger.debug(command)
-        command_execute = u2py.run(command, capture=True)
-        xmldata = command_execute.strip()
-        orderDetail = xmltodict.parse(xmldata)['ROOT']['PO.ORDER.MST']
-        orderDetailsDict = itemDict = {}
-        itemList = []
-        orderDetailsDict['OrderDate'] = orderDetail['@ORDER.DATE']
-        orderDetailsDict['CompanyName'] = orderDetail['@COMP.NAME']
-        orderDetailsDict['PhoneNumber'] = orderDetail['@COMP.PHONE']
-        orderDetailsDict['ContactName'] = orderDetail['@COMP.CONTACT.NAME']
-        orderDetailsDict['VendorName'] = orderDetail['@VEND.NAME']
+    if status:
+        commandLine = 'SELECT {}'.format('PO.ORDER.MST')
+        saveList_name = 'PAGE.LIST'
+        u2py.run(commandLine, capture=True)
+        u2py.run('SAVE.LIST {}'.format(saveList_name))
 
-        orderDetailsDict['Street'] = orderDetail['COMP.ADDRESS_MV'][0]['@COMP.ADDRESS']
-        orderDetailsDict['City'] = orderDetail['COMP.ADDRESS_MV'][1]['@COMP.ADDRESS']
-        orderDetailsDict['State'] = orderDetail['COMP.ADDRESS_MV'][2]['@COMP.ADDRESS']
-        orderDetailsDict['ZipCode'] = orderDetail['COMP.ADDRESS_MV'][3]['@COMP.ADDRESS']
-
-        if (type(orderDetail['ORDER.ITEM.IDS_MV']) is list):
-            for i in range(len(orderDetail['ORDER.ITEM.IDS_MV'])):
-                itemDict = {}
-                itemDict['ItemID'] = orderDetail['ORDER.ITEM.IDS_MV'][i]['@ORDER.ITEM.IDS']
-                itemDict['Cost'] = orderDetail['ORDER.ITEM.COST_MV'][i]['@ORDER.ITEM.COST']
-                itemDict['Quantity'] = orderDetail['ORDER.ITEM.QTY_MV'][i]['@ORDER.ITEM.QTY']
-                itemList.append(itemDict)
-        else:
-            itemDict = {}
-            itemDict['ItemID'] = orderDetail['ORDER.ITEM.IDS_MV']['@ORDER.ITEM.IDS']
-            itemDict['Cost'] = orderDetail['ORDER.ITEM.COST_MV']['@ORDER.ITEM.COST']
-            itemDict['Quantity'] = orderDetail['ORDER.ITEM.QTY_MV']['@ORDER.ITEM.QTY']
-            itemList.append(itemDict)
-        orderDetails = {}
-        orderDetails['orderData'] = orderDetailsDict
-        orderDetails['itemList'] = itemList
-        orderDetails['submitStatus'] = orderDetail['@ORDER.STATUS']
+        dataFile = u2py.File('PO.ORDER.MST')
+        orderDetail = mapPurchaseOrder(dataFile, orderID)
+        itemList = mapOrderItems(dataFile, orderID)
+        submitStatus = list(dataFile.readv(orderID, 2))[0][0]
 
         return {
             'status': 200,
-            'data': orderDetails
+            'data': {
+                'orderData' : orderDetail,
+                'itemList':itemList,
+                'submitStatus': submitStatus
+            }
         }
     else:
         return {
             'status': 404,
             'msg': 'Order no not found'
         }
+
 
 ################################
 ## INVOICE API #################
@@ -441,12 +441,6 @@ def login():
 ## HELPER METHODS ##############
 ################################
 
-def convertDateFormat(orderDate):
-    date = u2py.DynArray()
-    date.insert(1 , 0 , 0 , orderDate)
-    formattedDate = date.extract(1).iconv('D-')
-    return formattedDate
-
 def checkExistingRecord(filename, recordID):
     fileObject = u2py.File(filename)
     try:
@@ -464,7 +458,7 @@ def upsertVendor(details, itemIds, recordID):
 
 def upsertPurchaseOrder(details, itemDetails, recordID, status):
     orderDate = datetime.strptime(details['OrderDate'], "%Y-%m-%d").strftime("%m-%d-%Y")
-    formattedDate = convertDateFormat(orderDate)
+    formattedDate = convertDateFormat(orderDate,'internal')
     address = [details['Street'], details['City'], details['State'], details['ZipCode']]
     itemIds = []
     quantities = []
@@ -525,6 +519,67 @@ def token_required(f):
             return {'msg': 'Token is invalid'}, 403
 
     return decorated
+
+def filterPurchaseOrder(orderNo, vendorName, fromDate, toDate):
+    order_No = vendor_Name = from_Date = to_Date = ""
+    if orderNo and orderNo != 'null':
+        order_No = ' WITH @ID = "' + str(orderNo) + '"'
+    if vendorName and vendorName != 'null':
+        vendor_Name = ' AND WITH VEND.NAME = "' + vendorName + '"'
+    if fromDate and fromDate != 'null':
+        from_Date = ' AND WITH ORDER.DATE GE "' + str(fromDate) + '"'
+    if toDate and toDate != 'null':
+        to_Date = ' AND WITH ORDER.DATE LE "' + str(toDate) + '"'
+
+    if not orderNo and not vendorName and not fromDate and not toDate:
+        commandLine = 'SELECT {}'.format('PO.ORDER.MST')
+    else:
+        commandLine = 'SELECT {} {} {} {} {}'.format('PO.ORDER.MST', order_No, vendor_Name, from_Date, to_Date)
+
+    return commandLine
+
+def mappingOrder(date, vendorName, id):
+    orderDict = {}
+    orderDict['date'] = convertDateFormat(date,'external')
+    orderDict['vendorName'] = vendorName
+    orderDict['id'] = id
+    return orderDict
+
+def convertDateFormat(orderDate,format):
+    date = u2py.DynArray()
+    date.insert(1, 0, 0, orderDate)
+    if format == 'internal':
+        formattedDate = date.extract(1).iconv('D-')
+    else:
+        formattedDate = str(date.extract(1).oconv('D-'))
+    return formattedDate
+
+def mapPurchaseOrder(dataFile,orderID):
+    orderDetailsDict = {}
+    date = list(dataFile.readv(orderID, 1))[0][0]
+    orderDetailsDict['OrderDate'] = convertDateFormat(date,'external')
+    orderDetailsDict['CompanyName'] = list(dataFile.readv(orderID, 7))[0][0]
+    orderDetailsDict['ContactName'] = list(dataFile.readv(orderID, 8))[0][0]
+    orderDetailsDict['PhoneNumber'] = list(dataFile.readv(orderID, 10))[0][0]
+    orderDetailsDict['VendorName'] = list(dataFile.readv(orderID, 14))[0][0]
+    orderDetailsDict['Street'] = list(dataFile.readv(orderID, 9))[0][0]
+    orderDetailsDict['City'] = list(dataFile.readv(orderID, 9))[1][0]
+    orderDetailsDict['State'] = list(dataFile.readv(orderID, 9))[2][0]
+    orderDetailsDict['ZipCode'] = list(dataFile.readv(orderID, 9))[3][0]
+    return orderDetailsDict
+
+def mapOrderItems(dataFile,orderID):
+    itemId = [items[0] for items in list(dataFile.readv(orderID, 11))]
+    cost = [items[0] for items in list(dataFile.readv(orderID, 12))]
+    quantity= [items[0] for items in list(dataFile.readv(orderID, 13))]
+    itemList = []
+    for i in range(len(itemId)):
+        itemDict = {}
+        itemDict['ItemID'] = itemId[i]
+        itemDict['Cost'] = cost[i]
+        itemDict['Quantity'] = quantity[i]
+        itemList.append(itemDict)
+    return itemList
 
 
 if __name__ == '__main__':
