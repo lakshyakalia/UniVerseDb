@@ -149,5 +149,5 @@ export class Vendor {
   company: string
   name: string
   phone: string
-  items: Item[]
+  items: any
 }
