@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {VendorService} from '../service/vendor.service'
+import {VendorService,Vendor} from '../service/vendor.service'
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
 import {PageEvent} from '@angular/material/paginator';
+import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
+
 
 @Component({
   selector: 'app-all-vendors',
@@ -10,15 +12,58 @@ import {PageEvent} from '@angular/material/paginator';
   styleUrls: ['./all-vendors.component.css']
 })
 export class AllVendorsComponent implements OnInit {
-  length = 100;
-  pageSize = 10
-  pageEvent: PageEvent; 
+  length :number;
+  pageSize = 5
+  pageEvent: PageEvent;
+  pageIndex = 0
+  rowId : number = 0
+ vendorData : Vendor[] = []
+ vendorSearch = new FormGroup({
+  Name: new FormControl(),
+  VendorNo: new FormControl(),
+  Company: new FormControl(''),
+  Phone: new FormControl('',),
+})
   constructor(private vendorService: VendorService , private dialog : MatDialog) { }
 
-  ngOnInit() {}
+
+  ngOnInit() {
+    let event = {
+      pageIndex: this.pageIndex,
+      pageSize: this.pageSize
+    }
+    this.pagination(event)
+  }
 
   pagination(event){
+    this.pageIndex = event.pageIndex
+    this.pageSize = event.pageSize
+
+    this.rowId = this.pageIndex * this.pageSize + 1
+    let values = this.vendorSearch.value
+    this.paginateVendor(values)
+  }
+
+  paginateVendor(values){
+    values['pageIndex'] = this.pageIndex
+    values['pageSize'] = this.pageSize
     
+    this.vendorService.list(values).subscribe((res:any)=>{
+      this.vendorData  = []
+       this.length=res.totalCount
+       for(let vendorId in res.data){
+         let record = res.data[vendorId]
+         this.vendorData.push(
+           {
+             id: vendorId,
+             company: record['vendorCompany'],
+             name: record['vendorName'].toString(),
+           phone: record['phoneNo'].toString(),
+           items: record['itemId'].map(rawItem => {return rawItem})
+           }
+         )
+       }
+    })
   }
   openDialogBox(msg){
     this.dialog.open(PurchaseDialogBoxComponent,{
