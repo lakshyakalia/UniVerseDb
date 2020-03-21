@@ -402,7 +402,7 @@ def invoiceGet(invoiceId):
     for i in range(len(itemsId)):
         ids.append(list(orderFile.readv(invoiceId,2))[i][0])
         quantity.append(list(orderFile.readv(invoiceId,3))[i][0])
-        quantityReceived.append(list(orderFile.readv(invoiceId,4))[i][0])
+        quantityReceived.append(list(orderFile.readv(invoiceId,5))[i][0])
     return {
         "status": 200,
         "invoiceNo": invoiceNo,
