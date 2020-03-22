@@ -384,36 +384,43 @@ def invoiceCreate():
 
 @app.route('/api/invoice/<invoiceId>', methods=['GET'])
 def invoiceGet(invoiceId):
-    orderFile = u2py.File("PO.INVOICE.MST")
-    invoiceNo = []
-    invoiceDate = []
-    orderNo = []
-    invoiceAmount = []
-    ids = []
-    quantity = []
-    invoiceStatus = []
-    quantityReceived = []
-    invoiceNo.append(invoiceId)
-    invoiceDate.append(convertDateFormat(list(orderFile.readv(invoiceId,1))[0][0],'external'))
-    orderNo.append(list(orderFile.readv(invoiceId,6))[0][0])
-    invoiceStatus.append(list(orderFile.readv(invoiceId,7))[0][0])
-    invoiceAmount.append(list(orderFile.readv(invoiceId,8))[0][0])
-    itemsId=list(orderFile.readv(invoiceId,2))
-    for i in range(len(itemsId)):
-        ids.append(list(orderFile.readv(invoiceId,2))[i][0])
-        quantity.append(list(orderFile.readv(invoiceId,3))[i][0])
-        quantityReceived.append(list(orderFile.readv(invoiceId,5))[i][0])
-    return {
-        "status": 200,
-        "invoiceNo": invoiceNo,
-        "invoiceDate": invoiceDate,
-        "orderNo": orderNo,
-        "ids": ids,
-        "quantity": quantity,
-        "invoiceStatus": invoiceStatus,
-        "invoiceAmount": invoiceAmount,
-        "quantityReceived": quantityReceived
-    }
+    status = checkExistingRecord('PO.INVOICE.MST', invoiceId)
+    if (status):
+        orderFile = u2py.File("PO.INVOICE.MST")
+        invoiceNo = []
+        invoiceDate = []
+        orderNo = []
+        invoiceAmount = []
+        ids = []
+        quantity = []
+        invoiceStatus = []
+        quantityReceived = []
+        invoiceNo.append(invoiceId)
+        invoiceDate.append(convertDateFormat(list(orderFile.readv(invoiceId,1))[0][0],'external'))
+        orderNo.append(list(orderFile.readv(invoiceId,6))[0][0])
+        invoiceStatus.append(list(orderFile.readv(invoiceId,7))[0][0])
+        invoiceAmount.append(list(orderFile.readv(invoiceId,8))[0][0])
+        itemsId=list(orderFile.readv(invoiceId,2))
+        for i in range(len(itemsId)):
+            ids.append(list(orderFile.readv(invoiceId,2))[i][0])
+            quantity.append(list(orderFile.readv(invoiceId,3))[i][0])
+            quantityReceived.append(list(orderFile.readv(invoiceId,4))[i][0])
+        return {
+            "status": 200,
+            "invoiceNo": invoiceNo,
+            "invoiceDate": invoiceDate,
+            "orderNo": orderNo,
+            "ids": ids,
+            "quantity": quantity,
+            "invoiceStatus": invoiceStatus,
+            "invoiceAmount": invoiceAmount,
+            "quantityReceived": quantityReceived
+        }
+    else:
+        return {
+            'status': 404,
+            'message': 'Invoice not found'
+        }
 
 @app.route('/api/invoice/order/<orderId>', methods=['GET'])
 def invoicePurchaseOrderItemsGet(orderId):
