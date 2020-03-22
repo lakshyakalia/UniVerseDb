@@ -60,8 +60,8 @@ def allItems():
     items=[]
     for ids in recordid:
         field={}
-        item=list(itemFile.readv(ids,1))[0][0]
-        desc=list(itemFile.readv(ids,2))[0][0]
+        item=list(itemFile.readv(ids,0))[0][0]
+        desc=list(itemFile.readv(ids,1))[0][0]
         field['@_ID']=item
         field['@DESC']=desc
         items.append(field)
@@ -138,12 +138,12 @@ def vendorList():
     }
 def mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId):
         vendorItems = [items[0] for items in vendorItems]
-	details = {}
-	details['vendorCompany'] = vendorCompany
-	details['vendorName'] = vendorName
-	details['phoneNo'] = vendorPhone
-	details['itemId'] = vendorItems
-	return details
+        details = {}
+        details['vendorCompany'] = vendorCompany
+        details['vendorName'] = vendorName
+        details['phoneNo'] = vendorPhone
+        details['itemId'] = vendorItems
+        return details
 		
 @app.route('/api/vendor', methods=['POST'])
 def vendorCreate():
@@ -194,7 +194,6 @@ def vendorGet(vendorId):
                 items.append(itemsa)
         vendorData["particularVendorData"]=vendorDict
         vendorData["itemIds"]=items
-        print(vendorData)
         return {
             'status': 200,
             'vendorData': vendorData
@@ -212,7 +211,7 @@ def vendorGet(vendorId):
 @app.route('/api/order', methods=['GET'])
 def purchaseOrderList():
     allOrders = request.args.get('allOrders')
-
+    lastOrder = False
     if allOrders is None:
         saveList_name = 'PAGE.LIST'
         pageIndex = int(request.args.get('pageIndex'))
@@ -318,39 +317,63 @@ def invoiceList():
     invoiceFromDate = request.args.get('invoiceFromDate')
     invoiceToDate = request.args.get('invoiceToDate')
     orderNo = request.args.get('orderNo')
+    pageIndex = int(request.args.get('pageIndex'))
+    pageSize = int(request.args.get('pageSize'))
+    saveList_name = 'INVOICE.LIST'
 
-    invoice_No = order_No = date_from = date_to = ""
-    if invoiceNo and invoiceNo != 'null':
-        invoice_No = ' WITH @ID = "' + str(invoiceNo) + '"'
-    if orderNo and orderNo != 'null':
-        order_No = ' WITH ORDER.NO = "' + str(orderNo) + '"'
-    if invoiceFromDate and invoiceFromDate != 'null':
-        date_from = ' WITH INV.DATE GE "' + str(invoiceFromDate) + '"'
-    if invoiceToDate and invoiceToDate != 'null':
-        date_to = ' WITH INV.DATE LE "' + str(invoiceToDate) + '"'
-    command = "LIST DATA ORDER.NO INV.AMT PO.INVOICE.MST{}{}{}{} TOXML".format(invoice_No, order_No, date_from, date_to)
-    logger.debug(command)
-    command_execute = u2py.run(command, capture=True)
-    data = command_execute.strip()
-    invoices_data = xmltodict.parse(data)['ROOT']
-    if invoices_data is not None:
-        invoices = json.loads(json.dumps(invoices_data['PO.INVOICE.MST']))
+    start = pageIndex * pageSize + 1
+    end = (pageIndex + 1) * pageSize
+    allInvoices = request.args.get('allVendors')
+
+    if allInvoices  is not 'true':
+        start = pageIndex * pageSize + 1
+        end = (pageIndex + 1) * pageSize
+        commandLine = filterInvoice(invoiceToDate,invoiceNo,invoiceFromDate,orderNo)
     else:
-        invoices = []
-    if type(invoices) is not list :
-        invoiceList = []
-        invoiceList.append(invoices)
-        invoices = invoiceList
+        commandLine = 'SELECT {}'.format('PO.INVOICE.MST')
+
+    u2py.run(commandLine, capture=True)
+    u2py.run('SAVE.LIST {}'.format(saveList_name))
+
+    dataFile = u2py.File('PO.INVOICE.MST')
+    myList = u2py.List(0, saveList_name)
+    t_id = myList.readlist()
+    totalCount = t_id.dcount(u2py.FM)
+
+    data = []
+    for x in range(start, end+1):
+        if x > totalCount:
+            break
+        id = t_id.extract(x)
+        invoiceDate = list(dataFile.readv(id, 1))[0][0]
+        orderNo = list(dataFile.readv(id, 6))[0][0]
+        invoiceAmt = list(dataFile.readv(id, 8))[0][0]
+        id = list(id)[0][0]
+
+        vendorDict = mappingInvoices(invoiceDate,orderNo,invoiceAmt,id)
+        data.append(vendorDict)
     return {
         'status': 200,
-        'data': invoices
+        'data': data,
+        'totalInvoices': totalCount
     }
+
+def mappingInvoices(invoiceDate,orderNo,invoiceAmount,id):
+    details = {}
+    details['id'] = id
+    details['orderNumber'] = orderNo
+    details['amount'] = invoiceAmount
+    details['date'] = convertDateFormat(invoiceDate,'external')
+    return details
 
 @app.route('/api/invoice', methods=['POST'])
 def invoiceCreate():
     data = request.get_json()
+    date = data['invoiceDetails']['invoiceDate']
+    invoiceDate = datetime.strptime(date, "%Y-%m-%d").strftime("%m-%d-%Y")
+    convertedDate = convertDateFormat(invoiceDate,'internal')
     upsertInvoice(data['invoiceDetails']['orderNo'], data['invoiceDetails']['invoiceDetails'],
-                data['invoiceDetails']['invoiceNo'], data['invoiceDetails']['invoiceDate'],
+                data['invoiceDetails']['invoiceNo'], convertedDate ,
                 data['invoiceDetails']['invoiceAmount'], data['submitStatus'])
     return {
         'status': 200,
@@ -380,7 +403,6 @@ def invoiceGet(invoiceId):
         ids.append(list(orderFile.readv(invoiceId,2))[i][0])
         quantity.append(list(orderFile.readv(invoiceId,3))[i][0])
         quantityReceived.append(list(orderFile.readv(invoiceId,5))[i][0])
-        quantityReceived.append(list(orderFile.readv(invoiceId,9))[i][0])
     return {
         "status": 200,
         "invoiceNo": invoiceNo,
@@ -537,6 +559,20 @@ def filterPurchaseOrder(orderNo, vendorName, fromDate, toDate):
         commandLine = 'SELECT {} {} {} {} {}'.format('PO.ORDER.MST', order_No, vendor_Name, from_Date, to_Date)
 
     return commandLine
+
+def filterInvoice(invoiceToDate,invoiceNo,invoiceFromDate,orderNo):
+    invoice_No = order_No = date_from = date_to = ""
+    if invoiceNo and invoiceNo != 'null':
+        invoice_No = ' WITH @ID = "' + str(invoiceNo) + '"'
+    if orderNo and orderNo != 'null':
+        order_No = ' AND WITH ORDER.NO = "' + str(orderNo) + '"'
+    if invoiceFromDate and invoiceFromDate != 'null':
+        date_from = ' AND WITH INV.DATE GE "' + str(invoiceFromDate) + '"'
+    if invoiceToDate and invoiceToDate != 'null':
+        date_to = ' AND WITH INV.DATE LE "' + str(invoiceToDate) + '"'
+    command = "SELECT {}{}{}{}{}".format('PO.INVOICE.MST',invoice_No, order_No, date_from, date_to)
+    return command
+
 
 def mappingOrder(date, vendorName, id):
     orderDict = {}

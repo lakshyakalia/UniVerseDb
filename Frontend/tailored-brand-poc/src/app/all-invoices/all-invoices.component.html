@@ -61,7 +61,7 @@
         
       </div>
       <div class="col-md-3 col-7">
-        <button type="button" class="btn btn-dark" (click)="filterInvoiceNo($event,invoiceForm)">Search</button>
+        <button type="button" class="btn btn-dark" (click)="paginateInvoices()">Search</button>
       </div>
     </div>
     <hr>
@@ -71,13 +71,15 @@
         <thead class="thead-dark">
           <th class="right">SNo.</th>
           <th class="right">Invoice No.</th>
+          <th class="right">Invoice Date</th>
           <th class="right">Order No.</th>
           <th>Invoice Amount</th>
         </thead>
         <tbody>
           <tr *ngFor="let data of invoiceData; let i = index">
-            <td>{{ i+1 }}</td>
+            <td>{{ rowId + i }}</td>
             <td>{{ data['id'] }}</td>
+            <td>{{ data['date'] }}</td>
             <td>{{ data['orderNumber'] }}</td>
             <td width="15%">
               <div class="input-group">
@@ -92,14 +94,14 @@
       </table>
       <mat-paginator [length]="length"
       [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 25, 100]"
+      [pageSizeOptions]="[5 , 10 , 25 , 100]"
       (page)="pagination($event)">
       </mat-paginator>
     </div>
     <div class="row">
       <div class="col"></div>
       <div class="col-md-1 col-3">
-        <button type="button" class="btn btn-dark" routerLink="/home"> Back
+        <button type="button" class="btn btn-dark" routerLink="/home" style="margin-top: 10px;"> Back
         </button>
       </div>
     </div>

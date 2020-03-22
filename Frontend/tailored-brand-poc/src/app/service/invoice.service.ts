@@ -29,18 +29,10 @@ export class InvoiceService {
   @Cacheable({
     maxAge: 5 * 1000
   })
-  list(filters?): Observable<Invoice[]>{
-    return this.http.get<UvResponse<[]>>(this.baseUri+`api/invoices`,{
-      params: filters
-    }).pipe(
-      map(response => response.data.map(record => 
-        <Invoice>{
-          id: record['@_ID'],
-          orderNumber: record['@ORDER.NO'],
-          amount: record['@INV.AMT']
-        }
-      ))
-    )
+  list(filter){
+    return this.http.get(this.baseUri+`api/invoices`,{
+      params: filter
+    })
   }
 }
 export class Invoice {
