@@ -115,6 +115,8 @@ export class InvoiceDetailComponent implements OnInit {
   async getInvoiceDetail(invoiceId) {
     this.invoiceService.getInvoice(invoiceId)
       .subscribe((res: any) => {
+        if(res.status == 200)
+        {
         let  arr = <FormArray>this.invoiceForm.controls.invoiceDetails
         arr.controls = []
         this.quantityReceived = res.quantityReceived
@@ -144,6 +146,13 @@ export class InvoiceDetailComponent implements OnInit {
           const control = <FormArray>this.invoiceForm.controls['invoiceDetails']
           control.controls.forEach(data => data.disable())
         }
+      }
+      else{
+        this.openSnackBar(`${res.message}`, 'Dismiss')
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/invoice/edit']);
+        });
+      }
       })
 
     if (!this.checkValidation()) {
