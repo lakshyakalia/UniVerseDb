@@ -384,7 +384,7 @@ def invoiceCreate():
 
 @app.route('/api/invoice/<invoiceId>', methods=['GET'])
 def invoiceGet(invoiceId):
-    status = checkExistingRecord('PO.ORDER.MST', invoiceId)
+    status = checkExistingRecord('PO.INVOICE.MST', invoiceId)
     if (status):
         orderFile = u2py.File("PO.INVOICE.MST")
         invoiceNo = []
