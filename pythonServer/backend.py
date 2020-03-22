@@ -386,7 +386,7 @@ def invoiceCreate():
 def invoiceGet(invoiceId):
     status = checkExistingRecord('PO.INVOICE.MST', invoiceId)
     if (status):
-        orderFile = u2py.File("PO.INVOICE.MST")
+        invoiceFile = u2py.File("PO.INVOICE.MST")
         invoiceNo = []
         invoiceDate = []
         orderNo = []
@@ -396,15 +396,16 @@ def invoiceGet(invoiceId):
         invoiceStatus = []
         quantityReceived = []
         invoiceNo.append(invoiceId)
-        invoiceDate.append(convertDateFormat(list(orderFile.readv(invoiceId,1))[0][0],'external'))
-        orderNo.append(list(orderFile.readv(invoiceId,6))[0][0])
-        invoiceStatus.append(list(orderFile.readv(invoiceId,7))[0][0])
-        invoiceAmount.append(list(orderFile.readv(invoiceId,8))[0][0])
-        itemsId=list(orderFile.readv(invoiceId,2))
+        invoiceDate.append(convertDateFormat(list(invoiceFile.readv(invoiceId, 1))[0][0], 'external'))
+        orderNo.append(list(invoiceFile.readv(invoiceId, 6))[0][0])
+        invoiceStatus.append(list(invoiceFile.readv(invoiceId, 7))[0][0])
+        invoiceAmount.append(list(invoiceFile.readv(invoiceId, 8))[0][0])
+        itemsId = list(invoiceFile.readv(invoiceId, 2))
+        orderFile = u2py.File("PO.ORDER.MST")
         for i in range(len(itemsId)):
-            ids.append(list(orderFile.readv(invoiceId,2))[i][0])
-            quantity.append(list(orderFile.readv(invoiceId,3))[i][0])
-            quantityReceived.append(list(orderFile.readv(invoiceId,4))[i][0])
+            ids.append(list(invoiceFile.readv(invoiceId, 2))[i][0])
+            quantity.append(list(invoiceFile.readv(invoiceId, 3))[i][0])
+            quantityReceived.append(list(orderFile.readv(orderNo[0], 15))[i][0])
         return {
             "status": 200,
             "invoiceNo": invoiceNo,
@@ -492,17 +493,20 @@ def upsertPurchaseOrder(details, itemDetails, recordID, status):
     itemIds = []
     quantities = []
     costs = []
+    quantityPending = []
     for itemDetail in itemDetails:
         itemIds.append(itemDetail['ItemID'])
         quantities.append(itemDetail['Quantity'])
         costs.append(itemDetail['UnitCost'])
-    data = [formattedDate, status, "", "", "", "", details['CompanyName'], details['ContactName'], address, details['PhoneNumber'], itemIds, quantities, costs, details['VendorName']]
+        quantityPending.append('0')
+    data = [formattedDate, status, "", "", "", "", details['CompanyName'], details['ContactName'], address, details['PhoneNumber'], itemIds, quantities, costs, details['VendorName'],quantityPending]
     orderFile = u2py.File("PO.ORDER.MST")
     orderFile.write(recordID, u2py.DynArray(data))
 
 def upsertInvoice(orderNo, invoiceDetails, invoiceNo, invoiceDate, invoiceAmount, status):
     invoiceData = u2py.DynArray()
     invoiceFile = u2py.File("PO.INVOICE.MST")
+    orderFile = u2py.File("PO.ORDER.MST")
     itemNo = bytes("", "utf-8")
     description = bytes("", "utf-8")
     quantityOrdered = bytes("", "utf-8")
@@ -521,7 +525,9 @@ def upsertInvoice(orderNo, invoiceDetails, invoiceNo, invoiceDate, invoiceAmount
     invoiceData.insert(6, 0, 0, orderNo)
     invoiceData.insert(7, 0, 0, status)
     invoiceData.insert(8, 0, 0, invoiceAmount)
+    orderFile.writev(orderNo, 15, quantityPending[:-1])
     invoiceFile.write(invoiceNo, invoiceData)
+
 
 def checkuser(username, password):
     users = {"user1": "abc", "user2": "xyz", "user3": "123"}
