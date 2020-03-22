@@ -62,7 +62,7 @@
           </tr>
         </tbody>
       </table>
-      <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="[5]" (page)="pagination($event)">
+      <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="[5 , 10 , 25 ,100]" (page)="pagination($event)">
       </mat-paginator>
     </div>
     <div class="d-flex justify-content-end">
