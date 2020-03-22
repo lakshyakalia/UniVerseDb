@@ -386,7 +386,7 @@ def invoiceCreate():
 def invoiceGet(invoiceId):
     status = checkExistingRecord('PO.INVOICE.MST', invoiceId)
     if (status):
-        orderFile = u2py.File("PO.INVOICE.MST")
+        invoiceFile = u2py.File("PO.INVOICE.MST")
         invoiceNo = []
         invoiceDate = []
         orderNo = []
@@ -396,15 +396,16 @@ def invoiceGet(invoiceId):
         invoiceStatus = []
         quantityReceived = []
         invoiceNo.append(invoiceId)
-        invoiceDate.append(convertDateFormat(list(orderFile.readv(invoiceId,1))[0][0],'external'))
-        orderNo.append(list(orderFile.readv(invoiceId,6))[0][0])
-        invoiceStatus.append(list(orderFile.readv(invoiceId,7))[0][0])
-        invoiceAmount.append(list(orderFile.readv(invoiceId,8))[0][0])
-        itemsId=list(orderFile.readv(invoiceId,2))
+        invoiceDate.append(convertDateFormat(list(invoiceFile.readv(invoiceId,1))[0][0],'external'))
+        orderNo.append(list(invoiceFile.readv(invoiceId,6))[0][0])
+        invoiceStatus.append(list(invoiceFile.readv(invoiceId,7))[0][0])
+        invoiceAmount.append(list(invoiceFile.readv(invoiceId,8))[0][0])
+        itemsId=list(invoiceFile.readv(invoiceId,2))
+        orderFile=u2py.File("PO.ORDER.MST")
         for i in range(len(itemsId)):
-            ids.append(list(orderFile.readv(invoiceId,2))[i][0])
-            quantity.append(list(orderFile.readv(invoiceId,3))[i][0])
-            quantityReceived.append(list(orderFile.readv(invoiceId,4))[i][0])
+            ids.append(list(invoiceFile.readv(invoiceId,2))[i][0])
+            quantity.append(list(invoiceFile.readv(invoiceId,3))[i][0])
+            quantityReceived.append(list(orderFile.readv(orderNo[0],15))[i][0])
         return {
             "status": 200,
             "invoiceNo": invoiceNo,
