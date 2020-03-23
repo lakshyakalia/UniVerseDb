@@ -66,19 +66,16 @@ export class VendorSignUpComponent implements OnInit {
       this.lastid=this.vendorId
       this.vendorService.get(this.vendorId)
         .subscribe((res: any) => {
-          if(res.status === 404){
-            this.openSnackBar(`${res.msg} `, 'Dismiss')
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-              this.router.navigate(['/vendors']);
-          }); 
-          }
-            
-          else{
-            this.heading=`Edit Vendor ${this.vendorId}`;
-            this.setItemdOrderDetails(res)
-          }
+          this.heading=`Edit Vendor ${this.vendorId}`;
+          this.setItemdOrderDetails(res)
           
-        })
+        },error=>{
+          this.openSnackBar(error.error.msg , 'Dismiss')
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate(['/vendors']);
+        }); 
+
+      })
     }
   }
   ngOnInit() {
@@ -149,30 +146,22 @@ export class VendorSignUpComponent implements OnInit {
       if(!this.editVendor){
       this.vendorService.post(vendorDetail.value, itemIds)
         .subscribe((res: any) => {
-          if (res.status == 200) {
             this.openSnackBar(res.msg, 'Dismiss')
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
               this.router.navigate(['/vendor/new']);
           }); 
-
-          }
-          else {
-            this.openSnackBar(`Error! `, 'Dismiss')
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-              this.router.navigate(['/vendor/new']);
-          }); 
-          }
-        
+        },error=>{
+          this.openSnackBar(error.error.msg,'Dismiss')
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate(['/vendor/new']);
+        }); 
         })
       }
       else{
         this.vendorService.put(vendorDetail.value, itemIds, this.vendorId)
         .subscribe((res:any)=>{
-          if(res.status==200)
-          {
-            this.openSnackBar(`Vendor Updated ! `, 'Dismiss')
-            this.router.navigateByUrl('/vendors'); 
-          }
+            this.openSnackBar(res.msg, 'Dismiss')
+            this.router.navigateByUrl('/vendors');
         })
       }
     }

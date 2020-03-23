@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import request,jsonify
+from flask import request,jsonify,Response
 from flask import make_response
 from functools import wraps
 import u2py
@@ -11,7 +11,6 @@ import jwt
 from datetime import datetime
 from collections import OrderedDict
 from flask_cors import CORS, cross_origin
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'thisisthesercretkey'
 CORS(app)
@@ -131,11 +130,15 @@ def vendorList():
         vendorId = list(ids)[0][0]
         orderDict = mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId)
         data[vendorId]=(orderDict)
-    return {
-        'status': 200,
-        'data': data,
-        'totalCount': totalCount
-    }
+        response={
+               'data':data,
+               'totalCount':totalCount
+               }
+    return Response(
+        json.dumps(response),
+        status=200,
+        mimetype='application/json'
+    )
 def mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId):
         vendorItems = [items[0] for items in vendorItems]
         details = {}
@@ -153,23 +156,26 @@ def vendorCreate():
     vendorDetails = vendorData['vendorDetail']
 
     upsertVendor(vendorDetails, itemIds, vendorId)
-    return {
-        'status': 200,
-        'msg': "vendor " + str(vendorId) + " created",
-    }
-
-
+    msg="vendor " + str(vendorId) + " created"
+    data={'msg':msg}
+    return Response(
+	json.dumps(data),
+        status=200,
+        mimetype='application/json')
 @app.route('/api/vendor/<vendorId>', methods=['PUT'])
 def vendorUpdate(vendorId):
     vendorData = request.get_json()
     itemIds = vendorData['itemIds']
     vendorDetails = vendorData['vendorDetail']
     upsertVendor(vendorDetails, itemIds, vendorId)
-    return {
-        'status': 200,
-        'msg': "vendor updated",
-        'data': vendorData
-    }
+    msg="vendor updated"
+    data={'msg':msg}
+    return Response(
+        json.dumps(data),
+        status=200,
+        mimetype='application/json'
+        
+    )
 
 @app.route('/api/vendor/<vendorId>', methods=['GET'])
 def vendorGet(vendorId):
@@ -194,15 +200,18 @@ def vendorGet(vendorId):
                 items.append(itemsa)
         vendorData["particularVendorData"]=vendorDict
         vendorData["itemIds"]=items
-        return {
-            'status': 200,
-            'vendorData': vendorData
-        }
+        response={
+                  'vendorData':vendorData
+                  }
+        return Response(json.dumps(response),status=200,mimetype='application/json')
     else:
-        return {
-            'status': 404,
-            'msg': 'Vendor not found'
-        }
+         msg ='{} does not exits'.format(vendorId)
+         data={'msg':msg}
+         return Response(
+            json.dumps(data),
+            status=404,
+            mimetype='application/json'
+        )
 
 ################################
 ## PURCHASE ORDERS API #########
@@ -396,16 +405,16 @@ def invoiceGet(invoiceId):
         invoiceStatus = []
         quantityReceived = []
         invoiceNo.append(invoiceId)
-        invoiceDate.append(convertDateFormat(list(invoiceFile.readv(invoiceId,1))[0][0],'external'))
-        orderNo.append(list(invoiceFile.readv(invoiceId,6))[0][0])
-        invoiceStatus.append(list(invoiceFile.readv(invoiceId,7))[0][0])
-        invoiceAmount.append(list(invoiceFile.readv(invoiceId,8))[0][0])
-        itemsId=list(invoiceFile.readv(invoiceId,2))
-        orderFile=u2py.File("PO.ORDER.MST")
+        invoiceDate.append(convertDateFormat(list(invoiceFile.readv(invoiceId, 1))[0][0], 'external'))
+        orderNo.append(list(invoiceFile.readv(invoiceId, 6))[0][0])
+        invoiceStatus.append(list(invoiceFile.readv(invoiceId, 7))[0][0])
+        invoiceAmount.append(list(invoiceFile.readv(invoiceId, 8))[0][0])
+        itemsId = list(invoiceFile.readv(invoiceId, 2))
+        orderFile = u2py.File("PO.ORDER.MST")
         for i in range(len(itemsId)):
-            ids.append(list(invoiceFile.readv(invoiceId,2))[i][0])
-            quantity.append(list(invoiceFile.readv(invoiceId,3))[i][0])
-            quantityReceived.append(list(orderFile.readv(orderNo[0],15))[i][0])
+            ids.append(list(invoiceFile.readv(invoiceId, 2))[i][0])
+            quantity.append(list(invoiceFile.readv(invoiceId, 3))[i][0])
+            quantityReceived.append(list(orderFile.readv(orderNo[0], 15))[i][0])
         return {
             "status": 200,
             "invoiceNo": invoiceNo,
@@ -493,17 +502,20 @@ def upsertPurchaseOrder(details, itemDetails, recordID, status):
     itemIds = []
     quantities = []
     costs = []
+    quantityPending = []
     for itemDetail in itemDetails:
         itemIds.append(itemDetail['ItemID'])
         quantities.append(itemDetail['Quantity'])
         costs.append(itemDetail['UnitCost'])
-    data = [formattedDate, status, "", "", "", "", details['CompanyName'], details['ContactName'], address, details['PhoneNumber'], itemIds, quantities, costs, details['VendorName']]
+        quantityPending.append('0')
+    data = [formattedDate, status, "", "", "", "", details['CompanyName'], details['ContactName'], address, details['PhoneNumber'], itemIds, quantities, costs, details['VendorName'],quantityPending]
     orderFile = u2py.File("PO.ORDER.MST")
     orderFile.write(recordID, u2py.DynArray(data))
 
 def upsertInvoice(orderNo, invoiceDetails, invoiceNo, invoiceDate, invoiceAmount, status):
     invoiceData = u2py.DynArray()
     invoiceFile = u2py.File("PO.INVOICE.MST")
+    orderFile = u2py.File("PO.ORDER.MST")
     itemNo = bytes("", "utf-8")
     description = bytes("", "utf-8")
     quantityOrdered = bytes("", "utf-8")
@@ -522,7 +534,9 @@ def upsertInvoice(orderNo, invoiceDetails, invoiceNo, invoiceDate, invoiceAmount
     invoiceData.insert(6, 0, 0, orderNo)
     invoiceData.insert(7, 0, 0, status)
     invoiceData.insert(8, 0, 0, invoiceAmount)
+    orderFile.writev(orderNo, 15, quantityPending[:-1])
     invoiceFile.write(invoiceNo, invoiceData)
+
 
 def checkuser(username, password):
     users = {"user1": "abc", "user2": "xyz", "user3": "123"}
