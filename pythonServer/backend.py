@@ -57,7 +57,10 @@ def allItems():
         field['@DESC']=desc
         items.append(field)
 
-    return {"data": items}, 200
+    data = {
+        'items': items
+    }
+    return Response(json.dumps(data), status=200, mimetype='application/json')
 
 ################################
 ## VENDORS API #################
