@@ -64,7 +64,7 @@
             <td class="align-right">{{ item.id }}</td>
             <td class="align-right">{{ item.date | date: 'MM/dd/y' }}</td>
             <td class="align-left">{{ item.vendorName }}</td>
-            <td><i (click)="openParticularOrder(item.id)" class="fas fa-edit"></i></td>
+            <td><button class="btn btn-light"><i (click)="openParticularOrder(item.id)" class="fas fa-edit"></i></button></td>
           </tr>
         </tbody>
       </table>
