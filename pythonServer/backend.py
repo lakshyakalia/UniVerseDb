@@ -361,11 +361,14 @@ def invoiceList():
 
         vendorDict = mappingInvoices(invoiceDate,orderNo,invoiceAmt,id)
         data.append(vendorDict)
-    return {
-        'status': 200,
-        'data': data,
-        'totalInvoices': totalCount
-    }
+    response={'data':data,
+              'totalInvoices':totalCount 
+              }
+    return Response(
+        json.dumps(response),
+        status=200,
+        mimetype='application/json'
+    )
 
 def mappingInvoices(invoiceDate,orderNo,invoiceAmount,id):
     details = {}
@@ -384,11 +387,13 @@ def invoiceCreate():
     upsertInvoice(data['invoiceDetails']['orderNo'], data['invoiceDetails']['invoiceDetails'],
                 data['invoiceDetails']['invoiceNo'], convertedDate ,
                 data['invoiceDetails']['invoiceAmount'], data['submitStatus'])
-    return {
-        'status': 200,
-
-        'msg': 'Invoice {} generated'.format(data['invoiceDetails']['invoiceNo'])
-    }
+    msg='Invoice {} generated'.format(data['invoiceDetails']['invoiceNo'])
+    response={'msg':msg}
+    return Response(
+        json.dumps(response),
+        status=200,
+       mimetype='application/json'
+    )
 
 
 @app.route('/api/invoice/<invoiceId>', methods=['GET'])
@@ -415,22 +420,28 @@ def invoiceGet(invoiceId):
             ids.append(list(invoiceFile.readv(invoiceId, 2))[i][0])
             quantity.append(list(invoiceFile.readv(invoiceId, 3))[i][0])
             quantityReceived.append(list(orderFile.readv(orderNo[0], 15))[i][0])
-        return {
-            "status": 200,
-            "invoiceNo": invoiceNo,
+        response={"invoiceNo": invoiceNo,
             "invoiceDate": invoiceDate,
             "orderNo": orderNo,
             "ids": ids,
             "quantity": quantity,
             "invoiceStatus": invoiceStatus,
             "invoiceAmount": invoiceAmount,
-            "quantityReceived": quantityReceived
-        }
+            "quantityReceived": quantityReceived}
+        return Response(
+            json.dumps(response),
+            status=200,
+           mimetype='application/json'
+            
+        )
     else:
-        return {
-            'status': 404,
-            'message': 'Invoice not found'
-        }
+        msg ='Invoice {} does not exits'.format(invoiceId)
+        data={'msg':msg}
+        return Response(
+            json.dumps(data),
+            status=404,
+            mimetype='application/json'
+        )
 
 @app.route('/api/invoice/order/<orderId>', methods=['GET'])
 def invoicePurchaseOrderItemsGet(orderId):
@@ -445,17 +456,24 @@ def invoicePurchaseOrderItemsGet(orderId):
                 itemIds.append(list(orderFile.readv(orderId,11))[i][0])
                 itemCost.append(list(orderFile.readv(orderId,13))[i][0])
                 itemQuantity.append(list(orderFile.readv(orderId,12))[i][0])
-        return {
-            'status': 200,
+        response={
             'cost': itemCost,
             'quantity': itemQuantity,
             "ids": itemIds,
-        }
+                 }
+        return Response(
+            json.dumps(response),
+            status=200,
+            mimetype='application/json'
+        )
     else:
-        return {
-            'status': 404,
-            'message': 'OrderNo not found'
-        }
+        msg ='Order {} does not exits'.format(orderId)
+        data={'msg':msg}
+        return Response(
+            json.dumps(data),
+            status=404,
+            mimetype='application/json'
+        )
 
 ################################
 ## LOGIN API ###################
