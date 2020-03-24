@@ -61,6 +61,10 @@ export class AllInvoicesComponent implements OnInit {
       this.invoiceData = res.data
     })
   }
+  openParticularInvoice(invoiceNo){
+    this.router.navigate([`/invoice/edit/${invoiceNo}`])
+
+  }
 
   paginateInvoices(){
     let values = this.invoiceForm.value

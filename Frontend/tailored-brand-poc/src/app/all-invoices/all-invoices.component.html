@@ -68,19 +68,20 @@
     <div class="table-responsive">
       <table class="table table-striped">
         <thead class="thead-dark">
-          <th class="right">SNo.</th>
-          <th class="right">Invoice No.</th>
-          <th class="right">Invoice Date</th>
-          <th class="right">Order No.</th>
-          <th>Invoice Amount</th>
+          <th width="10%">SNo.</th>
+          <th width="25%" class="right">Invoice No.</th>
+          <th width="20%" class="right">Invoice Date</th>
+          <th width="20%" class="right">Order No.</th>
+          <th width="15%">Invoice Amount</th>
+          <th></th>
         </thead>
         <tbody>
           <tr *ngFor="let data of invoiceData; let i = index">
-            <td>{{ rowId + i }}</td>
-            <td>{{ data['id'] }}</td>
-            <td>{{ data['date'] }}</td>
-            <td>{{ data['orderNumber'] }}</td>
-            <td width="15%">
+            <td class="right">{{ rowId + i }}</td>
+            <td class="right">{{ data['id'] }}</td>
+            <td class="right">{{ data['date'] }}</td>
+            <td class="right">{{ data['orderNumber'] }}</td>
+            <td>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text">$</span>
@@ -88,6 +89,7 @@
                 <div class="form-control text-right" style="background-color: lightgray;">{{ data['amount']| number:'1.2-5' }}</div>
               </div>
             </td>
+              <td><button class="btn btn-light"><i (click)="openParticularInvoice(data['id'])" class="fas fa-edit"></i></button></td>
           </tr>
         </tbody>
       </table>
