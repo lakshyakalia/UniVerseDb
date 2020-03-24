@@ -32,16 +32,7 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
-def checkuser(username,password):
-	users={"jhon":"abc","stuart":"xyz","robin":"123"}
-	for keys in users.keys():
-		if(keys==username):
-			if(users[username]==password):
-				return 'True'
-			else:
-				return 'False'
-		else:
-			return 'False'
+
 ################################
 ## ITEMS API ###################
 ################################
@@ -66,7 +57,10 @@ def allItems():
         field['@DESC']=desc
         items.append(field)
 
-    return {"data": items}, 200
+    data = {
+        'items': items
+    }
+    return Response(json.dumps(data), status=200, mimetype='application/json')
 
 ################################
 ## VENDORS API #################
@@ -264,24 +258,26 @@ def purchaseOrderCreate():
     data = request.get_json()
     newOrderId = random.randrange(12, 10 ** 6)
     upsertPurchaseOrder(data['details'], data['itemDetails'], newOrderId, data['status'])
-    return {
-        'status': 200,
-        'msg': 'OrderId ' + str(newOrderId) + ' created'
+    msg = 'OrderId {} created'.format(str(newOrderId))
+    data = {
+        'msg': msg
     }
+    return Response(json.dumps(data),status = 200, mimetype='application/json')
+
 
 @app.route('/api/order/<orderId>', methods=['PUT'])
 def purchaseOrderUpdate(orderId):
     data = request.get_json()
     upsertPurchaseOrder(data['details'], data['itemDetails'], orderId, data['status'])
-    return {
-        'status': 200,
-        'msg': 'OrderId ' + str(orderId) + ' updated'
-    }
+    msg = 'Order Id {} updated'.format(str(orderId))
+    data = {'msg': msg}
+    return Response(json.dumps(data), status=200, mimetype='application/json')
+
 
 @app.route('/api/order/<orderID>', methods=['GET'])
 def purchaseOrderGet(orderID):
-    status = checkExistingRecord('PO.ORDER.MST', orderID)
-    if status:
+    orderstatus = checkExistingRecord('PO.ORDER.MST', orderID)
+    if orderstatus:
         commandLine = 'SELECT {}'.format('PO.ORDER.MST')
         saveList_name = 'PAGE.LIST'
         u2py.run(commandLine, capture=True)
@@ -292,19 +288,18 @@ def purchaseOrderGet(orderID):
         itemList = mapOrderItems(dataFile, orderID)
         submitStatus = list(dataFile.readv(orderID, 2))[0][0]
 
-        return {
-            'status': 200,
-            'data': {
-                'orderData' : orderDetail,
-                'itemList':itemList,
-                'submitStatus': submitStatus
+        response = {
+            'data':{
+                "orderData": orderDetail,
+                "itemList": itemList,
+                "submitStatus": submitStatus
             }
         }
+        return Response(json.dumps(response), status=200, mimetype='application/json')
     else:
-        return {
-            'status': 404,
-            'msg': 'Order no not found'
-        }
+        msg = '{} does not exist'.format(orderID)
+        data = {'msg':msg}
+        return Response(json.dumps(data), status=404, mimetype='application/json')
 
 
 ################################

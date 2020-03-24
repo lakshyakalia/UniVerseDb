@@ -7,6 +7,7 @@ import { StateService } from '../service/state.service'
 import { MatDialog , MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog'
 import { VendorService } from '../service/vendor.service';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
+import { error } from 'util';
 
 @Component({
   selector: 'purchase-order',
@@ -106,16 +107,14 @@ export class PurchaseOrderComponent implements OnInit {
       this.lastId = orderID
       this.purchaseOrderService.get(orderID)
         .subscribe((res: any) => {
-          if (res.status === 404) {
-            this.openSnackBar(`${orderID} does not exist`, 'Dismiss')
+          this.purchaseOrderTitle = "Update Purchase Order " + orderID
+          this.setItemOrderDetails(res)
+        },
+        error =>{
+          this.openSnackBar(error.error.msg,'Dismiss')
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
               this.router.navigate(['/order/edit']);
             });
-          }
-          else {
-            this.purchaseOrderTitle = "Update Purchase Order " + orderID
-            this.setItemOrderDetails(res)
-          }
         })
     }
   }
@@ -250,8 +249,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   private put(recordId, purchaseOrderValues, itemOrderValues, submitStatus) {
     this.purchaseOrderService.put(recordId, purchaseOrderValues, itemOrderValues, submitStatus)
-      .subscribe((res) => {
-        this.openSnackBar(`${res["msg"]}`, 'Dismiss')
+      .subscribe((res:any) => {
+        this.openSnackBar(`${res.msg}`, 'Dismiss')
         this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
           this.router.navigate(['/order/edit']);
         });
