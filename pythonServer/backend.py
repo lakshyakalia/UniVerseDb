@@ -57,7 +57,7 @@ def allItems():
         items.append(field)
 
     data = {
-        'items': items
+        'data': items
     }
     return Response(json.dumps(data), status=200, mimetype='application/json')
 
