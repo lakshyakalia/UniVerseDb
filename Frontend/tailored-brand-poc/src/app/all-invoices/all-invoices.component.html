@@ -89,7 +89,7 @@
                 <div class="form-control text-right" style="background-color: lightgray;">{{ data['amount']| number:'1.2-5' }}</div>
               </div>
             </td>
-              <td><button class="btn btn-light"><i (click)="openParticularInvoice(data['id'])" class="fas fa-edit"></i></button></td>
+              <td><button (click)="openParticularInvoice(data['id'])"  class="btn btn-light"><i class="fas fa-edit"></i></button></td>
           </tr>
         </tbody>
       </table>
