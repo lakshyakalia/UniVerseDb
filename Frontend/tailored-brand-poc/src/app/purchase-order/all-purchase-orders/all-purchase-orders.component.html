@@ -11,13 +11,13 @@
           <label class="items-left">Order Number</label>
         </div>
         <div class="col-md-3 col-7">
-      <input type="text" placeholder="orderNo" formControlName="OrderNo" class="form-control">
+      <input type="text" placeholder="Order No." formControlName="OrderNo" class="form-control">
     </div>
     <div class="col-md-3 col-5 col-form-label">
       <label class="items-right">Vendor Name</label>
     </div>
     <div class="col-md-3 col-7">
-      <input type="text" placeholder="vendor name" formControlName="VendorName" class="form-control">
+      <input type="text" placeholder="Vendor Name" formControlName="VendorName" class="form-control">
     </div>
 </div>
 <div class="row">
@@ -26,14 +26,20 @@
   </div>
   <div class="col-md-3 col-7">
 
-      <input type="date" formControlName="FromDate" class="form-control">
+      <input type="text" formControlName="FromDate"
+      placeholder="From Date"
+      onfocus="(this.type='date')"
+       class="form-control">
       </div>
       <div class="col-md-3 col-5 col-form-label">
         <label class="items-right">To Date</label>
       </div>
       <div class="col-md-3 col-7">
 
-      <input type="date" formControlName="ToDate" class="form-control">
+      <input type="text" formControlName="ToDate"
+      placeholder="To Date"
+      onfocus="(this.type='date')"
+       class="form-control">
       </div>
       </div>
       <div class="row">
