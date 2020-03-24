@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import request,jsonify
+from flask import request,jsonify,Response
 from flask import make_response
 from functools import wraps
 import u2py
@@ -11,7 +11,6 @@ import jwt
 from datetime import datetime
 from collections import OrderedDict
 from flask_cors import CORS, cross_origin
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'thisisthesercretkey'
 CORS(app)
@@ -125,11 +124,15 @@ def vendorList():
         vendorId = list(ids)[0][0]
         orderDict = mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId)
         data[vendorId]=(orderDict)
-    return {
-        'status': 200,
-        'data': data,
-        'totalCount': totalCount
-    }
+        response={
+               'data':data,
+               'totalCount':totalCount
+               }
+    return Response(
+        json.dumps(response),
+        status=200,
+        mimetype='application/json'
+    )
 def mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId):
         vendorItems = [items[0] for items in vendorItems]
         details = {}
@@ -147,23 +150,26 @@ def vendorCreate():
     vendorDetails = vendorData['vendorDetail']
 
     upsertVendor(vendorDetails, itemIds, vendorId)
-    return {
-        'status': 200,
-        'msg': "vendor " + str(vendorId) + " created",
-    }
-
-
+    msg="vendor " + str(vendorId) + " created"
+    data={'msg':msg}
+    return Response(
+	json.dumps(data),
+        status=200,
+        mimetype='application/json')
 @app.route('/api/vendor/<vendorId>', methods=['PUT'])
 def vendorUpdate(vendorId):
     vendorData = request.get_json()
     itemIds = vendorData['itemIds']
     vendorDetails = vendorData['vendorDetail']
     upsertVendor(vendorDetails, itemIds, vendorId)
-    return {
-        'status': 200,
-        'msg': "vendor updated",
-        'data': vendorData
-    }
+    msg="vendor updated"
+    data={'msg':msg}
+    return Response(
+        json.dumps(data),
+        status=200,
+        mimetype='application/json'
+        
+    )
 
 @app.route('/api/vendor/<vendorId>', methods=['GET'])
 def vendorGet(vendorId):
@@ -188,15 +194,18 @@ def vendorGet(vendorId):
                 items.append(itemsa)
         vendorData["particularVendorData"]=vendorDict
         vendorData["itemIds"]=items
-        return {
-            'status': 200,
-            'vendorData': vendorData
-        }
+        response={
+                  'vendorData':vendorData
+                  }
+        return Response(json.dumps(response),status=200,mimetype='application/json')
     else:
-        return {
-            'status': 404,
-            'msg': 'Vendor not found'
-        }
+         msg ='{} does not exits'.format(vendorId)
+         data={'msg':msg}
+         return Response(
+            json.dumps(data),
+            status=404,
+            mimetype='application/json'
+        )
 
 ################################
 ## PURCHASE ORDERS API #########

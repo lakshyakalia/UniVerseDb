@@ -115,7 +115,6 @@ export class InvoiceDetailComponent implements OnInit {
   async getInvoiceDetail(invoiceId) {
     this.invoiceService.getInvoice(invoiceId)
       .subscribe((res: any) => {
-        if(res.status == 200)
         {
         let  arr = <FormArray>this.invoiceForm.controls.invoiceDetails
         arr.controls = []
@@ -147,12 +146,12 @@ export class InvoiceDetailComponent implements OnInit {
           control.controls.forEach(data => data.disable())
         }
       }
-      else{
-        this.openSnackBar(`${res.message}`, 'Dismiss')
+
+      },error=>{
+        this.openSnackBar(error.error.msg, 'Dismiss')
         this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
           this.router.navigate(['/invoice/edit']);
         });
-      }
       })
 
     if (!this.checkValidation()) {
@@ -183,18 +182,15 @@ export class InvoiceDetailComponent implements OnInit {
         arr.controls = []
         this.invoiceService.getParticularOrder(orderID)
           .subscribe((res: any) => {
-            if (res.status == 200) {
               let len = res.ids.length
               for (let i = 0; i < len; i++) {
                 this.createNewFormControl(res.ids[i], res.quantity[i],this.quantityPendingDefault)
               }
-            }
-            if (res.status == 404) {
-              this.openSnackBar(`${res.message}`, 'Dismiss')
+          },error=>{
+            this.openSnackBar(`${error.error.msg}`, 'Dismiss')
               this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
                 this.router.navigate(['/invoice/new']);
               });
-            }
           })
       }
     }
