@@ -356,7 +356,8 @@ def invoiceList():
 
         vendorDict = mappingInvoices(invoiceDate,orderNo,invoiceAmt,id)
         data.append(vendorDict)
-    response={'data':data,
+    response={
+              'data':data,
               'totalInvoices':totalCount 
               }
     return Response(
@@ -383,7 +384,9 @@ def invoiceCreate():
                 data['invoiceDetails']['invoiceNo'], convertedDate ,
                 data['invoiceDetails']['invoiceAmount'], data['submitStatus'])
     msg='Invoice {} generated'.format(data['invoiceDetails']['invoiceNo'])
-    response={'msg':msg}
+    response={
+             'msg':msg
+             }
     return Response(
         json.dumps(response),
         status=200,
@@ -415,14 +418,16 @@ def invoiceGet(invoiceId):
             ids.append(list(invoiceFile.readv(invoiceId, 2))[i][0])
             quantity.append(list(invoiceFile.readv(invoiceId, 3))[i][0])
             quantityReceived.append(list(orderFile.readv(orderNo[0], 15))[i][0])
-        response={"invoiceNo": invoiceNo,
+        response={
+            "invoiceNo": invoiceNo,
             "invoiceDate": invoiceDate,
             "orderNo": orderNo,
             "ids": ids,
             "quantity": quantity,
             "invoiceStatus": invoiceStatus,
             "invoiceAmount": invoiceAmount,
-            "quantityReceived": quantityReceived}
+            "quantityReceived": quantityReceived
+                 }
         return Response(
             json.dumps(response),
             status=200,
