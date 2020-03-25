@@ -405,34 +405,26 @@ def invoiceGet(invoiceId):
     status = checkExistingRecord('PO.INVOICE.MST', invoiceId)
     if (status):
         invoiceFile = u2py.File("PO.INVOICE.MST")
-        invoiceNo = []
-        invoiceDate = []
-        orderNo = []
-        invoiceAmount = []
-        ids = []
-        quantity = []
-        invoiceStatus = []
-        quantityReceived = []
-        invoiceNo.append(invoiceId)
-        invoiceDate.append(convertDateFormat(list(invoiceFile.readv(invoiceId, 1))[0][0], 'external'))
-        orderNo.append(list(invoiceFile.readv(invoiceId, 6))[0][0])
-        invoiceStatus.append(list(invoiceFile.readv(invoiceId, 7))[0][0])
-        invoiceAmount.append(list(invoiceFile.readv(invoiceId, 8))[0][0])
+        invoiceDetails={}
+        invoiceItems=[]
+        invoiceDetails['invoiceNo']=(invoiceId)
+        invoiceDetails['invoiceDate']=(convertDateFormat(list(invoiceFile.readv(invoiceId, 1))[0][0], 'external'))
+        invoiceDetails['orderNo']=(list(invoiceFile.readv(invoiceId, 6))[0][0])
+        invoiceStatus=(list(invoiceFile.readv(invoiceId, 7))[0][0])
+        invoiceDetails['invoiceAmount']=(list(invoiceFile.readv(invoiceId, 8))[0][0])
         itemsId = list(invoiceFile.readv(invoiceId, 2))
         orderFile = u2py.File("PO.ORDER.MST")
         for i in range(len(itemsId)):
-            ids.append(list(invoiceFile.readv(invoiceId, 2))[i][0])
-            quantity.append(list(invoiceFile.readv(invoiceId, 3))[i][0])
-            quantityReceived.append(list(orderFile.readv(orderNo[0], 15))[i][0])
+            item={}
+            item['id']=(list(invoiceFile.readv(invoiceId, 2))[i][0])
+            item['quantity']=(list(invoiceFile.readv(invoiceId, 3))[i][0])
+            item['quantityPending']=(list(orderFile.readv(invoiceDetails['orderNo'], 15))[i][0])
+            item['quantityReceived']=(list(invoiceFile.readv(invoiceId,5))[i][0])
+            invoiceItems.append(item)
         response={
-            "invoiceNo": invoiceNo,
-            "invoiceDate": invoiceDate,
-            "orderNo": orderNo,
-            "ids": ids,
-            "quantity": quantity,
-            "invoiceStatus": invoiceStatus,
-            "invoiceAmount": invoiceAmount,
-            "quantityReceived": quantityReceived
+            "invoiceDetails": invoiceDetails,
+            "invoiceItems": invoiceItems,
+            "invoiceStatus": invoiceStatus
                  }
         return Response(
             json.dumps(response),
@@ -670,4 +662,4 @@ def mapOrderItems(dataFile,orderID):
 
 if __name__ == '__main__':
     app.run()
-
+s
