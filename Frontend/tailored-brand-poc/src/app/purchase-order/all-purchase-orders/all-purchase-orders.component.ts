@@ -53,8 +53,8 @@ export class AllPurchaseOrdersComponent implements OnInit {
   }
 
   list(values) {
-    values['PageIndex'] = this.pageIndex
-    values['PageSize'] = this.pageSize
+    values['pageIndex'] = this.pageIndex
+    values['pageSize'] = this.pageSize
     this.purchaseOrderService.list(values)
       .subscribe((res: any) => {
         this.length = res.totalCount

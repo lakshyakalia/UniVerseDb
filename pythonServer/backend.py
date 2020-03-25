@@ -195,7 +195,7 @@ def vendorGet(vendorId):
    
         for i in itemid:
                 items={}
-                itemsa["itemId"]=i[0]
+                items["itemId"]=i[0]
                 items.append(items)
         vendorData["particularVendorData"]=vendorDict
         vendorData["itemIds"]=items
@@ -222,8 +222,8 @@ def purchaseOrderList():
     lastOrder = False
     if allOrders is None:
         saveList_name = 'PAGE.LIST'
-        pageIndex = int(request.args.get('PageIndex'))
-        pageSize = int(request.args.get('PageSize'))
+        pageIndex = int(request.args.get('pageIndex'))
+        pageSize = int(request.args.get('pageSize'))
         orderNo = request.args.get('OrderNo')
 
         vendorName = request.args.get('VendorName')
