@@ -58,7 +58,7 @@ def allItems():
 
     data = {
         'items': items
-    }
+           }
     return Response(json.dumps(data), status=200, mimetype='application/json')
 
 ################################
@@ -151,7 +151,9 @@ def vendorCreate():
 
     upsertVendor(vendorDetails, itemIds, vendorId)
     msg="vendor " + str(vendorId) + " created"
-    data={'msg':msg}
+    data={
+          'msg':msg
+         }
     return Response(
 	json.dumps(data),
         status=200,
@@ -163,7 +165,9 @@ def vendorUpdate(vendorId):
     vendorDetails = vendorData['vendorDetail']
     upsertVendor(vendorDetails, itemIds, vendorId)
     msg="vendor updated"
-    data={'msg':msg}
+    data={
+          'msg':msg
+         }
     return Response(
         json.dumps(data),
         status=200,
@@ -260,7 +264,7 @@ def purchaseOrderList():
         'data': data,
         'lastOrder': lastOrder,
         'totalCount': totalCount
-    }
+         }
 
 @app.route('/api/order', methods=['POST'])
 def purchaseOrderCreate():
@@ -268,9 +272,9 @@ def purchaseOrderCreate():
     newOrderId = random.randrange(12, 10 ** 6)
     upsertPurchaseOrder(data['details'], data['itemDetails'], newOrderId, data['status'])
     msg = 'OrderId {} created'.format(str(newOrderId))
-    data = {
+    data={
         'msg': msg
-    }
+         }
     return Response(json.dumps(data),status = 200, mimetype='application/json')
 
 
@@ -307,7 +311,9 @@ def purchaseOrderGet(orderID):
         return Response(json.dumps(response), status=200, mimetype='application/json')
     else:
         msg = '{} does not exist'.format(orderID)
-        data = {'msg':msg}
+        data = {
+                'msg':msg
+               }
         return Response(json.dumps(data), status=404, mimetype='application/json')
 
 
@@ -436,7 +442,9 @@ def invoiceGet(invoiceId):
         )
     else:
         msg ='Invoice {} does not exits'.format(invoiceId)
-        data={'msg':msg}
+        data={
+             'msg':msg
+             }
         return Response(
             json.dumps(data),
             status=404,
@@ -468,7 +476,9 @@ def invoicePurchaseOrderItemsGet(orderId):
         )
     else:
         msg ='Order {} does not exits'.format(orderId)
-        data={'msg':msg}
+        data={
+              'msg':msg
+             }
         return Response(
             json.dumps(data),
             status=404,
