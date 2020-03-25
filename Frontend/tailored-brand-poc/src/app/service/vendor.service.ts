@@ -75,7 +75,6 @@ export class VendorService {
       params: values
     })
   }
-
   list(filter){
     return this.http.get(this._baseUri+'api/vendor',{
       params: filter
