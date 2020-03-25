@@ -112,7 +112,7 @@ def vendorList():
     totalCount = t_id.dcount(u2py.FM)
     if allVendors == 'true':
         end = totalCount - 1
-    data = {}	
+    data = {}
     for x in range(start, end + 1):
         if x > totalCount:
             break
@@ -125,14 +125,15 @@ def vendorList():
         orderDict = mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId)
         data[vendorId]=(orderDict)
     response={
-             'data':data,
-              'totalCount':totalCount
-               }
-    return Response(
-        json.dumps(response),
-        status=200,
-        mimetype='application/json'
-    )
+           'data':data,
+           'totalCount':totalCount
+           }
+    if len(data) is not 0:
+        return Response(json.dumps(response),status=200,mimetype='application/json')
+    else:
+        response['msg'] = 'Vendor does not existed'
+        return Response(json.dumps(response),status=404,mimetype='application/json')
+
 def mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId):
         vendorItems = [items[0] for items in vendorItems]
         details = {}
@@ -193,9 +194,9 @@ def vendorGet(vendorId):
         items=[]
    
         for i in itemid:
-                itemsa={}
-                itemsa["itemId"]=i[0]
-                items.append(itemsa)
+                items={}
+                items["itemId"]=i[0]
+                items.append(items)
         vendorData["particularVendorData"]=vendorDict
         vendorData["itemIds"]=items
         response={
@@ -259,12 +260,17 @@ def purchaseOrderList():
         id = list(id)[0][0]
         orderDict = mappingOrder(date, vendorName, id)
         data.append(orderDict)
-    return {
-        'status': 200,
+
+    response = {
         'data': data,
         'lastOrder': lastOrder,
         'totalCount': totalCount
-         }
+    }
+    if len(data) is 0:
+        response['msg'] = 'Order does not exist'
+        return Response(json.dumps(response),status = 404, mimetype='application/json')
+    else:
+        return Response(json.dumps(response),status = 200, mimetype='application/json')
 
 @app.route('/api/order', methods=['POST'])
 def purchaseOrderCreate():
@@ -316,7 +322,6 @@ def purchaseOrderGet(orderID):
                }
         return Response(json.dumps(data), status=404, mimetype='application/json')
 
-
 ################################
 ## INVOICE API #################
 ################################
@@ -366,11 +371,11 @@ def invoiceList():
               'data':data,
               'totalInvoices':totalCount 
               }
-    return Response(
-        json.dumps(response),
-        status=200,
-        mimetype='application/json'
-    )
+    if len(data) is 0:
+        response['msg'] = 'Invoice does not exist'
+        return Response(json.dumps(response),status=404,mimetype='application/json')
+    else:
+        return Response(json.dumps(response), status=200, mimetype='application/json')
 
 def mappingInvoices(invoiceDate,orderNo,invoiceAmount,id):
     details = {}
@@ -634,27 +639,32 @@ def convertDateFormat(orderDate,format):
 def mapPurchaseOrder(dataFile,orderID):
     orderDetailsDict = {}
     date = list(dataFile.readv(orderID, 1))[0][0]
-    orderDetailsDict['OrderDate'] = convertDateFormat(date,'external')
-    orderDetailsDict['CompanyName'] = list(dataFile.readv(orderID, 7))[0][0]
-    orderDetailsDict['ContactName'] = list(dataFile.readv(orderID, 8))[0][0]
-    orderDetailsDict['PhoneNumber'] = list(dataFile.readv(orderID, 10))[0][0]
-    orderDetailsDict['VendorName'] = list(dataFile.readv(orderID, 14))[0][0]
-    orderDetailsDict['Street'] = list(dataFile.readv(orderID, 9))[0][0]
-    orderDetailsDict['City'] = list(dataFile.readv(orderID, 9))[1][0]
-    orderDetailsDict['State'] = list(dataFile.readv(orderID, 9))[2][0]
-    orderDetailsDict['ZipCode'] = list(dataFile.readv(orderID, 9))[3][0]
+    orderDetailsDict['orderDate'] = convertDateFormat(date,'external')
+    orderDetailsDict['companyName'] = list(dataFile.readv(orderID, 7))[0][0]
+    orderDetailsDict['contactName'] = list(dataFile.readv(orderID, 8))[0][0]
+    orderDetailsDict['phoneNumber'] = list(dataFile.readv(orderID, 10))[0][0]
+    orderDetailsDict['vendorName'] = list(dataFile.readv(orderID, 14))[0][0]
+    orderDetailsDict['street'] = list(dataFile.readv(orderID, 9))[0][0]
+    orderDetailsDict['city'] = list(dataFile.readv(orderID, 9))[1][0]
+    orderDetailsDict['state'] = list(dataFile.readv(orderID, 9))[2][0]
+    orderDetailsDict['zipCode'] = list(dataFile.readv(orderID, 9))[3][0]
     return orderDetailsDict
 
 def mapOrderItems(dataFile,orderID):
+    description = []
+    itemFile = u2py.File('PO.ITEM.MST')
     itemId = [items[0] for items in list(dataFile.readv(orderID, 11))]
-    cost = [items[0] for items in list(dataFile.readv(orderID, 12))]
-    quantity= [items[0] for items in list(dataFile.readv(orderID, 13))]
+    for item in itemId:
+        description.append(list(itemFile.readv(item,1))[0][0])
+    quantity = [items[0] for items in list(dataFile.readv(orderID, 12))]
+    cost = [items[0] for items in list(dataFile.readv(orderID, 13))]
     itemList = []
     for i in range(len(itemId)):
         itemDict = {}
-        itemDict['ItemID'] = itemId[i]
-        itemDict['Cost'] = cost[i]
-        itemDict['Quantity'] = quantity[i]
+        itemDict['itemID'] = itemId[i]
+        itemDict['cost'] = cost[i]
+        itemDict['quantity'] = quantity[i]
+        itemDict['description'] = description[i]
         itemList.append(itemDict)
     return itemList
 
