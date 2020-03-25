@@ -124,9 +124,9 @@ def vendorList():
         vendorId = list(ids)[0][0]
         orderDict = mappingVendor(vendorCompany,vendorName,vendorPhone,vendorItems,vendorId)
         data[vendorId]=(orderDict)
-        response={
-               'data':data,
-               'totalCount':totalCount
+    response={
+             'data':data,
+              'totalCount':totalCount
                }
     return Response(
         json.dumps(response),
