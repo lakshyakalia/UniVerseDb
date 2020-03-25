@@ -144,7 +144,7 @@ export class InvoiceDetailComponent implements OnInit {
           this.createNewFormControl(res.invoiceItems[i]['id'], res.invoiceItems[i]['quantity'],res.invoiceItems[i]['quantityPending'],res.invoiceItems[i]['quantityReceived'])
         }
         
-        if(res.invoiceStatus[0] === 'receive'){
+        if(res.invoiceStatus==='receive'){
           const control = <FormArray>this.invoiceForm.controls['invoiceDetails']
           control.controls.forEach(data => data.disable())
         }

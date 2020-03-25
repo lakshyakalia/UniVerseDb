@@ -433,7 +433,7 @@ def invoiceGet(invoiceId):
             
         )
     else:
-        msg ='Invoice {} does not exits'.format(invoiceId)
+        msg ='Invoice {} does not exist'.format(invoiceId)
         data={
              'msg':msg
              }
