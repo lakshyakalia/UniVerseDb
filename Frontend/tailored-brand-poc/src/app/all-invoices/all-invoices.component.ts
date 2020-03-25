@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { InvoiceService, Invoice } from '../service/invoice.service';
 import { FormGroup, FormControl, FormBuilder,  Validators } from '@angular/forms';
 import{Router} from '@angular/router'
-import {PageEvent} from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'app-all-invoices',
@@ -14,7 +14,7 @@ export class AllInvoicesComponent implements OnInit {
   length : number;
   pageIndex = 0
   pageSize = 5
-  constructor(private router: Router,private invoiceService : InvoiceService) { }
+  constructor(private router: Router,private invoiceService : InvoiceService,private snackBar: MatSnackBar) { }
 
   orderNo
   invoiceData: Invoice[] = [];
@@ -56,9 +56,14 @@ export class AllInvoicesComponent implements OnInit {
   list(values){
     values['pageIndex'] = this.pageIndex
     values['pageSize'] = this.pageSize
-    this.invoiceService.list(values).subscribe((res:any) =>{
+    this.invoiceService.list(values)
+    .subscribe((res:any) =>{
       this.length = res.totalInvoices
       this.invoiceData = res.data
+    },error =>{
+      this.length = error.error.totalInvoices
+      this.invoiceData = error.error.data
+      this.openSnackBar(error.error.msg,'Dismiss')
     })
   }
   openParticularInvoice(invoiceNo){
@@ -69,5 +74,11 @@ export class AllInvoicesComponent implements OnInit {
     let values = this.invoiceForm.value
     values['allVendors'] = false
     this.list(values)
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
   }
 }
