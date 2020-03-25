@@ -90,6 +90,7 @@
           id="invoiceAmount"
           formControlName="invoiceAmount"
           (keydown)="checkForExponential($event)"
+          (focus)="$event.target.select(); $event.preventDefault()"
         />
         </div>
         <span
