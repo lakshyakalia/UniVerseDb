@@ -63,7 +63,6 @@ export class AllInvoicesComponent implements OnInit {
   }
   openParticularInvoice(invoiceNo){
     this.router.navigate([`/invoice/edit/${invoiceNo}`])
-
   }
 
   paginateInvoices(){
