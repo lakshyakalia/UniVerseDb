@@ -33,7 +33,7 @@
           <label class="vendor">Vendor</label>  
         </div>
         <div class="col-md-3 col-7">
-          <input type="text" formControlName="VendorName" class="form-control" placeholder=" -- Vendor -- " [ngbTypeahead]="vendorService.typeahead" [(value)]="vendorService.selectedVendor.name" (selectItem)="selectVendor($event)" autocomplete="doNotAutoComplete">
+          <input type="text" formControlName="VendorName" class="form-control" placeholder=" -- Vendor -- " [ngbTypeahead]="vendorService.typeahead" [(value)]="vendorService.selectedVendor.name" (selectItem)="selectVendor($event)" (focus)="$event.target.select()" autocomplete="doNotAutoComplete">
           <input type="hidden">
           <span *ngIf="purchaseOrderForm.controls['VendorName'].touched && purchaseOrderForm.controls['VendorName'].invalid"class="error-field">Required</span>
         </div>
@@ -146,7 +146,7 @@
                   <div class="form-control text-right" style="background-color: lightgray;">{{ control.value.TotalPrice| number:'1.2-5' }}</div>
                 </div>
               </td>
-              <td (click)="removeParticularItem(i)"><i class="fas fa-window-close"></i></td>
+              <td><button type="button" class="btn btn-light" (click)="removeParticularItem(i)"><i class="fas fa-window-close"></i></button></td>
             </tr>
             <tr>
               <td></td>
