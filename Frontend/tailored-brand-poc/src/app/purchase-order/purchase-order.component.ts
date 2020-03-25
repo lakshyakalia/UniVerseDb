@@ -5,9 +5,9 @@ import { MatSnackBar } from "@angular/material";
 import { PurchaseOrderService } from '../service/purchase-order.service'
 import { StateService } from '../service/state.service'
 import { MatDialog , MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog'
-import { VendorService } from '../service/vendor.service';
+import { VendorService,Vendor } from '../service/vendor.service';
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
-import { error } from 'util';
+import { ItemService } from '../service/item.service';
 
 @Component({
   selector: 'purchase-order',
@@ -33,6 +33,7 @@ export class PurchaseOrderComponent implements OnInit {
   lastId: number = 0;
   showButtons: boolean = true
   flag:string ;
+  removeItem : boolean  = true
 
   constructor(
     private purchaseOrderService: PurchaseOrderService,
@@ -42,6 +43,7 @@ export class PurchaseOrderComponent implements OnInit {
     public snackBar: MatSnackBar,
     private stateService: StateService,
     private vendorService: VendorService,
+    private itemService: ItemService
   ) {
   }
   
@@ -71,6 +73,7 @@ export class PurchaseOrderComponent implements OnInit {
     })
 
     this.editForm = this.router.url.endsWith('/new')
+    
     if (this.editForm) {
       this.purchaseOrderForm.controls['NewOrder'].disable()
       this.purchaseOrderTitle = 'Create Purchase Order'
@@ -122,29 +125,31 @@ export class PurchaseOrderComponent implements OnInit {
   setItemOrderDetails(res: any) {
     let submitBool = false
     for (let i in res.data.orderData) {
-      if(this.purchaseOrderForm.controls[i] == this.purchaseOrderForm.controls["OrderDate"]) {
+      let key = i.charAt(0).toUpperCase() + i.slice(1)
+      if(this.purchaseOrderForm.controls[key] == this.purchaseOrderForm.controls["OrderDate"]) {
         let date = new Date(Date.parse(res.data.orderData[i])).toISOString().substr(0, 10)
-        this.purchaseOrderForm.controls[i].setValue(date)
+        this.purchaseOrderForm.controls[key].setValue(date)
       }
       else
-        this.purchaseOrderForm.controls[i].setValue(res.data.orderData[i])
+        this.purchaseOrderForm.controls[key].setValue(res.data.orderData[i])
       if (res.data.submitStatus === 'submit') {
+        this.removeItem = false
         this.purchaseOrderForm.controls['NewOrder'].disable()
-        this.purchaseOrderForm.controls[i].disable()
+        this.purchaseOrderForm.controls[key].disable()
       }
     }
 
     if (res.data.submitStatus === 'submit') {
+
       this.itemOrderForm.controls['VendorItem'].disable()
       this.showButtons = false
       submitBool = true
     }
-
     for (let j in res.data.itemList) {
-      let itemDescription: string
-      let cost = res.data.itemList[j].Cost
-      let quantity = res.data.itemList[j].Quantity
-      let vendorItem = res.data.itemList[j].ItemID
+      let itemDescription = res.data.itemList[j].description
+      let cost = res.data.itemList[j].cost
+      let quantity = res.data.itemList[j].quantity
+      let vendorItem = res.data.itemList[j].itemID
       this.createNewFormControl(vendorItem, itemDescription, quantity, cost)
       this.calculateTotalPrice(j, submitBool)
     }
@@ -162,10 +167,8 @@ export class PurchaseOrderComponent implements OnInit {
       this.purchaseOrderForm.controls['VendorName'].setValue(event.item.split("|")[0].trim());  
     }
     else{
-      this.openDialogBox('Changing the vendor will clear all items from the list. Are you sure you want to proceed?')
-      
+      this.openDialogBox('Changing the vendor will clear all items from the list. Are you sure you want to proceed?') 
     }
-    
   }
 
   clearFormArray(){
@@ -188,7 +191,7 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   removeParticularItem(index: number) {
-    if (!this.editForm) {
+    if (this.removeItem) {
       let control = <FormArray>this.itemOrderForm.get('SpecialRequests')
       control.removeAt(index)
     }

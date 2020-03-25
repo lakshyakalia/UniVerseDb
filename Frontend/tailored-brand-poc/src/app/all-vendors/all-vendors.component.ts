@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {VendorService,Vendor} from '../service/vendor.service'
 import { PurchaseDialogBoxComponent } from '../purchase-order/purchase-dialog-box.component'
 import { MatDialog } from '@angular/material/dialog'
+import {MatSnackBar} from '@angular/material'
 import {PageEvent} from '@angular/material/paginator';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 
@@ -24,7 +25,7 @@ export class AllVendorsComponent implements OnInit {
   Company: new FormControl(''),
   Phone: new FormControl('',),
 })
-  constructor(private vendorService: VendorService , private dialog : MatDialog) { }
+  constructor(private vendorService: VendorService , private dialog : MatDialog,private snackBar: MatSnackBar) { }
 
 
   ngOnInit() {
@@ -48,7 +49,8 @@ export class AllVendorsComponent implements OnInit {
     values['pageIndex'] = this.pageIndex
     values['pageSize'] = this.pageSize
     
-    this.vendorService.list(values).subscribe((res:any)=>{
+    this.vendorService.list(values)
+    .subscribe((res:any)=>{
       this.vendorData  = []
        this.length=res.totalCount
        for(let vendorId in res.data){
@@ -63,6 +65,11 @@ export class AllVendorsComponent implements OnInit {
            }
          )
        }
+    },
+    error =>{
+      this.vendorData = []
+      this.length = error.error.totalCount
+      this.openSnackBar(error.error.msg, 'Dismiss')
     })
   }
   openDialogBox(msg){
@@ -105,5 +112,11 @@ export class AllVendorsComponent implements OnInit {
         str += line + '\r\n';
       }
       return str;
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
   }
 }
