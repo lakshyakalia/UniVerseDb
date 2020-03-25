@@ -438,7 +438,7 @@ def invoiceGet(invoiceId):
             
         )
     else:
-        msg ='Invoice {} does not exist'.format(invoiceId)
+        msg ='Invoice {} does not exits'.format(invoiceId)
         data={
              'msg':msg
              }
@@ -453,18 +453,17 @@ def invoicePurchaseOrderItemsGet(orderId):
     status = checkExistingRecord('PO.ORDER.MST', orderId)
     if (status):
         orderFile = u2py.File("PO.ORDER.MST")
-        itemCost = []
-        itemQuantity = []
-        itemIds = []
+        data=[]
         items=list(orderFile.readv(orderId,11))
         for i in range(len(items)):
-                itemIds.append(list(orderFile.readv(orderId,11))[i][0])
-                itemCost.append(list(orderFile.readv(orderId,13))[i][0])
-                itemQuantity.append(list(orderFile.readv(orderId,12))[i][0])
+                itemDetails={}
+                itemDetails['itemIds']=(list(orderFile.readv(orderId,11))[i][0])
+                itemDetails['itemCost']=(list(orderFile.readv(orderId,13))[i][0])
+                itemDetails['itemQuantity']=(list(orderFile.readv(orderId,12))[i][0])
+                itemDetails['quantityPending']=(list(orderFile.readv(orderId,15))[i][0])
+                data.append(itemDetails)
         response={
-            'cost': itemCost,
-            'quantity': itemQuantity,
-            "ids": itemIds,
+                  "data":data
                  }
         return Response(
             json.dumps(response),
@@ -672,4 +671,4 @@ def mapOrderItems(dataFile,orderID):
 
 if __name__ == '__main__':
     app.run()
-s
+
