@@ -69,18 +69,18 @@
       <table class="table table-striped">
         <thead class="thead-dark">
           <th width="10%">SNo.</th>
-          <th width="25%" class="right">Invoice No.</th>
-          <th width="20%" class="right">Invoice Date</th>
-          <th width="20%" class="right">Order No.</th>
+          <th width="25%" class="text-right">Invoice No.</th>
+          <th width="20%" class="text-right">Invoice Date</th>
+          <th width="20%" class="text-right">Order No.</th>
           <th width="15%">Invoice Amount</th>
           <th></th>
         </thead>
         <tbody>
           <tr *ngFor="let data of invoiceData; let i = index">
-            <td class="right">{{ rowId + i }}</td>
-            <td class="right">{{ data['id'] }}</td>
-            <td class="right">{{ data['date'] }}</td>
-            <td class="right">{{ data['orderNumber'] }}</td>
+            <td class="text-right">{{ rowId + i }}</td>
+            <td class="text-right">{{ data['id'] }}</td>
+            <td class="text-right">{{ data['date'] }}</td>
+            <td class="text-right">{{ data['orderNumber'] }}</td>
             <td>
               <div class="input-group">
                 <div class="input-group-prepend">
