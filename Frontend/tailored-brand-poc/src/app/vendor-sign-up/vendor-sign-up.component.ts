@@ -72,7 +72,7 @@ export class VendorSignUpComponent implements OnInit {
         },error=>{
           this.openSnackBar(error.error.msg , 'Dismiss')
           this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/vendors']);
+            this.router.navigate(['/vendor/edit']);
         }); 
 
       })
