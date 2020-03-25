@@ -118,7 +118,7 @@ export class InvoiceDetailComponent implements OnInit {
         {
           let arr = <FormArray>this.invoiceForm.controls.invoiceDetails
           arr.controls = []
-          this.quantitypending = res.invoiceItems.map(items => items.quantityPending)
+          this.quantityPending = res.invoiceItems.map(items => items.quantityPending)
           let len = res.invoiceItems.length
           let date = new Date(Date.parse(res.invoiceDetails['invoiceDate'])).toISOString().substr(0, 10)
           this.invoiceForm.controls['invoiceDate'].setValue(date)
