@@ -185,9 +185,10 @@ export class InvoiceDetailComponent implements OnInit {
         arr.controls = []
         this.invoiceService.getParticularOrder(orderID)
           .subscribe((res: any) => {
-              let len = res.ids.length
+            console.log(res)
+              let len = res.data.length
               for (let i = 0; i < len; i++) {
-                this.createNewFormControl(res.ids[i], res.quantity[i],this.quantityPendingDefault,0)
+                this.createNewFormControl(res.data[i]['itemIds'], res.data[i]['itemQuantity'],res.data[i]['quantityPending'],0)
               }
           },error=>{
             this.openSnackBar(`${error.error.msg}`, 'Dismiss')
