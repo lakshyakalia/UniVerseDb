@@ -49,11 +49,6 @@ export class InvoiceDetailComponent implements OnInit {
       invoiceDetails: this.fb.array([])
     })
 
-    // this.editInvoice = this.router.url.endsWith('/invoice/edit')
-
-    // if (this.editInvoice) {
-    //   this.heading = 'Edit Invoice';
-    // }
     if(this.router.url.endsWith('/invoice/new')){
       this.heading = 'New Invoice';
     }
