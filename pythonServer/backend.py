@@ -616,7 +616,7 @@ def filterInvoice(invoiceToDate,invoiceNo,invoiceFromDate,orderNo):
         date_from = ' AND WITH INV.DATE GE "' + str(invoiceFromDate) + '"'
     if invoiceToDate and invoiceToDate != 'null':
         date_to = ' AND WITH INV.DATE LE "' + str(invoiceToDate) + '"'
-    command = "SELECT {}{}{}{}{}".format('PO.INVOICE.MST',invoice_No, order_No, date_from, date_to)
+    command = "SELECT {}{}{}{}{} BY INV.DATE".format('PO.INVOICE.MST',invoice_No, order_No, date_from, date_to)
     return command
 
 
