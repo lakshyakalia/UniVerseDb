@@ -588,7 +588,6 @@ def token_required(f):
     return decorated
 
 def filterPurchaseOrder(orderNo, vendorName, fromDate, toDate):
-    print(fromDate)
     order_No = vendor_Name = from_Date = to_Date = ""
     if orderNo and orderNo != 'null':
         order_No = ' WITH @ID = "' + str(orderNo) + '"'
