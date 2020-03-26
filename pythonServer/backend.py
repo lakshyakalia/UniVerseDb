@@ -531,7 +531,7 @@ def upsertPurchaseOrder(details, itemDetails, recordID, status):
         itemIds.append(itemDetail['ItemID'])
         quantities.append(itemDetail['Quantity'])
         costs.append(itemDetail['UnitCost'])
-        quantityPending.append('0')
+        quantityPending.append(itemDetail['Quantity'])
     data = [formattedDate, status, "", "", "", "", details['CompanyName'], details['ContactName'], address, details['PhoneNumber'], itemIds, quantities, costs, details['VendorName'],quantityPending]
     orderFile = u2py.File("PO.ORDER.MST")
     orderFile.write(recordID, u2py.DynArray(data))
