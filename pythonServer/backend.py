@@ -190,12 +190,12 @@ def vendorGet(vendorId):
         vendorDict['State']=list(orderFile.readv(vendorId,3))[2][0]
         vendorDict['Zip']=list(orderFile.readv(vendorId,3))[3][0]
         vendorDict['Phone']=list(orderFile.readv(vendorId,4))[0][0]
-        itemid=list(orderFile.readv(vendorId,5))
+        itemIds=list(orderFile.readv(vendorId,5))
         items=[]
    
-        for i in itemid:
+        for itemId in itemIds:
                 vendorItem={}
-                vendorItem["itemId"]=i[0]
+                vendorItem["itemId"]=itemId[0]
                 items.append(vendorItem)
         vendorData["particularVendorData"]=vendorDict
         vendorData["itemIds"]=items
