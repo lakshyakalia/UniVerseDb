@@ -194,9 +194,9 @@ def vendorGet(vendorId):
         items=[]
    
         for i in itemid:
-                itemsa={}
-                itemsa["itemId"]=i[0]
-                items.append(itemsa)
+                vendorItem={}
+                vendorItem["itemId"]=i[0]
+                items.append(vendorItem)
         vendorData["particularVendorData"]=vendorDict
         vendorData["itemIds"]=items
         response={
