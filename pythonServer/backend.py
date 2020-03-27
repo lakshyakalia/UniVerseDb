@@ -191,7 +191,7 @@ def vendorGet(vendorId):
         vendorDict['Zip']=list(orderFile.readv(vendorId,3))[3][0]
         vendorDict['Phone']=list(orderFile.readv(vendorId,4))[0][0]
         itemid=list(orderFile.readv(vendorId,5))
-        items=[]
+        itemList=[]
    
         for i in itemid:
                 itemsa={}
@@ -260,7 +260,6 @@ def purchaseOrderList():
         id = list(id)[0][0]
         orderDict = mappingOrder(date, vendorName, id)
         data.append(orderDict)
-
     response = {
         'data': data,
         'lastOrder': lastOrder,
@@ -600,10 +599,9 @@ def filterPurchaseOrder(orderNo, vendorName, fromDate, toDate):
         to_Date = ' AND WITH ORDER.DATE LE "' + str(toDate) + '"'
 
     if not orderNo and not vendorName and not fromDate and not toDate:
-        commandLine = 'SELECT {}'.format('PO.ORDER.MST')
+        commandLine = 'SELECT {} BY ORDER.DATE'.format('PO.ORDER.MST')
     else:
-        commandLine = 'SELECT {} {} {} {} {}'.format('PO.ORDER.MST', order_No, vendor_Name, from_Date, to_Date)
-
+        commandLine = 'SELECT {} {} {} {} {} BY ORDER.DATE'.format('PO.ORDER.MST', order_No, vendor_Name, from_Date, to_Date)
     return commandLine
 
 def filterInvoice(invoiceToDate,invoiceNo,invoiceFromDate,orderNo):
