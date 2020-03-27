@@ -20,7 +20,7 @@ import { async } from '@angular/core/testing';
 export class InvoiceDetailComponent implements OnInit {
   invoiceForm: FormGroup;
   editInvoice: boolean;
-  heading: string = 'New Invoice';
+  heading: string;
   lastId: number;
   date: string;
   itemOrderError: boolean
@@ -49,9 +49,10 @@ export class InvoiceDetailComponent implements OnInit {
       invoiceDetails: this.fb.array([])
     })
 
-    this.editInvoice = this.router.url.endsWith('/invoice/edit')
-
-    if (this.editInvoice) {
+    if(this.router.url.endsWith('/invoice/new')){
+      this.heading = 'New Invoice';
+    }
+    else{
       this.heading = 'Edit Invoice';
     }
     let url = this.router.url
@@ -184,6 +185,7 @@ export class InvoiceDetailComponent implements OnInit {
         arr.controls = []
         this.invoiceService.getParticularOrder(orderID)
           .subscribe((res: any) => {
+            this.quantityPending = res.data.map(items => items.quantityPending)
             let len = res.data.length
             for (let i = 0; i < len; i++) {
               this.createNewFormControl(res.data[i]['itemIds'], res.data[i]['itemQuantity'], res.data[i]['quantityPending'], 0)
@@ -210,7 +212,8 @@ export class InvoiceDetailComponent implements OnInit {
       leftQuantity = initialPendingQuantity - receivedQuantity
     }
     else {
-      leftQuantity = quantityOrdered - receivedQuantity
+      let initialPendingQuantity = this.quantityPending[index]
+      leftQuantity = initialPendingQuantity - receivedQuantity
     }
 
     controlArray.controls[index].get('quantityPending').setValue(leftQuantity)

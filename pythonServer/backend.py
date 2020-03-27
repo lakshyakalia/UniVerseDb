@@ -194,9 +194,9 @@ def vendorGet(vendorId):
         itemList=[]
    
         for i in itemid:
-            items={}
-            items["itemId"]=i[0]
-            itemList.append(items)
+                itemsa={}
+                itemsa["itemId"]=i[0]
+                items.append(itemsa)
         vendorData["particularVendorData"]=vendorDict
         vendorData["itemIds"]=items
         response={
@@ -530,7 +530,7 @@ def upsertPurchaseOrder(details, itemDetails, recordID, status):
         itemIds.append(itemDetail['ItemID'])
         quantities.append(itemDetail['Quantity'])
         costs.append(itemDetail['UnitCost'])
-        quantityPending.append('0')
+        quantityPending.append(itemDetail['Quantity'])
     data = [formattedDate, status, "", "", "", "", details['CompanyName'], details['ContactName'], address, details['PhoneNumber'], itemIds, quantities, costs, details['VendorName'],quantityPending]
     orderFile = u2py.File("PO.ORDER.MST")
     orderFile.write(recordID, u2py.DynArray(data))
@@ -614,7 +614,7 @@ def filterInvoice(invoiceToDate,invoiceNo,invoiceFromDate,orderNo):
         date_from = ' AND WITH INV.DATE GE "' + str(invoiceFromDate) + '"'
     if invoiceToDate and invoiceToDate != 'null':
         date_to = ' AND WITH INV.DATE LE "' + str(invoiceToDate) + '"'
-    command = "SELECT {}{}{}{}{}".format('PO.INVOICE.MST',invoice_No, order_No, date_from, date_to)
+    command = "SELECT {}{}{}{}{} BY INV.DATE".format('PO.INVOICE.MST',invoice_No, order_No, date_from, date_to)
     return command
 
 
