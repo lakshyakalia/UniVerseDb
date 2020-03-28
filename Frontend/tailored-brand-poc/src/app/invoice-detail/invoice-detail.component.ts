@@ -20,7 +20,7 @@ import { async } from '@angular/core/testing';
 export class InvoiceDetailComponent implements OnInit {
   invoiceForm: FormGroup;
   editInvoice: boolean;
-  heading: string = 'New Invoice';
+  heading: string;
   lastId: number;
   date: string;
   itemOrderError: boolean
@@ -49,9 +49,10 @@ export class InvoiceDetailComponent implements OnInit {
       invoiceDetails: this.fb.array([])
     })
 
-    this.editInvoice = this.router.url.endsWith('/invoice/edit')
-
-    if (this.editInvoice) {
+    if(this.router.url.endsWith('/invoice/new')){
+      this.heading = 'New Invoice';
+    }
+    else{
       this.heading = 'Edit Invoice';
     }
     let url = this.router.url

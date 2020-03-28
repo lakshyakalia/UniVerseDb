@@ -161,7 +161,9 @@ export class VendorSignUpComponent implements OnInit {
         this.vendorService.put(vendorDetail.value, itemIds, this.vendorId)
         .subscribe((res:any)=>{
             this.openSnackBar(res.msg, 'Dismiss')
-            this.router.navigateByUrl('/vendors');
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate(['/vendor/edit']);
+          }); 
         })
       }
     }
