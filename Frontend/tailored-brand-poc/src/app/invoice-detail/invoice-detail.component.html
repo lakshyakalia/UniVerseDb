@@ -132,6 +132,7 @@
                 type="text"
                 formControlName="quantityReceived"
                 (input)="calculatePendingQuantity(i)"
+                (keydown)="checkForExponential($event)"
               />
             </td>
           </tr>

@@ -109,7 +109,7 @@
           <tr>
             <td></td>
             <td colspan="3" class="form-group" style="width:1px;">
-              <input type="text" class="form-control" placeholder=" -- Item # -- " [ngbTypeahead]="itemService.typeahead" [value]="selectedItem" (selectItem)="selectItem($event)" style="text-align: right;" autocomplete="doNotAutoComplete">
+              <input *ngIf="itemEnable" type="text" class="form-control" placeholder=" -- Item # -- " [ngbTypeahead]="itemService.typeahead" [value]="selectedItem" (selectItem)="selectItem($event)" style="text-align: right;" autocomplete="doNotAutoComplete">
             </td>
           </tr>
         </tbody>

@@ -215,7 +215,9 @@ export class InvoiceDetailComponent implements OnInit {
       let initialPendingQuantity = this.quantityPending[index]
       leftQuantity = initialPendingQuantity - receivedQuantity
     }
-
+    if(leftQuantity<0){
+      console.log('noit okay')
+    }
     controlArray.controls[index].get('quantityPending').setValue(leftQuantity)
   }
 
