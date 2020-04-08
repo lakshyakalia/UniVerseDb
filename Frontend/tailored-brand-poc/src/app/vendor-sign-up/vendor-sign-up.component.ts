@@ -93,6 +93,7 @@ export class VendorSignUpComponent implements OnInit {
     }
     if(this.router.url.endsWith('/vendor/edit')){
       this.itemEnable = false;
+      this.vendorDetailForm.controls['State'].disable()
     }
   }
   initiateForm(description, id): FormGroup {

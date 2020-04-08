@@ -76,7 +76,7 @@ export class InvoiceDetailComponent implements OnInit {
       description: new FormControl(),
       quantityOrdered: new FormControl(quantity),
       quantityPending: new FormControl(quantityPending),
-      quantityReceived: new FormControl(quantityReceived)
+      quantityReceived: new FormControl('0')
     })
   }
 
