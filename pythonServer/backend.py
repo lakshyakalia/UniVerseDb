@@ -556,7 +556,8 @@ def upsertInvoice(orderNo, invoiceDetails, invoiceNo, invoiceDate, invoiceAmount
     invoiceData.insert(6, 0, 0, orderNo)
     invoiceData.insert(7, 0, 0, status)
     invoiceData.insert(8, 0, 0, invoiceAmount)
-    orderFile.writev(orderNo, 15, quantityPending[:-1])
+    if (status == 'receive'):
+        orderFile.writev(orderNo, 15, quantityPending[:-1])
     invoiceFile.write(invoiceNo, invoiceData)
 
 
