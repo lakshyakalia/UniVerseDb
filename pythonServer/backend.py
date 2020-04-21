@@ -104,10 +104,10 @@ def vendorList():
         commandLine = 'SELECT {}'.format('PO.VENDOR.MST')
 
     u2py.run(commandLine, capture=True)
-    u2py.run('SAVE.LIST {}'.format(saveList_name))
+    u2py.run('SAVE.LIST {}'.format(9))
 
     dataFile = u2py.File('PO.VENDOR.MST')
-    myList = u2py.List(0, saveList_name)
+    myList = u2py.List(0, "9")
     t_id = myList.readlist()
     totalCount = t_id.dcount(u2py.FM)
     if allVendors == 'true':
@@ -220,7 +220,7 @@ def purchaseOrderList():
     allOrders = request.args.get('allOrders')
     lastOrder = False
     if allOrders is None:
-        saveList_name = 'PAGE.LIST'
+        saveList_name = 'PAGE8.LIST'
         pageIndex = int(request.args.get('pageIndex'))
         pageSize = int(request.args.get('pageSize'))
         orderNo = request.args.get('OrderNo')
@@ -239,10 +239,10 @@ def purchaseOrderList():
         commandLine = 'SELECT {}'.format('PO.ORDER.MST')
 
     u2py.run(commandLine, capture=True)
-    u2py.run('SAVE.LIST {}'.format(saveList_name))
-
+    u2py.run('SAVE.LIST {}'.format(8))
+    u2py.run('GET.LIST {}'.format(8))
     dataFile = u2py.File('PO.ORDER.MST')
-    myList = u2py.List(0, saveList_name)
+    myList = u2py.List(0, "8")
     t_id = myList.readlist()
     totalCount = t_id.dcount(u2py.FM)
     if allOrders is not None:
@@ -298,7 +298,7 @@ def purchaseOrderGet(orderID):
         commandLine = 'SELECT {}'.format('PO.ORDER.MST')
         saveList_name = 'PAGE.LIST'
         u2py.run(commandLine, capture=True)
-        u2py.run('SAVE.LIST {}'.format(saveList_name))
+        u2py.run('SAVE.LIST {}'.format(3))
 
         dataFile = u2py.File('PO.ORDER.MST')
         orderDetail = mapPurchaseOrder(dataFile, orderID)
@@ -346,10 +346,10 @@ def invoiceList():
         commandLine = 'SELECT {}'.format('PO.INVOICE.MST')
 
     u2py.run(commandLine, capture=True)
-    u2py.run('SAVE.LIST {}'.format(saveList_name))
+    u2py.run('SAVE.LIST {}'.format(4))
 
     dataFile = u2py.File('PO.INVOICE.MST')
-    myList = u2py.List(0, saveList_name)
+    myList = u2py.List(0, "4")
     t_id = myList.readlist()
     totalCount = t_id.dcount(u2py.FM)
 
@@ -453,14 +453,17 @@ def invoicePurchaseOrderItemsGet(orderId):
         orderFile = u2py.File("PO.ORDER.MST")
         data=[]
         items=list(orderFile.readv(orderId,11))
+        sumCheck=0
         for i in range(len(items)):
                 itemDetails={}
                 itemDetails['itemIds']=(list(orderFile.readv(orderId,11))[i][0])
                 itemDetails['itemCost']=(list(orderFile.readv(orderId,13))[i][0])
                 itemDetails['itemQuantity']=(list(orderFile.readv(orderId,12))[i][0])
                 itemDetails['quantityPending']=(list(orderFile.readv(orderId,15))[i][0])
+                sumCheck=sumCheck+(list(orderFile.readv(orderId,15))[i][0])
                 data.append(itemDetails)
         response={
+                  "sumCheck":sumCheck,
                   "data":data
                  }
         return Response(
@@ -556,8 +559,7 @@ def upsertInvoice(orderNo, invoiceDetails, invoiceNo, invoiceDate, invoiceAmount
     invoiceData.insert(6, 0, 0, orderNo)
     invoiceData.insert(7, 0, 0, status)
     invoiceData.insert(8, 0, 0, invoiceAmount)
-    if (status == 'receive'):
-        orderFile.writev(orderNo, 15, quantityPending[:-1])
+    orderFile.writev(orderNo, 15, quantityPending[:-1])
     invoiceFile.write(invoiceNo, invoiceData)
 
 
